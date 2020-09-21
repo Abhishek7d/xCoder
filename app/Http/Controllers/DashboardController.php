@@ -5,12 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\helpers\CommonFunctions;
 use App\Models\Server;
+use App\Jobs\ServerInstaller​;
+use Artisan;
 
 class DashboardController extends Controller
 {
+    
+    public function test(){
+        $server = Server::get();
+        $a = ServerInstaller​::dispatch($server[0]);
+    }
     public function availableSizes()
     {
         return CommonFunctions::sendResponse(1, "List of available Sizes", CommonFunctions::$availableSizes);
+    }
+    public function serverCompleted(Request $request, $server_id, $hashed){
+        $server = Server::find($server_id);
+        if($server->hashed == $hashed){
+            $server->status = CommonFunctions::$server_statuses[3];
+            $server->save();
+            return 1;
+        }
+        return 0;
     }
     public function destroyDroplet(Request $request, $id){
         $action = $request->get('action');
@@ -23,7 +39,7 @@ class DashboardController extends Controller
                     $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
                     $response = CommonFunctions::makeRequest($url, "DELETE",null,"X-Dangerous: true");
                     $server->delete();
-                    return CommonFunctions::sendResponse(1, "Droplet Destroyed", json_decode($response));
+                    return CommonFunctions::sendResponse(1, "Droplet Destroyed");
                 }
                 return CommonFunctions::sendResponse(0, "You dont have access to this resource");
             }else{
@@ -59,21 +75,44 @@ class DashboardController extends Controller
                     "CUSTOMER:$user->id",
                 ]
             ];
+
+            $status = CommonFunctions::$server_statuses[0];
             
             $response = CommonFunctions::makeRequest("/droplets","POST",json_encode($body));
-            $response = json_decode($response);
+
+            if(!$response['status']){
+                return CommonFunctions::sendResponse(0, "Request Faild", $response['data']);
+            }
+            $response = json_decode($response['data']);
             if($response->droplet){
                 $droplet_id = $response->droplet->id;
                 $server = new Server();
                 $server->droplet_id = $droplet_id;
                 $server->name = $name;
                 $server->size = $size;
+                $server->status = $status;
                 $server->memory = $response->droplet->memory;
                 $server->vcpus = $response->droplet->vcpus;
                 $server->disk = $response->droplet->disk;
                 $server->user_id = $user->id;
                 $server->save();
-                return CommonFunctions::sendResponse(1, "Server Created Successfully", $response);
+
+                $server_id = "SERVER:".$server->id;
+                $body = ["name"=> $server_id];
+                CommonFunctions::makeRequest("/tags","POST",json_encode($body));
+                $body = [
+                    "resources"=> [
+                        [
+                            "resource_id"=> strval($droplet_id),
+                            "resource_type"=> "droplet"
+                        ]
+                    ]
+                ];
+                CommonFunctions::makeRequest("/tags/".$server_id."/resources","POST",json_encode($body));
+
+                CommonFunctions::releaseResponse(1,"Server Created Successfully", $server);
+                ServerInstaller​::dispatch($server);
+                // return CommonFunctions::sendResponse(1, "Server Created Successfully", $server);
             }
             return CommonFunctions::sendResponse(0, "Something Went Wrong While creating a Droplet", $response);
         }

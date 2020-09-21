@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Http\Controllers\helpers\CommonFunctions;
-
+use Auth;
 class checkAuth
 {
     /**
@@ -28,7 +28,12 @@ class checkAuth
             if($user && (count($token) > 1) ){
                 $tokens = json_decode($user->access_tokens);
                 if (($key = array_search($auth_header, $tokens)) !== false) {
-                    return $next($request);
+                    if($user->hasVerifiedEmail()){
+                        Auth::login($user);
+                        return $next($request);
+                    }else{
+                        return CommonFunctions::sendResponse(0, "Email Not Verified");
+                    }
                 }
             }
         }

@@ -90,6 +90,9 @@ class UserController extends Controller
             $users = User::where("email", $email)->get();
             if(count($users) > 0){
                 $user = $users[0];
+                if ($user->hasVerifiedEmail()) {
+                    return redirect("/");
+                }
                 $user->sendEmailVerificationNotification();
                 return CommonFunctions::sendResponse(1, "Verification mail Resend successfully");
             }else{
