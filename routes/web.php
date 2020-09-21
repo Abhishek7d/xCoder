@@ -25,6 +25,9 @@ Route::post('/reset/password', [UserController::class, 'resetPassword']);
 Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
 
 Route::group(['middleware' => 'checkAuth'], function () {
+    Route::get('/sizes', [DashboardController::class, 'availableSizes']);
+    Route::post('/droplet', [DashboardController::class, 'createDroplet']);
+    Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
     Route::get('/droplets', [DashboardController::class, 'droplets']);
 });
 
