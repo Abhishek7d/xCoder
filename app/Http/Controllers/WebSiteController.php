@@ -35,7 +35,7 @@ class WebSiteController extends Controller
             return CommonFunctions::sendResponse(0, "Server Auth Faild");
         }
         $ssh->write($this->step_one);
-        $ssh->write("./v-delete-domain admin $application->domain");
+        $ssh->write("./v-delete-domain admin $application->domain\n");
         $output = $ssh->read();
         $application->delete();
         return CommonFunctions::sendResponse(1, "Application Deleted Successfully", $output);
@@ -45,13 +45,14 @@ class WebSiteController extends Controller
         return CommonFunctions::sendResponse(1, "List of applications",$apps);
     }
     public function addDomain(Request $request){
-        $config = file_get_contents($this->sample_wp_config);
         
         $domain = $request->get('domain');
         $server = $request->get('server');
-        if(empty($server) || empty($domain) ){
+        $install_wp = $request->get("wordpress");
+        if(empty($server) || empty($domain) || empty($install_wp)){
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
+        $install_wp =  (($install_wp=="true")?true:false);
         if(!$this->is_valid_domain_name($domain)){
             return CommonFunctions::sendResponse(0, "Domain name is not valid");
         }
@@ -85,24 +86,7 @@ class WebSiteController extends Controller
         $ssh->write($this->step_one);
         //add webiste
         $ssh->write("./v-add-domain admin $domain\n");
-        //create database
-        $db_password = CommonFunctions::generateRandomString(8);
-        $ssh->write("./v-add-database admin $domain $domain $db_password mysql\n");
         
-        $ssh->write("cd /home/admin/web/$domain/public_html\n");
-        
-        $ssh->write("su admin\n");
-        $ssh->write("wget $this->wp_download_link\n");
-        $ssh->write("unzip latest.zip\n");
-        $ssh->write("mv ./wordpress/* ./ && mv ./wordpress/.* ./ \n");
-        $ssh->write("rm -rf latest.zip wordpress index.html robots.txt\n");
-        $table_prefix = '$table_prefix';
-        $config = file_get_contents($this->sample_wp_config);
-        $config = str_replace("VESTA_DB_NAME", "admin_$domain", $config);
-        $config = str_replace("VESTA_DB_USER", "admin_$domain", $config);
-        $config = str_replace("VESTA_DB_PASSWORD", $db_password, $config);
-        $ssh->write("$config\n");
-
         //create Application
         $application = new Application();
         $application->domain = $domain;
@@ -110,12 +94,32 @@ class WebSiteController extends Controller
         $application->ip_address = $server->ip_address;
         $application->user_id = auth()->user()->id;
         $application->status = CommonFunctions::$application_statuses[2];
-        $application->db_name = "admin_$domain";
-        $application->db_username = "admin_$domain";
-        $application->db_password = $db_password;
-        $application->save();
         
-        return CommonFunctions::sendResponse(1,"Domain added to the server", $ssh->read());
-        return CommonFunctions::sendResponse(1,"Domain added to the server", "http://$domain/");
+        if($install_wp){
+            //create database
+            $db_password = CommonFunctions::generateRandomString(8);
+            $ssh->write("./v-add-database admin $domain $domain $db_password mysql\n");
+            
+            $ssh->write("cd /home/admin/web/$domain/public_html\n");
+            
+            $ssh->write("su admin\n");
+            $ssh->write("wget $this->wp_download_link\n");
+            $ssh->write("unzip latest.zip\n");
+            $ssh->write("mv ./wordpress/* ./ && mv ./wordpress/.* ./ \n");
+            $ssh->write("rm -rf latest.zip wordpress index.html robots.txt\n");
+            $table_prefix = '$table_prefix';
+            $config = file_get_contents($this->sample_wp_config);
+            $config = str_replace("VESTA_DB_NAME", "admin_$domain", $config);
+            $config = str_replace("VESTA_DB_USER", "admin_$domain", $config);
+            $config = str_replace("VESTA_DB_PASSWORD", $db_password, $config);
+            $ssh->write("$config\n");
+            $application->db_name = "admin_$domain";
+            $application->db_username = "admin_$domain";
+            $application->db_password = $db_password;
+        }
+        
+        $application->save();
+        $ssh->read();
+        return CommonFunctions::sendResponse(1,"Domain added to the server", $application);
     }
 }
