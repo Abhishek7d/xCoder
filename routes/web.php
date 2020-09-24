@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\WebsiteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,7 @@ Route::group(['middleware' => 'checkAuth'], function () {
     Route::post('/droplet', [DashboardController::class, 'createDroplet']);
     Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
     Route::get('/droplets', [DashboardController::class, 'droplets']);
+    Route::post('/application', [WebsiteController::class, 'addDomain']);
     Route::get('/test', [DashboardController::class, 'test']);
 });
 

@@ -9,6 +9,7 @@ class CommonFunctions extends Controller
 {
     public static $availableSizes = ["s-1vcpu-1gb","512mb","s-1vcpu-2gb","1gb","s-3vcpu-1gb","s-2vcpu-2gb","s-1vcpu-3gb","s-2vcpu-4gb","2gb","s-4vcpu-8gb","m-1vcpu-8gb","c-2","4gb","c2-2vcpu-4gb","g-2vcpu-8gb","gd-2vcpu-8gb","m-16gb","s-8vcpu-16gb","s-6vcpu-16gb","c-4","8gb","c2-4vpcu-8gb","m-2vcpu-16gb","m3-2vcpu-16gb","g-4vcpu-16gb","gd-4vcpu-16gb","m6-2vcpu-16gb","m-32gb","s-8vcpu-32gb","c-8","c2-8vpcu-16gb","m-4vcpu-32gb","m3-4vcpu-32gb","g-8vcpu-32gb","s-12vcpu-48gb","gd-8vcpu-32gb","m6-4vcpu-32gb","m-64gb","s-16vcpu-64gb","c-16","32gb","c2-16vcpu-32gb","m-8vcpu-64gb","m3-8vcpu-64gb","g-16vcpu-64gb","s-20vcpu-96gb","48gb","gd-16vcpu-64gb","m6-8vcpu-64gb","m-128gb","s-24vcpu-128gb","c-32","64gb","c2-32vpcu-64gb","s-32vcpu-192gb"];
     public static $server_statuses = ['BLANK', "NOT READY",'INSTALLING', "READY", "FAILD"];
+    public static $application_statuses = ['BLANK', 'INSTALLING', "READY", "FAILD"];
     public static function releaseResponse($status=0,$message="", $data=null){
         ignore_user_abort(true);
         set_time_limit(0);
