@@ -45,6 +45,10 @@ Route::group(['middleware' => 'checkAuth'], function () {
     Route::post('/server/{server}', [ServiceController::class, 'setService']);
     Route::get('/resouces/{server}', [ServiceController::class, 'getResources']);
     
+    //cronjob
+    Route::get('/cron/{server}', [ServiceController::class, 'getCronjobs']);
+    Route::post('/cron/{server}', [ServiceController::class, 'addCronjob']);
+    Route::post('/cron/{server}/{job}', [ServiceController::class, 'setCronjob']);
 });
 
 Route::get('/{slug}/{id}', function ($slug, $id) {

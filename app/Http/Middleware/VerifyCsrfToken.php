@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         'server/*',
         'droplet/*',
         'application',
-        'application/*'
+        'application/*',
+        "cron/*"
     ];
 }
