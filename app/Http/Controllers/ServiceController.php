@@ -89,4 +89,36 @@ class ServiceController extends Controller
         $output = $ssh->exec("systemctl $action_name $service_name");
         return CommonFunctions::sendResponse(1, "Service successfully $action_name"."ed");
     }
+
+    public function getResources(Request $request, $server){
+        $server = Server::find($server);
+        if(!$server){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if(!$server->user_id==auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($server->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+        $data = $ssh->exec("cat /proc/meminfo");
+        $data = explode("\n", $data);
+        
+        $total = preg_split('/[\s]+/', $data[0]);
+        $free = preg_split('/[\s]+/', $data[1]);
+        $available = preg_split('/[\s]+/', $data[2]);
+        $memory = ['total'=>$total, 'free'=>$free, 'available'=>$available];
+
+        $cpu = $ssh->exec("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
+        
+        $disk = $ssh->exec("df -h /");
+        $disk = explode("\n", $disk);
+        $disk = $disk[1];
+        $disk = preg_split('/[\s]+/', $disk);
+        $disk = ["total"=>$disk[1], "used"=>$disk[2], "available"=>$disk[3], "usage"=>$disk[4]];
+        $rsp = ["cpu"=>trim($cpu)."%", "disk"=>$disk, "memory"=>$memory];
+        
+        return CommonFunctions::sendResponse(1, "Available Resouces", $rsp);
+    }
 }

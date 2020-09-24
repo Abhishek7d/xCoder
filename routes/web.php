@@ -29,17 +29,22 @@ Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd']
 Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, 'serverCompleted']);
 
 Route::group(['middleware' => 'checkAuth'], function () {
+    //droplets
     Route::get('/sizes', [DashboardController::class, 'availableSizes']);
     Route::post('/droplet', [DashboardController::class, 'createDroplet']);
     Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
     Route::get('/droplets', [DashboardController::class, 'droplets']);
     
+    //application
     Route::get('/application', [WebsiteController::class, 'showDomains']);
     Route::post('/application', [WebsiteController::class, 'addDomain']);
     Route::post('/application/{application}', [WebsiteController::class, 'removeDomain']);
 
+    //services
     Route::get('/server/{server}', [ServiceController::class, 'getStatus']);
     Route::post('/server/{server}', [ServiceController::class, 'setService']);
+    Route::get('/resouces/{server}', [ServiceController::class, 'getResources']);
+    
 });
 
 Route::get('/{slug}/{id}', function ($slug, $id) {
