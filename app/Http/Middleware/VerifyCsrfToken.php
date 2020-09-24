@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         'reset',
         'reset/*',
         'droplet',
+        'server/*',
         'droplet/*',
         'application',
         'application/*'

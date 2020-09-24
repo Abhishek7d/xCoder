@@ -75,10 +75,8 @@ class WebSiteController extends Controller
             return CommonFunctions::sendResponse(0, "Server unreachable");
         }
 
-        $key = new RSA();
-        $key->loadKey(file_get_contents('../ssh-keys/parvaty-cloud-hosting'));
-        $ssh = new SSH2($server->ip_address);
-        if (!$ssh->login('root', $key)) {
+        $ssh = CommonFunctions::connect($server->ip_address);
+        if (!$ssh) {
             return CommonFunctions::sendResponse(0, "Server Auth Faild");
         }
 

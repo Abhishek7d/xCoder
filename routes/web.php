@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\ServiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,10 +33,13 @@ Route::group(['middleware' => 'checkAuth'], function () {
     Route::post('/droplet', [DashboardController::class, 'createDroplet']);
     Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
     Route::get('/droplets', [DashboardController::class, 'droplets']);
+    
     Route::get('/application', [WebsiteController::class, 'showDomains']);
     Route::post('/application', [WebsiteController::class, 'addDomain']);
     Route::post('/application/{application}', [WebsiteController::class, 'removeDomain']);
-    Route::get('/test', [DashboardController::class, 'test']);
+
+    Route::get('/server/{server}', [ServiceController::class, 'getStatus']);
+    Route::post('/server/{server}', [ServiceController::class, 'setService']);
 });
 
 Route::get('/{slug}/{id}', function ($slug, $id) {
