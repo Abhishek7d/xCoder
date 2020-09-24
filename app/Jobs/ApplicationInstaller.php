@@ -8,7 +8,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AddWebsite implements ShouldQueue
+use App\Models\Server;
+use App\Models\Application;
+use phpseclib\Net\SSH2;
+
+class ApplicationInstaller implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -17,9 +21,11 @@ class AddWebsite implements ShouldQueue
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Server $server, Application $application, SSH2 $ssh)
     {
-        //
+        $this->server = $server;
+        $this->application = $application;
+        $this->ssh = $ssh;
     }
 
     /**
@@ -29,6 +35,6 @@ class AddWebsite implements ShouldQueue
      */
     public function handle()
     {
-        //
+        // v-add-database
     }
 }

@@ -19,9 +19,11 @@ class CreateApplicationsTable extends Migration
             $table->string('server_id');
             $table->string('user_id');
             $table->string('status');
+            $table->string('ip_address');
             $table->string('username')->nullable();
             $table->string('password')->nullable();
             $table->string('db_name')->nullable();
+            $table->string('db_username')->nullable();
             $table->string('db_password')->nullable();
             $table->string('ssl_enabled')->default(false);
             $table->timestamps();

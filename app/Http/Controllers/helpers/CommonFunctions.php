@@ -4,6 +4,8 @@ namespace App\Http\Controllers\helpers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use phpseclib\Crypt\RSA;
+use phpseclib\Net\SSH2;
 
 class CommonFunctions extends Controller
 {
@@ -21,6 +23,15 @@ class CommonFunctions extends Controller
         ob_end_flush();
         ob_flush();
         flush();
+    }
+    public static function connect($ip_address){
+        $key = new RSA();
+        $key->loadKey(file_get_contents('../ssh-keys/parvaty-cloud-hosting'));
+        $ssh = new SSH2($ip_address);
+        if (!$ssh->login('root', $key)) {
+            return false;
+        }
+        return $ssh;
     }
     public static function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

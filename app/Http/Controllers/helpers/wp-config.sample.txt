@@ -1,0 +1,1 @@
+cat wp-config-sample.php| sed "s/^.*DB_NAME.*$/define('DB_NAME', 'VESTA_DB_NAME');/"| sed "s/^.*DB_USER.*$/define('DB_USER', 'VESTA_DB_USER');/"| sed "s/^.*DB_PASSWORD.*$/define('DB_PASSWORD', 'VESTA_DB_PASSWORD');/" > wp-config.php

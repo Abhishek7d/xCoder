@@ -32,8 +32,14 @@ Route::group(['middleware' => 'checkAuth'], function () {
     Route::post('/droplet', [DashboardController::class, 'createDroplet']);
     Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
     Route::get('/droplets', [DashboardController::class, 'droplets']);
+    Route::get('/application', [WebsiteController::class, 'showDomains']);
     Route::post('/application', [WebsiteController::class, 'addDomain']);
+    Route::post('/application/{application}', [WebsiteController::class, 'removeDomain']);
     Route::get('/test', [DashboardController::class, 'test']);
 });
 
-Route::any('/', [UserController::class, 'default']);
+Route::get('/{slug}/{id}', function ($slug, $id) {
+    return [$slug, $id];
+})->where('slug', '([0-9A-Za-z\-]+)')->where('id', '([0-9]+)');
+
+// Route::any('/', [UserController::class, 'default']);
