@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\helpers\CommonFunctions;
 use App\Models\Server;
+use App\Models\Application;
 use App\Jobs\ServerInstaller​;
 use Artisan;
 
@@ -17,7 +18,20 @@ class DashboardController extends Controller
     }
     public function availableSizes()
     {
-        return CommonFunctions::sendResponse(1, "List of available Sizes", CommonFunctions::$availableSizes);
+        $sizes = CommonFunctions::makeRequest("/sizes","GET");
+        if(!$sizes['status']){
+            return CommonFunctions::sendResponse(0, "Something Went wrong");
+        }
+        $sizes = json_decode($sizes['data'])->sizes;
+        return CommonFunctions::sendResponse(1, "List of available Sizes", $sizes);
+    }
+    public function availableRegions(){
+        $regions = CommonFunctions::makeRequest("/regions","GET");
+        if(!$regions['status']){
+            return CommonFunctions::sendResponse(0, "Something Went wrong");
+        }
+        $regions = json_decode($regions['data'])->regions;
+        return CommonFunctions::sendResponse(1, "List of available Regions", $regions);
     }
     public function serverCompleted(Request $request, $server_id, $hashed){
         $server = Server::find($server_id);
@@ -38,6 +52,7 @@ class DashboardController extends Controller
 
                     $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
                     $response = CommonFunctions::makeRequest($url, "DELETE",null,"X-Dangerous: true");
+                    Application::where("server_id", $server->id)->delete();
                     $server->delete();
                     return CommonFunctions::sendResponse(1, "Droplet Destroyed");
                 }
@@ -51,11 +66,25 @@ class DashboardController extends Controller
     public function createDroplet(Request $request){
         $name = $request->get('name');
         $size = $request->get('size');
+        $region = $request->get('region');
 
-        if(!empty($name) && !empty($size) ){
-            if(!CommonFunctions::validateSize($size)){
-                return CommonFunctions::sendResponse(0, "Invalid Droplet Size");
+        if(!empty($name) && !empty($size) && !empty($region)){
+
+            $sizes = CommonFunctions::makeRequest("/sizes","GET");
+            if(!$sizes['status']){
+                return CommonFunctions::sendResponse(0, "Something Went wrong");
             }
+            $sizes = json_decode($sizes['data'])->sizes;
+            $valid = false;
+            foreach($sizes as $s){
+                if($s->slug==$size && in_array($region, $s->regions) && $s->available){
+                    $valid = true;
+                }
+            }
+            if(!$valid){
+                return CommonFunctions::sendResponse(0, "Invalid Selection");
+            }
+            
             $user = auth()->user();
             $body = [
                 "name"=> "Customer-".$user->id,

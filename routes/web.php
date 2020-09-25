@@ -31,6 +31,7 @@ Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, '
 Route::group(['middleware' => 'checkAuth'], function () {
     //droplets
     Route::get('/sizes', [DashboardController::class, 'availableSizes']);
+    Route::get('/regions', [DashboardController::class, 'availableRegions']);
     Route::post('/droplet', [DashboardController::class, 'createDroplet']);
     Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
     Route::get('/droplets', [DashboardController::class, 'droplets']);
