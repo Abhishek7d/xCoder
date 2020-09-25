@@ -120,6 +120,7 @@ class DashboardController extends Controller
                 $server->name = $name;
                 $server->size = $size;
                 $server->status = $status;
+                $server->region = $region;
                 $server->memory = $response->droplet->memory;
                 $server->vcpus = $response->droplet->vcpus;
                 $server->disk = $response->droplet->disk;

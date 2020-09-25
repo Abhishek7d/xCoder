@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\BlockStorageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,12 @@ Route::group(['middleware' => 'checkAuth'], function () {
     Route::get('/cron/{server}', [ServiceController::class, 'getCronjobs']);
     Route::post('/cron/{server}', [ServiceController::class, 'addCronjob']);
     Route::post('/cron/{server}/{job}', [ServiceController::class, 'setCronjob']);
+
+    //block storage
+    Route::post('/storage', [BlockStorageController::class, 'createBlockStorage']);
+    Route::post('/storage/resize', [BlockStorageController::class, 'resizeBlockStorage']);
+    Route::post('/storage/delete', [BlockStorageController::class, 'deleteBlockStorage']);
+    
 });
 
 Route::get('/{slug}/{id}', function ($slug, $id) {
