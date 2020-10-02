@@ -62,9 +62,21 @@ class ServerInstaller​ implements ShouldQueue
             }else{
                 $droplet = $droplets[0];
                 if($droplet->networks && $droplet->networks->v4 && count($droplet->networks->v4)>0){
+                    $found = false;
+                    foreach($droplet->networks->v4 as $address){
+                        if($address->type=="public"){
+                            $found = $address->ip_address;
+                        }
+                    }
+                    if(!$found){
+                        echo "Server Not Ready";
+                        sleep(10);
+                        ServerInstaller​::dispatch($server);
+                        die;
+                    }
                     $network = $droplet->networks->v4[0];
                     $server->status = CommonFunctions::$server_statuses[2];
-                    $server->ip_address = $network->ip_address;
+                    $server->ip_address = $found;
                     $server->password = CommonFunctions::generateRandomString(8);
                     $server->hashed = CommonFunctions::generateRandomString(98);
                     $server->save();
