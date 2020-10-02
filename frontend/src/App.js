@@ -7,19 +7,8 @@ import Login from './screens/Login';
 function App() {
   return (
     <Router>
-        {localStorage.getItem("validation") === "true" ? (
-        <div className="wrapper">
-            {Routes.map((x,i) =>
+        {Routes.map((x,i) =>
             <Route key={i} path={x.path} component={x.component} />
-            )}
-            {/* <Route exact path="/dashboard" component={Dashboard} />
-            <Route exact path="/employees" component={Employee} /> */}
-        </div>
-        ) : (
-        <div className="hold-transition login-page">
-            {/* <Redirect path="/" /> */}
-            <Route exact path="/" component={Login} />
-        </div>
         )}
     </Router>
   );

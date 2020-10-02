@@ -8,17 +8,17 @@ import ForgotPassword from '../screens/ForgotPassword';
 import Servers from '../screens/Servers';
 
 let routes = [
-    {
-        path: '/',
-        component: () =>{ 
-            console.log(localStorage.getItem("validation")===true)
-            if(localStorage.getItem("access_token") === "true"){
-                return <Redirect to="/servers" />;
-            }else{
-                return <Redirect to="/login" />;
-            }
-        }
-    },
+    // {
+    //     path: '/',
+    //     component: () =>{ 
+    //         console.log(localStorage.getItem("validation")===true)
+    //         if(localStorage.getItem("access_token") === "true"){
+    //             return <Redirect to="/servers" />;
+    //         }else{
+    //             return <Redirect to="/login" />;
+    //         }
+    //     }
+    // },
     {
         path: '/login',
         component: () => <Login/>

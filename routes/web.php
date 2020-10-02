@@ -21,8 +21,9 @@ use App\Http\Controllers\BlockStorageController;
 Route::group(['prefix' => 'api'], function () {
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
-    Route::post('/resend', [UserController::class, 'resend']);
+    Route::get('/resend', [UserController::class, 'resend']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::get('/check', [UserController::class, 'checkLogin']);
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);

@@ -13,7 +13,7 @@ class ForgotPassword extends React.Component{
                                 <div className="login-logo mt-5">
                                     <a href="../../index2.html"><b>Parvaty</b></a>
                                 </div>
-                                <div className="card shadow-none">
+                                <div className="card">
                                     <div className="card-body login-card-body">
                                         <h4 className="login-box-msg ">Forgot Password</h4>
                                         
@@ -40,14 +40,14 @@ class ForgotPassword extends React.Component{
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-1 font-weight-lighter un">
-                                                        <Link to="/login" class="text-center">
+                                                        <Link to="/login" className="text-center">
                                                             <small><u>Login here</u></small>
                                                         </Link> 
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-0 font-weight-lighter">
-                                                        <Link to="/register" class="text-center">
+                                                        <Link to="/register" className="text-center">
                                                             <small><u>Dont have a account?</u></small>
                                                         </Link> 
                                                     </p>

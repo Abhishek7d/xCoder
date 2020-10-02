@@ -21,6 +21,26 @@ class UserController extends Controller
     {
         die("will send to frontend");
     }
+    public function checkLogin(Request $request){
+        $header = $request->header('Authorization');
+        if (Str::startsWith($header, 'Bearer ')) {
+            $auth_header = Str::substr($header, 7);
+            $token = explode(':',$auth_header);
+            $user = User::find($token[0]);
+            
+            if($user && (count($token) > 1) ){
+                $tokens = json_decode($user->access_tokens);
+                if (($key = array_search($auth_header, $tokens)) !== false) {
+                    if($user->hasVerifiedEmail()){
+                        return CommonFunctions::sendResponse(1, "user valid", true);
+                    }else{
+                        return CommonFunctions::sendResponse(0, "Email Not Verified");
+                    }
+                }
+            }
+        }
+        return CommonFunctions::sendResponse(0, "user not valid", false);
+    }
     public function resetPassword(Request $request){
         $password = $request->get('password');
         $token = $request->get('token');
@@ -118,7 +138,7 @@ class UserController extends Controller
                     $user->password = Hash::make($password);
                     $user->save();
                     $user->sendEmailVerificationNotification();
-                    return CommonFunctions::sendResponse(1, "User Registed Successfully");
+                    return CommonFunctions::sendResponse(1, "Verification email sent");
                 }else{
                     return CommonFunctions::sendResponse(0, "Email Already Registered");
                 }
@@ -137,6 +157,10 @@ class UserController extends Controller
             $users = User::where("email", $email)->get();
             if(count($users) > 0){
                 if(Auth::attempt(['email' => $email, 'password' => $password])){
+                    $user = Auth::user();
+                    if(!$user->hasVerifiedEmail()){
+                        return CommonFunctions::sendResponse(0, "Email Not Verified  <a href='#'>Resend</a>", true);
+                    }
                     $user = Auth::user();
                     $token_key = Str::random(32);
                     $token = $user->id.":".$token_key;
