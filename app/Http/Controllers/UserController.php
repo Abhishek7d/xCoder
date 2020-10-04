@@ -17,9 +17,9 @@ class UserController extends Controller
     public function default(){
         return CommonFunctions::sendResponse(0, "route not found");
     }
-    public function returnToFrontEnd()
-    {
-        die("will send to frontend");
+    public function returnToFrontEnd(Request $request, $token){
+        $email=$request->get('email');
+        return redirect("/reset?token=$token&email=$email");
     }
     public function checkLogin(Request $request){
         $header = $request->header('Authorization');
@@ -27,7 +27,7 @@ class UserController extends Controller
             $auth_header = Str::substr($header, 7);
             $token = explode(':',$auth_header);
             $user = User::find($token[0]);
-            
+
             if($user && (count($token) > 1) ){
                 $tokens = json_decode($user->access_tokens);
                 if (($key = array_search($auth_header, $tokens)) !== false) {
@@ -69,9 +69,9 @@ class UserController extends Controller
         return CommonFunctions::sendResponse(0,"All Data required");
     }
     public function verify(Request $request, $id){
-    
+
         $success_route = "/";
-        
+
         $user = User::find($id);
 
         if(!$user){
@@ -186,7 +186,7 @@ class UserController extends Controller
             $auth_header = Str::substr($header, 7);
             $token = explode(':',$auth_header);
             $user = User::find($token[0]);
-            
+
             if($user && (count($token) > 1) ){
                 $tokens = json_decode($user->access_tokens);
                 if(!is_array($tokens)){
