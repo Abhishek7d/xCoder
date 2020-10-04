@@ -25,7 +25,7 @@ class ApiHandler {
         }catch(error){
             faild(error.message);
         }
-    
+
     }
     register = (name, email, password, confPassword, success=()=>{}, faild=()=>{})=>{
         if (!name || !email || !password || !confPassword) return;
@@ -57,7 +57,7 @@ class ApiHandler {
             }else if(response.status==1){
                 success(response.message, response.data);
             }else{
-                faild("someting went wrong");
+                faild("something went wrong");
             }
         });
     }

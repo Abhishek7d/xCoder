@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import ApiHandler from "../model/ApiHandler";
 
 class Login extends React.Component{
@@ -7,6 +7,7 @@ class Login extends React.Component{
     constructor(props){
         super();
         this.state = {
+            loggedIn: false,
             loadding:false,
             email:"",
             password:""
@@ -25,21 +26,26 @@ class Login extends React.Component{
         }
         this.setState({error:"", success:"", loadding:true})
         this.apiHandler.login(this.state.email,this.state.password, (message, data)=>{
-            this.setState({error:"", success:message, loadding:false})
-            console.log(data)
-        }, (data)=>{
-            this.setState({error:data, success:"", loadding:false})
+            this.setState({error:"", success:message, loadding:false, loggedIn:true})
+            localStorage.setItem("name", data.name)
+            localStorage.setItem("email", data.email)
+            localStorage.setItem("auth", data.access_tokens[data.access_tokens.length - 1])
+        }, (message)=>{
+            this.setState({error:message, success:"", loadding:false, loggedIn:false})
         });
     }
     dataChange = (event)=>{
         this.setState({[event.target.name]:event.target.value})
     }
     render(){
+        if(this.state.loggedIn){
+            return <Redirect to="/servers" />
+        }
         return(
             <div className="wrapper">
                 <div className="container-fluid">
                     <div className="row">
-                        
+
                         <div style={{textAlign:"center",margin:"auto"}} className="col-sm-6  login-page-fields">
                             <div className="login-box m-auto">
                                 <div className="login-logo mt-5">
@@ -81,14 +87,14 @@ class Login extends React.Component{
                                                     <p className="mb-1 font-weight-lighter un">
                                                         <Link to="/forgot-password" class="text-center">
                                                             <small><u>Forgot Password?</u></small>
-                                                        </Link> 
+                                                        </Link>
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-0 font-weight-lighter">
                                                         <Link to="/register" class="text-center">
                                                             <small><u>New to Parvaty? SignUp</u></small>
-                                                        </Link> 
+                                                        </Link>
                                                     </p>
                                                 </div>
                                             </div>
