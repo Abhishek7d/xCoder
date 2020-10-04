@@ -36,6 +36,9 @@ class Register extends React.Component{
     dataChange = (event)=>{
         this.setState({[event.target.name]:event.target.value})
     }
+    componentDidMount(){
+        document.title = "Register";
+    }
     render(){
         return(
             <div className="wrapper">
@@ -47,7 +50,7 @@ class Register extends React.Component{
                                 <div className="login-logo mt-5">
                                     <a href="/"><b>Parvaty Cloud Hosting</b></a>
                                 </div>
-                                <div className="card">
+                                <div className="card form-card">
                                     <div className="card-body login-card-body">
                                         <h4 className="login-box-msg ">Register Here</h4>
                                         <p style={{color:"red"}}>{this.state.error}</p>
