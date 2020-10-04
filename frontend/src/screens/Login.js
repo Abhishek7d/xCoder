@@ -15,6 +15,9 @@ class Login extends React.Component{
 
         this.apiHandler = new ApiHandler();
     }
+    componentDidMount(){
+        document.title = "Login";
+    }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
         if(!form.checkValidity()){
@@ -51,7 +54,7 @@ class Login extends React.Component{
                                 <div className="login-logo mt-5">
                                     <a href="/"><b>Parvaty Cloud Hosting</b></a>
                                 </div>
-                                <div className="card" >
+                                <div className="card form-card" >
                                     <div className="card-body login-card-body">
                                         <h4 className="login-box-msg ">Login Here</h4>
                                         <p style={{color:"red"}}>{this.state.error}</p>
@@ -85,14 +88,14 @@ class Login extends React.Component{
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-1 font-weight-lighter un">
-                                                        <Link to="/forgot-password" class="text-center">
+                                                        <Link to="/forgot-password" className="text-center">
                                                             <small><u>Forgot Password?</u></small>
                                                         </Link>
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-0 font-weight-lighter">
-                                                        <Link to="/register" class="text-center">
+                                                        <Link to="/register" className="text-center">
                                                             <small><u>New to Parvaty? SignUp</u></small>
                                                         </Link>
                                                     </p>

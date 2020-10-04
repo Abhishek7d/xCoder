@@ -61,6 +61,25 @@ class ApiHandler {
             }
         });
     }
+    getServers = (success=()=>{}, failure=()=>{})=>{
+        let access_token = localStorage.getItem("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer "+access_token)
+        this.getResult("/droplets", "GET", null, authHeaders, (response)=>{
+            if(response.status==0){
+                if(response.message==="Authenticatio Faild"){
+                    localStorage.clear();
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            }else if(response.status==1){
+                success(response.message, response.data);
+            }else{
+                failure("something went wrong");
+            }
+        }, failure);
+    }
 }
 
 export default ApiHandler;
