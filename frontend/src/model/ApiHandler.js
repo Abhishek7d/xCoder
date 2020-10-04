@@ -1,4 +1,5 @@
 import * as conf from './config';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 class ApiHandler {
     constructor(){
@@ -62,13 +63,13 @@ class ApiHandler {
         });
     }
     getServers = (success=()=>{}, failure=()=>{})=>{
-        let access_token = localStorage.getItem("auth");
+        let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer "+access_token)
         this.getResult("/droplets", "GET", null, authHeaders, (response)=>{
             if(response.status==0){
                 if(response.message==="Authenticatio Faild"){
-                    localStorage.clear();
+                    delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }

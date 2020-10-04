@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import ApiHandler from "../model/ApiHandler";
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 class Login extends React.Component{
 
@@ -30,9 +31,10 @@ class Login extends React.Component{
         this.setState({error:"", success:"", loadding:true})
         this.apiHandler.login(this.state.email,this.state.password, (message, data)=>{
             this.setState({error:"", success:message, loadding:false, loggedIn:true})
-            localStorage.setItem("name", data.name)
-            localStorage.setItem("email", data.email)
-            localStorage.setItem("auth", data.access_tokens[0])
+            bake_cookie("name", data.name);
+            bake_cookie("email", data.email);
+            bake_cookie("auth", data.access_tokens.pop());
+            window.location.href="/servers";
         }, (message)=>{
             this.setState({error:message, success:"", loadding:false, loggedIn:false})
         });
