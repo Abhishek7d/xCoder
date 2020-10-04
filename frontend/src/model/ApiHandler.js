@@ -61,6 +61,40 @@ class ApiHandler {
             }
         });
     }
+    forgotPassword = (email, success=()=>{}, faild=()=>{})=>{
+        if ( !email ) return;
+        const formData = new FormData();
+        formData.append("email", email);
+
+        this.getResult("/reset", "POST", formData, null, (response)=>{
+            if(response.status==0){
+                faild(response.message)
+            }else if(response.status==1){
+                success(response.message, response.data);
+            }else{
+                faild("something went wrong");
+            }
+        });
+    }
+    resetPassword = (email, newPassword, confirmPassword, tocken, success=()=>{}, faild=()=>{})=>{
+        if ( !email ) return;
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("newPassword", newPassword);
+        formData.append("confirmPassword", confirmPassword);
+        formData.append("tocken", tocken);
+
+
+        this.getResult("/password/reset", "POST", formData, null, (response)=>{
+            if(response.status==0){
+                faild(response.message)
+            }else if(response.status==1){
+                success(response.message, response.data);
+            }else{
+                faild("something went wrong");
+            }
+        });
+    }
 }
 
 export default ApiHandler;

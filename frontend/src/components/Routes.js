@@ -4,13 +4,14 @@ import CreateServerScreen from '../screens/CreateServerScreen';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
 import ForgotPassword from '../screens/ForgotPassword';
+import ResetScreen from '../screens/ResetScreen';
 
 import Servers from '../screens/Servers';
 
 let routes = [
     // {
     //     path: '/',
-    //     component: () =>{ 
+    //     component: () =>{
     //         console.log(localStorage.getItem("validation")===true)
     //         if(localStorage.getItem("access_token") === "true"){
     //             return <Redirect to="/servers" />;
@@ -40,6 +41,11 @@ let routes = [
         path: '/server/create',
         title: 'Create Server',
         component: () => <CreateServerScreen />
+    },
+    {
+        path: '/reset',
+        title: 'Reset',
+        component: () => <ResetScreen />
     },
 ];
 

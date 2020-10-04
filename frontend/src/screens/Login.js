@@ -14,6 +14,7 @@ class Login extends React.Component{
         }
 
         this.apiHandler = new ApiHandler();
+        
     }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
