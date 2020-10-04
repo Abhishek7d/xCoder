@@ -18,7 +18,8 @@ class UserController extends Controller
         return CommonFunctions::sendResponse(0, "route not found");
     }
     public function returnToFrontEnd(Request $request, $token){
-        return redirect("/reset/$token");
+        $email=$request->get('email');
+        return redirect("/reset?token=$token&email=$email");
     }
     public function checkLogin(Request $request){
         $header = $request->header('Authorization');
