@@ -136,6 +136,7 @@ class UserController extends Controller
                     $user->name = $name;
                     $user->email = $email;
                     $user->password = Hash::make($password);
+                    $user->access_tokens = json_encode([]);
                     $user->save();
                     $user->sendEmailVerificationNotification();
                     return CommonFunctions::sendResponse(1, "Verification email sent");
