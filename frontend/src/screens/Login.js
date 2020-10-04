@@ -29,7 +29,7 @@ class Login extends React.Component{
             this.setState({error:"", success:message, loadding:false, loggedIn:true})
             localStorage.setItem("name", data.name)
             localStorage.setItem("email", data.email)
-            localStorage.setItem("auth", data.access_tokens[0])
+            localStorage.setItem("auth", data.access_tokens[data.access_tokens.length - 1])
         }, (message)=>{
             this.setState({error:message, success:"", loadding:false, loggedIn:false})
         });
