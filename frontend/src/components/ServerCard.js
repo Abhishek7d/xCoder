@@ -1,0 +1,82 @@
+import React from "react";
+/**
+ * 
+created_at: "2020-10-04T05:27:10.000000Z"
+disk: "25"
+id: 3
+ip_address: "142.93.12.4"
+memory: "1024"
+meta_data: null
+name: "test"
+password: "javrD4Wk"
+region: "nyc1"
+size: "s-1vcpu-1gb"
+status: "READY"
+updated_at: "2020-10-04T05:32:08.000000Z"
+user_id: "3"
+ */
+
+class ServerCard extends React.Component{
+    constructor(props){
+        super();
+        this.props = props;
+        this.server = props.server;
+        this.state = {
+            created_at: props.server.created_at,
+            disk: props.server.disk,
+            id: props.server.id,
+            ip_address: props.server.ip_address,
+            memory: props.server.memory,
+            name: props.server.name,
+            password: props.server.password,
+            region: props.server.region,
+            size: props.server.size,
+            status: props.server.status,
+        }
+    }
+    render(){
+        return(
+            <div className="card card-outline">
+                <div className="card-body">
+                    <div className="row mb-2">
+                        <div className="col-sm-12 col-md-9 application_page_card_info">
+                            <div className="float-left">
+                                <span className="p-2 channel_green_dot btn-success"></span>
+                            </div>
+                            <a href="server-details.php">
+                                <div className="row">
+                                    <div className="col-1">
+                                        <img style={{width:"100%"}} src={require('../assets/images/wordpress.png')} />
+                                    </div>
+                                    <div className="col-11">
+                                        <p className="m-0">{this.state.name}</p>
+                                        <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address} {this.state.region}</p>
+        <p className="mt-3"><small>Created: {new Date(this.state.created_at).toDateString()}</small></p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div className="col-sm-12 col-md-3 text-right application_page_card_actions">
+                            <a href="" className="pl-3">www<span className="number_of_users"> 0</span></a>
+                            <a href="" className="pl-3"><i className="fa fa-folder-open"><span className="number_of_users">0</span></i></a>
+                            <a href="" className="pl-3"><i className="fa fa-user"><span className="number_of_users">0</span></i></a>
+                            <div className="btn-group pl-3 dropleft">
+                                <i className="fas fa-ellipsis-v" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false"></i>
+                                <div className="dropdown-menu">
+                                    <a className="dropdown-item" href="#"><i className="fa fa-stop "></i>&nbsp;Stop</a>
+                                    <a className="dropdown-item" href="#"><i className="fa fa-redo" aria-hidden="true"></i>&nbsp;Restart</a>
+                                    <a className="dropdown-item" href="#"><i className="fa fa-trash"></i>&nbsp;Delete</a>
+                                    <a className="dropdown-item" href="#"><i className="fa fa-globe"></i>&nbsp;Add Application</a>
+                                    <a className="dropdown-item" href="#"><i className="fa fa-server"></i>&nbsp;Transfer Server</a>
+                                    <a className="dropdown-item" href="#"><i className="fa fa-clone"></i>&nbsp;Clone Server</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+export default ServerCard;

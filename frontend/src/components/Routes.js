@@ -4,6 +4,7 @@ import CreateServerScreen from '../screens/CreateServerScreen';
 import Login from '../screens/Login';
 import Register from '../screens/Register';
 import ForgotPassword from '../screens/ForgotPassword';
+<<<<<<< HEAD
 import ResetScreen from '../screens/ResetScreen';
 
 import Servers from '../screens/Servers';
@@ -20,6 +21,24 @@ let routes = [
     //         }
     //     }
     // },
+=======
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import Servers from '../screens/Servers';
+
+let routes = [
+    {
+        path: '/',
+        component: () =>{ 
+            let cookie = read_cookie("auth")
+            console.log(cookie);
+            if(typeof cookie !== "object"){
+                return <Redirect to="/servers" />;
+            }else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+>>>>>>> 0ee2bc1fb1b49f0d61dc03f65c6bfe52d2728f4a
     {
         path: '/login',
         component: () => <Login/>

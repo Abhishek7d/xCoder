@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import ApiHandler from "../model/ApiHandler";
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 class Login extends React.Component{
 
@@ -16,6 +17,9 @@ class Login extends React.Component{
         this.apiHandler = new ApiHandler();
         
     }
+    componentDidMount(){
+        document.title = "Login";
+    }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
         if(!form.checkValidity()){
@@ -28,9 +32,10 @@ class Login extends React.Component{
         this.setState({error:"", success:"", loadding:true})
         this.apiHandler.login(this.state.email,this.state.password, (message, data)=>{
             this.setState({error:"", success:message, loadding:false, loggedIn:true})
-            localStorage.setItem("name", data.name)
-            localStorage.setItem("email", data.email)
-            localStorage.setItem("auth", data.access_tokens[data.access_tokens.length - 1])
+            bake_cookie("name", data.name);
+            bake_cookie("email", data.email);
+            bake_cookie("auth", data.access_tokens.pop());
+            window.location.href="/servers";
         }, (message)=>{
             this.setState({error:message, success:"", loadding:false, loggedIn:false})
         });
@@ -52,7 +57,7 @@ class Login extends React.Component{
                                 <div className="login-logo mt-5">
                                     <a href="/"><b>Parvaty Cloud Hosting</b></a>
                                 </div>
-                                <div className="card" >
+                                <div className="card form-card" >
                                     <div className="card-body login-card-body">
                                         <h4 className="login-box-msg ">Login Here</h4>
                                         <p style={{color:"red"}}>{this.state.error}</p>
@@ -86,14 +91,14 @@ class Login extends React.Component{
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-1 font-weight-lighter un">
-                                                        <Link to="/forgot-password" class="text-center">
+                                                        <Link to="/forgot-password" className="text-center">
                                                             <small><u>Forgot Password?</u></small>
                                                         </Link>
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-0 font-weight-lighter">
-                                                        <Link to="/register" class="text-center">
+                                                        <Link to="/register" className="text-center">
                                                             <small><u>New to Parvaty? SignUp</u></small>
                                                         </Link>
                                                     </p>

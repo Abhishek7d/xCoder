@@ -1,4 +1,5 @@
 import * as conf from './config';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 class ApiHandler {
     constructor(){
@@ -61,6 +62,7 @@ class ApiHandler {
             }
         });
     }
+<<<<<<< HEAD
     forgotPassword = (email, success=()=>{}, faild=()=>{})=>{
         if ( !email ) return;
         const formData = new FormData();
@@ -94,6 +96,26 @@ class ApiHandler {
                 faild("something went wrong");
             }
         });
+=======
+    getServers = (success=()=>{}, failure=()=>{})=>{
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer "+access_token)
+        this.getResult("/droplets", "GET", null, authHeaders, (response)=>{
+            if(response.status==0){
+                if(response.message==="Authenticatio Faild"){
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            }else if(response.status==1){
+                success(response.message, response.data);
+            }else{
+                failure("something went wrong");
+            }
+        }, failure);
+>>>>>>> 0ee2bc1fb1b49f0d61dc03f65c6bfe52d2728f4a
     }
 }
 
