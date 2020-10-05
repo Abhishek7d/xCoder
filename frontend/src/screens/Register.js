@@ -1,5 +1,5 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+ import React from 'react';
+import {Link, Redirect} from 'react-router-dom';
 import ApiHandler from "../model/ApiHandler";
 
 class Register extends React.Component{

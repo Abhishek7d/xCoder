@@ -18,6 +18,11 @@ class ResetScreen extends React.Component {
         // alert(window.location.href)
 
     }
+    componentDidMount(){
+        let params = window.location.href
+        let token = params.split("?")[0].split("/").pop()
+        let email = params.split("?")[1].split("=").pop()
+    }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
         if(!form.checkValidity()){

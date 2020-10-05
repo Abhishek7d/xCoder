@@ -27,10 +27,10 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);
-    Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
-    
+    //Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
+
     Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, 'serverCompleted']);
-    
+
     Route::group(['middleware' => 'checkAuth'], function () {
         //droplets
         Route::get('/sizes', [DashboardController::class, 'availableSizes']);
@@ -38,29 +38,31 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/droplet', [DashboardController::class, 'createDroplet']);
         Route::post('/droplet/{id}', [DashboardController::class, 'destroyDroplet']);
         Route::get('/droplets', [DashboardController::class, 'droplets']);
-        
+
         //application
         Route::get('/application', [WebsiteController::class, 'showDomains']);
         Route::post('/application', [WebsiteController::class, 'addDomain']);
         Route::post('/application/{application}', [WebsiteController::class, 'removeDomain']);
-    
+
         //services
         Route::get('/server/{server}', [ServiceController::class, 'getStatus']);
         Route::post('/server/{server}', [ServiceController::class, 'setService']);
         Route::get('/resouces/{server}', [ServiceController::class, 'getResources']);
-        
+
         //cronjob
         Route::get('/cron/{server}', [ServiceController::class, 'getCronjobs']);
         Route::post('/cron/{server}', [ServiceController::class, 'addCronjob']);
         Route::post('/cron/{server}/{job}', [ServiceController::class, 'setCronjob']);
-    
+
         //block storage
         Route::post('/storage', [BlockStorageController::class, 'createBlockStorage']);
         Route::post('/storage/resize', [BlockStorageController::class, 'resizeBlockStorage']);
         Route::post('/storage/delete', [BlockStorageController::class, 'deleteBlockStorage']);
-        
-    });     
+
+    });
 });
 Route::view("/{path?}", "app");
 Route::view("/{path?}/{subpath?}", "app");
+Route::view("/{path?}/{subpath?}/{subsubpath?}", "app");
+
 // Route::any('/', [UserController::class, 'default']);
