@@ -230,6 +230,7 @@ class ApiHandler {
         },faild);
     }
     logout = (success = () => { }, faild = () => { }) => {
+        let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
