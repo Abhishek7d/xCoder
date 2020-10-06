@@ -188,12 +188,10 @@ class UserController extends Controller
 
             if($user && (count($token) > 1) ){
                 $tokens = json_decode($user->access_tokens);
-                if(!is_array($tokens)){
-                    $user->access_tokens = [];
-                    $user->save();
-                    Auth::logout();
-                    return CommonFunctions::sendResponse(1, "Logged out", $user->access_tokens);
-                }
+                $user->access_tokens = [];
+                $user->save();
+                Auth::logout();
+                return CommonFunctions::sendResponse(1, "Logged out", $user->access_tokens);
             }
         }
         return CommonFunctions::sendResponse(0, "Logged out faild");

@@ -22,7 +22,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
     Route::get('/resend', [UserController::class, 'resend']);
-    Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/check', [UserController::class, 'checkLogin']);
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
@@ -32,6 +31,8 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, 'serverCompleted']);
 
     Route::group(['middleware' => 'checkAuth'], function () {
+        Route::post('/logout', [UserController::class, 'logout']);
+    
         //droplets
         Route::get('/sizes', [DashboardController::class, 'availableSizes']);
         Route::get('/regions', [DashboardController::class, 'availableRegions']);
