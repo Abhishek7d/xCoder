@@ -5,8 +5,9 @@ import ApiHandler from '../model/ApiHandler';
 import 'jquery/dist/jquery.min.js';
 import 'popper.js/dist/popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
+import Select from "react-select";
 
+   
 class CreateServerScreen extends React.Component {
     constructor(props) {
         super();
@@ -19,8 +20,32 @@ class CreateServerScreen extends React.Component {
             error: "",
             success: "",
             loadding: false,
+            options:[],
+            sizes:[],
+            regions:{},
+            selectd_size:0
         }
         this.apiHandler = new ApiHandler();
+    }
+    componentDidMount = ()=>{
+        this.apiHandler.getServerSizes((data)=>{
+            let tmp_sizes = [];
+            data.forEach(size=>{
+                tmp_sizes.push(size.slug)
+            })
+            this.setState({sizes:data,options:tmp_sizes})
+        }, (err)=>{
+            console.log(err)
+        })
+        this.apiHandler.getRegions((regions)=>{
+            let tmp_regions = this.state.regions;
+            regions.forEach(region=>{
+                tmp_regions[region.slug] = region.name
+            })
+            this.setState({regions:tmp_regions})
+        }, (err)=>{
+            console.log(err)
+        })
     }
     formAction = () => {
 
@@ -32,20 +57,72 @@ class CreateServerScreen extends React.Component {
         if (this.state.loadding) {
             return;
         }
-        this.setState({ error: "", success: "", loadding: true })
-        this.apiHandler.createServer(this.state.serverName, this.state.serverSize, this.state.serverLocation, (message, data) => {
+        this.setState({ error: "", success: "", loadding: false })
+        console.log(this.apiHandler.createServer)
+        this.apiHandler.createServer(this.state.name, this.state.size, this.state.location, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
-            console.log(data, message);
             window.location.href = "/servers"
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
-            console.log(message);
         });
     }
     dataChange = (event) => {
+        if(event.target.name==="size"){
+            let tmp = Object.values(this.state.sizes);
+            let flag = null;
+            tmp.forEach((size,index)=>{
+                if(size.slug===event.target.value){
+                    flag = index;
+                }
+            })
+            if(flag===null){
+                return;
+            }
+            tmp = tmp[flag].regions;
+            this.setState({location:tmp[0]}) 
+        }
         this.setState({ [event.target.name]: event.target.value })
     }
-
+    renderOptions(){
+        let tmp_data = [<option value="" >Available Sizes</option>];
+        let tmp_list = [];
+        this.state.options.forEach(data=>{
+            let tmp = data.split("-");
+            if(tmp.length===3){
+                tmp_list.push(data);
+            }
+        })
+        tmp_list.sort();
+        tmp_list.forEach(data=>{
+            let tmp = data.split("-");
+            tmp_data.push(<option value={data}>{tmp[1].toUpperCase()+" + "+tmp[2].toUpperCase()}</option>);
+        })
+        return tmp_data;
+    }
+    renderLocations (){
+        let tmp_data = [];
+        if(this.state.sizes==undefined){
+            return;
+        }
+        let tmp = Object.values(this.state.sizes);
+        let flag = null;
+        tmp.forEach((size,index)=>{
+            if(size.slug===this.state.size){
+                flag = index;
+            }
+        })
+        if(flag===null){
+            return;
+        }
+        tmp = tmp[flag].regions;
+        
+        tmp.forEach((data)=>{
+            let tmp = this.state.regions[data]
+            tmp_data.push(<option value={data}>{tmp}</option>);
+        });
+        
+        return tmp_data;
+    }
     render() {
         return (
             <div className="container-fluid p-0">
@@ -55,104 +132,60 @@ class CreateServerScreen extends React.Component {
                     <section className="content-header">
                         <div className="container-fluid">
                             <div className="row mb-2">
-                                <div className="col-sm-6">
-                                    <h1>Your Dashboard</h1>
-                                </div>
-                                <div className="col-sm-6">
-                                    <ol className="breadcrumb float-sm-right">
-                                        <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                        <li className="breadcrumb-item"><a href="#">Servers</a></li>
-                                        <li className="breadcrumb-item active">Create</li>
-                                    </ol>
-                                </div>
+                                
                             </div>
                         </div>
                     </section>
                     <section className="content">
                         <div className="container-fluid">
                             <div className="row">
+                                
                                 <div className="col-12">
                                     <div className="card">
                                         <div className="card-header">
-                                            <h3 className="card-title"></h3>
-
-                                            <div className="card-tools">
-                                                <button type="button" className="btn btn-tool" data-card-widget="collapse"
-                                                    data-toggle="tooltip" title="Collapse">
-                                                    <i className="fas fa-minus"></i></button>
-                                                <button type="button" className="btn btn-tool" data-card-widget="remove"
-                                                    data-toggle="tooltip" title="Remove">
-                                                    <i className="fas fa-times"></i></button>
-                                            </div>
+                                            <h3 className="card-title">
+                                                Create Server
+                                            </h3>
                                         </div>
                                         <form action="#" method="post">
+                                            <p style={{color:"red",textAlign:"center"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>
+                                            <p style={{color:"green",textAlign:"center"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
+                                
                                             <div className="card-body">
-                                                <div className="row">
-
-                                                    <div className="col-md-3">
-                                                        <input type="text" value={this.state.serverName} onChange={this.dataChange} name="serverName" className="form-control border-bottom" id="Namemanageserver"
-                                                            placeholder="Name your Managed Server" />
+                                            <div className="row">
+                                                    <div className="col-2">
+                                                        <h3 className="card-title">Server Name</h3>
                                                     </div>
-
+                                                    <div className="col-9">
+                                                    <input type="text" required value={this.state.name} onChange={this.dataChange} name="name" className="form-control border-bottom col-md-9" id="Namemanageserver"
+                                                            placeholder="Name your Managed Server" />
+                                                    
+                                                    </div>
                                                 </div>
-
                                                 <br />
-
                                                 <div className="row">
-                                                    <div className="col-12">
+                                                    <div className="col-2">
                                                         <h3 className="card-title">Server Size</h3>
                                                     </div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-12">
-                                                        <input id="ex19" type="text"
-                                                            value={this.state.serverSize}
-                                                            onChange={this.dataChange}
-                                                            name="serverSize"
-                                                            data-provide="slider"
-                                                            data-slider-ticks="[1, 2, 3, 4, 5,6,7,8,9,10,11]"
-                                                            data-slider-ticks-labels='["1GB", "2GB", "4gb","8gb","16gb","32gb","48gb","64gb","96gb","128gb","192gb"]'
-                                                            data-slider-min="1"
-                                                            data-slider-max="11"
-                                                            data-slider-step="1"
-                                                            data-slider-value="3"
-                                                            data-slider-tooltip="hide"
-
-                                                        />
-                                                        {/* <ReactBootstrapSlider
-                                                            value={3}
-                                                            step={1}
-                                                            max={11}
-                                                            min={1}
-                                                            reversed={true}
-                                                            ticks={[0, 100, 200, 300, 400]}
-                                                            ticks_labels={["1GB", "2GB", "4gb","8gb","16gb","32gb","48gb","64gb","96gb","128gb","192gb"]}
-                                                            ticks_snap_bounds={30}
-                                                        /> */}
+                                                    <div className="col-7">
+                                                    <select required value={this.state.size} onChange={this.dataChange} name="size" className="form-control border-bottom">
+                                                        {this.renderOptions()}
+                                                    </select>
                                                     </div>
                                                 </div>
                                                 <br />
-                                                <div className="row ">
 
-                                                    <div className="col-8">
-                                                        <h3 className="card-title">LOCATION</h3>
-                                                        <br />
-                                                        <div className="form-group">
-                                                            <label for="exampleInputEmail1">Please select your server location.</label>
-                                                            <select id="locations" value={this.state.serverLocation} onChange={this.dataChange} name="serverLocation" className="form-control border-bottom">
-                                                                <option value="lon1" selected>London</option>
-                                                                <option>San Francisco</option>
-                                                                <option value="sgp1">Singapore</option>
-                                                                <option value="nyc1">New York</option>
-                                                                <option value="ams3">Amsterdam</option>
-                                                                <option value="fra1">Frankfurt</option>
-                                                                <option value="tor1">Toronto</option>
-                                                                <option value="blr1">Bangalore</option>
-
-                                                            </select>
-                                                        </div>
+                                                <div className="row">
+                                                    <div className="col-2">
+                                                        <h3 className="card-title">Server Location</h3>
+                                                    </div>
+                                                    <div className="col-7">
+                                                    <select id="locations" required value={this.state.location} onChange={this.dataChange} name="region" className="form-control border-bottom">
+                                                        {this.renderLocations()}
+                                                    </select>
                                                     </div>
                                                 </div>
+
                                             </div>
                                             <div className="card-footer">
                                                 <button type="button" onClick={this.formAction} className="btn btn-primary">

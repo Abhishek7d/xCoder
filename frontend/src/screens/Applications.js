@@ -28,10 +28,8 @@ class Applications extends React.Component {
         document.title = "Your Applications";
         this.apiHandler.getApplications((msg, data) => {
             this.setState({ applications: data })
-            console.log(data+", "+msg);
         }, err => {
             this.showError(err);
-            console.log(err);
         })
         this.apiHandler.getServers((msg, data) => {
             this.setState({ servers: data })
@@ -51,6 +49,9 @@ class Applications extends React.Component {
         this.state.applications.forEach((data, index) => {
             applications.push(<ApplicationCard key={index} application={data} />);
         })
+        if(applications.length < 1){
+            applications = <p style={{textAlign: "center", marginTop: "20px", color:"#949292"}}>No Application Created</p>
+        }
         return applications;
     }
     handleModalShow = () => {
@@ -99,9 +100,7 @@ class Applications extends React.Component {
                     <section className="content-header">
                         <div className="container-fluid">
                             <div className="row mb-2">
-                                <div className="col-sm-6">
-                                    <h1>Applications</h1>
-                                </div>
+                            
                             </div>
                         </div>
                     </section>
@@ -114,7 +113,7 @@ class Applications extends React.Component {
                                     <div className="card card-primary card-outline">
                                         <div className="card-header">
                                             <div className="col-3 float-left">
-                                                <a href="#" className="btn btn-primary start_new_app" onClick={this.handleModalShow}>START A NEW APPLICATION</a>
+                                                <a href="#" className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Application</a>
                                             </div>
                                             <div className="col-3 float-right pt-1">
                                                 <div className="btn-group pl-3 float-right dropleft">

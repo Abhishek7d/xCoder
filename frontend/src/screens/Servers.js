@@ -9,13 +9,15 @@ class Servers extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            servers: []
+            servers: [],
+            regions:{},
         }
         this.apiHandler = new ApiHandler();
     }
     showError = (err) => {
 
     }
+    
     componentDidMount() {
         document.title = "Your Servers";
         this.apiHandler.getServers((msg, data) => {
@@ -23,12 +25,27 @@ class Servers extends React.Component {
         }, err => {
             this.showError(err);
         })
+        this.apiHandler.getRegions((regions)=>{
+            let tmp_regions = this.state.regions;
+            regions.forEach(region=>{
+                tmp_regions[region.slug] = region.name
+            })
+            this.setState({regions:tmp_regions})
+        }, (err)=>{
+            console.log(err)
+        })
+    }
+    getRegionName = (slug)=>{
+        return this.state.regions[slug];
     }
     renderServers() {
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            servers.push(<ServerCard key={index} server={data} />);
+            servers.push(<ServerCard region={this.getRegionName(data.region)} key={index} server={data} />);
         })
+        if(servers.length<1){
+            servers = <p style={{textAlign: "center", marginTop: "20px", color:"#949292"}}>No Servers Created</p>
+        }
         return servers;
     }
     render() {
@@ -39,7 +56,9 @@ class Servers extends React.Component {
                 <div className="content-wrapper">
                     <section className="content-header">
                         <div className="container-fluid">
-
+                        <div className="row mb-2">
+                            
+                            </div>
                         </div>
                     </section>
 
@@ -51,7 +70,7 @@ class Servers extends React.Component {
                                         <div className="card-header">
                                             <div className="col-3 float-left">
                                                 <Link to="/server/create" className="text-center">
-                                                    <a href="#" className="btn btn-info ">+ Add Server</a>
+                                                    <a href="#" className="btn btn-info ">Create Server</a>
                                                 </Link>
                                             </div>
 

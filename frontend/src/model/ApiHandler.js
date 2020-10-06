@@ -117,6 +117,7 @@ class ApiHandler {
     }
 
     createServer = (serverName, serverSize, serverLocation, success = () => { }, faild = () => { }) => {
+        console.log(!serverName || !serverSize || !serverLocation, "---")
         if (!serverName || !serverSize || !serverLocation) return;
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
@@ -127,6 +128,7 @@ class ApiHandler {
         formData.append("region", serverLocation);
 
         this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
+            console.log(response)
             if (response.status == 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
@@ -239,6 +241,36 @@ class ApiHandler {
                 faild(response.message)
             } else if (response.status == 1) {
                 success(response.message, response.data);
+            } else {
+                faild("something went wrong");
+            }
+        });
+    }
+    getServerSizes = (success = () => { }, faild = () => { }) => {
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+
+        this.getResult("/sizes", "GET", null, authHeaders, (response) => {
+            if (response.status == 0) {
+                faild(response.message)
+            } else if (response.status == 1) {
+                success(response.data);
+            } else {
+                faild("something went wrong");
+            }
+        });
+    }
+    getRegions = (success = () => { }, faild = () => { }) => {
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+
+        this.getResult("/regions", "GET", null, authHeaders, (response) => {
+            if (response.status == 0) {
+                faild(response.message)
+            } else if (response.status == 1) {
+                success(response.data);
             } else {
                 faild("something went wrong");
             }

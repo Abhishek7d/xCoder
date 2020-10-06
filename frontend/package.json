@@ -15,6 +15,8 @@
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
+    "react-select": "^3.1.0",
+    "react-step-range-slider": "^1.4.1",
     "reactstrap": "^8.6.0",
     "resolve-url-loader": "^3.1.1",
     "sfcookies": "^1.0.2"

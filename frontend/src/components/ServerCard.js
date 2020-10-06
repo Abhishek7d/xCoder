@@ -2,24 +2,6 @@ import React from "react";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ApiHandler from '../model/ApiHandler';
 
-
-/**
- *
-created_at: "2020-10-04T05:27:10.000000Z"
-disk: "25"
-id: 3
-ip_address: "142.93.12.4"
-memory: "1024"
-meta_data: null
-name: "test"
-password: "javrD4Wk"
-region: "nyc1"
-size: "s-1vcpu-1gb"
-status: "READY"
-updated_at: "2020-10-04T05:32:08.000000Z"
-user_id: "3"
- */
-
 class ServerCard extends React.Component {
     constructor(props) {
         super();
@@ -78,7 +60,8 @@ class ServerCard extends React.Component {
                                             <p className="m-0">{this.state.name}</p>
                                             <span class="badge badge-info ml-4 pt-1">{this.state.status}</span>
                                         </div>
-                                        <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address} {this.state.region}</p>
+                                        <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address}</p>
+                                        <p className="m-0">{this.props.region}</p>
                                         <p className="mt-3"><small>Created: {new Date(this.state.created_at).toDateString()}</small></p>
                                     </div>
                                 </div>

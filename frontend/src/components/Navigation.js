@@ -8,7 +8,6 @@ class Navigation extends React.Component {
         super();
         this.state = {
             loadding: false,
-            password: "password",
             error:"",
             success:"",
             sidebarToggle: false,
@@ -23,7 +22,7 @@ class Navigation extends React.Component {
             delete_cookie("name");
             delete_cookie("email");
             delete_cookie("auth");
-            // window.location.href="/login";
+            window.location.href="/login";
         }, (message)=>{
             this.setState({error:message, success:"", loadding:false})
             console.log(message);

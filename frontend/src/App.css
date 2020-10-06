@@ -1,6 +1,12 @@
 .App {
   text-align: center;
 }
+.menu-opened{
+  background-color: rgba(255,255,255,.1);
+}
+.nav-pills .nav-link:not(.active):hover {
+  color: #c2c7d0;
+}
 
 .App-logo {
   height: 40vmin;

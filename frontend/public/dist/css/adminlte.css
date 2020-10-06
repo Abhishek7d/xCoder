@@ -13700,9 +13700,6 @@ body.text-sm .control-sidebar {
   color: #6c757d;
 }
 
-.nav-pills .nav-link:not(.active):hover {
-  color: #007bff;
-}
 
 .nav-pills .nav-item.dropdown.show .nav-link:hover {
   color: #ffffff;
