@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\WebSiteController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\BlockStorageController;
 
@@ -40,9 +40,9 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/droplets', [DashboardController::class, 'droplets']);
         
         //application
-        Route::get('/application', [WebsiteController::class, 'showDomains']);
-        Route::post('/application', [WebsiteController::class, 'addDomain']);
-        Route::post('/application/{application}', [WebsiteController::class, 'removeDomain']);
+        Route::get('/application', [WebSiteController::class, 'showDomains']);
+        Route::post('/application', [WebSiteController::class, 'addDomain']);
+        Route::post('/application/{application}', [WebSiteController::class, 'removeDomain']);
     
         //services
         Route::get('/server/{server}', [ServiceController::class, 'getStatus']);
