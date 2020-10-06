@@ -27,11 +27,12 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);
     //Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
-
+Route::post('/logout', [UserController::class, 'logout']);
+    
     Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, 'serverCompleted']);
 
     Route::group(['middleware' => 'checkAuth'], function () {
-        Route::post('/logout', [UserController::class, 'logout']);
+        //Route::post('/logout', [UserController::class, 'logout']);
     
         //droplets
         Route::get('/sizes', [DashboardController::class, 'availableSizes']);
