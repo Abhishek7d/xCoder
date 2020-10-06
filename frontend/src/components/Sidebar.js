@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 class Sidebar extends React.Component {
     render() {
         return (
-            <aside className="main-sidebar sidebar-dark-primary elevation-4">
+            <aside className="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
                 <a href="index3.html" className="brand-link">
                     <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" className="brand-image img-circle elevation-3"
                     />

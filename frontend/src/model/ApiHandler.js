@@ -122,9 +122,9 @@ class ApiHandler {
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
-        formData.append("serverName", serverName);
-        formData.append("serverSize", serverSize);
-        formData.append("serverLocation", serverLocation);
+        formData.append("name", serverName);
+        formData.append("size", serverSize);
+        formData.append("region", serverLocation);
 
         this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
             if (response.status == 0) {
@@ -141,13 +141,15 @@ class ApiHandler {
             }
         },faild);
     }
-    deleteServer = (serverId, success = () => { }, faild = () => { }) => {
+    deleteServer = (serverId, action, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("action", action);
 
-        this.getResult("/droplet/"+serverId, "POST", null, authHeaders, (response) => {
+        this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
             if (response.status == 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
@@ -181,13 +183,15 @@ class ApiHandler {
             }
         }, failure);
     }
-    createApplication = (selectedServerId, success = () => { }, faild = () => { }) => {
-        if (!selectedServerId) return;
+    createApplication = (selectedServerId, selectedDomain, isWordpress, success = () => { }, faild = () => { }) => {
+        if (!selectedServerId || !selectedDomain) return;
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
-        formData.append("selectedServerId", selectedServerId);
+        formData.append("domain", selectedDomain);
+        formData.append("server", selectedServerId);
+        formData.append("wordpress", isWordpress);
 
         this.getResult("/application", "POST", formData, authHeaders, (response) => {
             if (response.status == 0) {
@@ -204,7 +208,7 @@ class ApiHandler {
             }
         },faild);
     }
-    deleteServer = (applicationId, success = () => { }, faild = () => { }) => {
+    deleteApplication = (applicationId, success = () => { }, faild = () => { }) => {
         if (!applicationId) return;
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
@@ -224,6 +228,28 @@ class ApiHandler {
                 faild("something went wrong");
             }
         },faild);
+    }
+    logout = (password, token, success = () => { }, faild = () => { }) => {
+        if (!token || !password) return;
+        let access_token = token;
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        const formData = new FormData();
+        formData.append("token", token);
+        formData.append("password", password);
+
+        this.getResult("/logout", "POST", formData, authHeaders, (response) => {
+            if (response.status == 0) {
+                faild(response.message)
+            } else if (response.status == 1) {
+        alert('hi')
+
+                success(response.message, response.data);
+            } else {
+                faild("something went wrong");
+            }
+        });
     }
 }
 

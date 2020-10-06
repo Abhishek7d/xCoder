@@ -1,5 +1,6 @@
 import React from "react";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import ApiHandler from '../model/ApiHandler';
 
 
 /**
@@ -41,6 +42,7 @@ class ServerCard extends React.Component {
             success: "",
             dropdownOpen: false,
         }
+        this.apiHandler = new ApiHandler();
     }
     toggleDropdown = () => this.setState(prevState => ({dropdownOpen: !prevState.dropdownOpen}))
 
@@ -50,12 +52,11 @@ class ServerCard extends React.Component {
             return;
         }
         this.setState({ error: "", success: "", loadding: true })
-        this.apiHandler.deleteServer(this.state.id, (message, data) => {
+        this.apiHandler.deleteServer(this.state.id, "destroy", (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
-            console.log(data, message);
+            window.location.href = "/servers"
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
-            console.log(message);
         });
     }
     render() {
@@ -73,7 +74,10 @@ class ServerCard extends React.Component {
                                         <img style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
                                     </div>
                                     <div className="col-11">
-                                        <p className="m-0">{this.state.name}</p>
+                                        <div className="d-flex">
+                                            <p className="m-0">{this.state.name}</p>
+                                            <span class="badge badge-info ml-4 pt-1">{this.state.status}</span>
+                                        </div>
                                         <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address} {this.state.region}</p>
                                         <p className="mt-3"><small>Created: {new Date(this.state.created_at).toDateString()}</small></p>
                                     </div>

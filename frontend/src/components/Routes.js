@@ -8,6 +8,8 @@ import ResetScreen from '../screens/ResetScreen';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
+import Logout from '../screens/Logout';
+
 
 //let routes = [
     // {
@@ -27,7 +29,6 @@ let routes = [
         path: '/',
         component: () =>{
             let cookie = read_cookie("auth")
-            console.log(cookie);
             if(typeof cookie !== "object"){
                 return <Redirect to="/servers" />;
             }else{
@@ -66,6 +67,11 @@ let routes = [
         path: '/applications',
         title: 'Applications',
         component: () => <Applications />
+    },
+    {
+        path: '/logout',
+        title: 'Logout',
+        component: () => <Logout />
     },
 ];
 

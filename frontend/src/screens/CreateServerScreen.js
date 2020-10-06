@@ -18,7 +18,7 @@ class CreateServerScreen extends React.Component {
             project: "",
             error: "",
             success: "",
-            loadding: false
+            loadding: false,
         }
         this.apiHandler = new ApiHandler();
     }
@@ -36,6 +36,7 @@ class CreateServerScreen extends React.Component {
         this.apiHandler.createServer(this.state.serverName, this.state.serverSize, this.state.serverLocation, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
             console.log(data, message);
+            window.location.href = "/servers"
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
             console.log(message);
@@ -60,8 +61,8 @@ class CreateServerScreen extends React.Component {
                                 <div className="col-sm-6">
                                     <ol className="breadcrumb float-sm-right">
                                         <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                        <li className="breadcrumb-item"><a href="#">Layout</a></li>
-                                        <li className="breadcrumb-item active">Boxed Layout</li>
+                                        <li className="breadcrumb-item"><a href="#">Servers</a></li>
+                                        <li className="breadcrumb-item active">Create</li>
                                     </ol>
                                 </div>
                             </div>
@@ -87,29 +88,10 @@ class CreateServerScreen extends React.Component {
                                         <form action="#" method="post">
                                             <div className="card-body">
                                                 <div className="row">
-                                                    <div className="col-md-3">
-                                                        <select value={this.state.serverLocation} onChange={this.dataChange} name="serverLocation" className="form-control border-bottom">
-                                                            <option value="" disabled selected>Wordpress</option>
-                                                            <option>Version 5.4.2</option>
-                                                            <option>Version 5.4.2 with WooCommerce Version 4.3.0</option>
-                                                            <option>Multisite Version 5.4.2</option>
-                                                            <option>Clean (No cloudways optimization) Version 5.4.2</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div className="col-md-3">
-                                                        <input type="text" value={this.state.appName} onChange={this.dataChange} name="appName" className="form-control border-bottom" id="Namemanageapp"
-                                                            placeholder="Name your Managed App" />
-                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <input type="text" value={this.state.serverName} onChange={this.dataChange} name="serverName" className="form-control border-bottom" id="Namemanageserver"
                                                             placeholder="Name your Managed Server" />
-                                                    </div>
-
-                                                    <div className="col-md-3">
-                                                        <input type="text" value={this.state.project} onChange={this.dataChange} name="project" className="form-control border-bottom" id="Selectyourproj"
-                                                            placeholder="Select your Project" />
                                                     </div>
 
                                                 </div>
@@ -176,8 +158,7 @@ class CreateServerScreen extends React.Component {
                                                 <button type="button" onClick={this.formAction} className="btn btn-primary">
                                                     {this.state.loadding ?
                                                         <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                                        :
-                                                        "LAUNCH NOW"
+                                                        : "LAUNCH NOW"
                                                     }
 
                                                 </button>

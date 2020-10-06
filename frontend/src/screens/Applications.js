@@ -15,7 +15,9 @@ class Applications extends React.Component {
             servers: [],
             error: "",
             success: "",
-            selectedServerId: ""
+            selectedServerId: "",
+            selectedDomain: "",
+            isWordpress: false,
         }
         this.apiHandler = new ApiHandler();
     }
@@ -26,8 +28,10 @@ class Applications extends React.Component {
         document.title = "Your Applications";
         this.apiHandler.getApplications((msg, data) => {
             this.setState({ applications: data })
+            console.log(data+", "+msg);
         }, err => {
             this.showError(err);
+            console.log(err);
         })
         this.apiHandler.getServers((msg, data) => {
             this.setState({ servers: data })
@@ -69,7 +73,7 @@ class Applications extends React.Component {
             return;
         }
         this.setState({ error: "", success: "", loadding: true })
-        this.apiHandler.createApplication(this.state.selectedServerId, (message, data) => {
+        this.apiHandler.createApplication(this.state.selectedServerId, this.state.selectedDomain, this.state.isWordpress, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
             console.log(data, message);
         }, (message) => {
@@ -77,8 +81,14 @@ class Applications extends React.Component {
             console.log(message);
         });
     }
-    dataChange = (event)=>{
-        this.setState({[event.target.name]:event.target.value})
+    dataChange = (event) => {
+        if (event.target.type === 'checkbox') {
+            this.setState({ [event.target.name]: event.target.checked })
+        }
+        else {
+
+            this.setState({ [event.target.name]: event.target.value })
+        }
     }
     render() {
         return (
@@ -89,13 +99,6 @@ class Applications extends React.Component {
                     <section className="content-header">
                         <div className="container-fluid">
                             <div className="row mb-2">
-                                <div className="card card-outline w-100">
-                                    <div className="card-body">
-                                        <span className="float-left" style={{ lineHeight: "35px" }}>Want your team members to receive Server / Application alerts? CloudwaysBot can send it through Channels.</span>
-                                        <button className="btn btn-info float-left ml-3 text-uppercase">Add Channel</button>
-                                        <a href="" className="float-right" style={{ lineHeight: "35px" }}>Learn More</a>
-                                    </div>
-                                </div>
                                 <div className="col-sm-6">
                                     <h1>Applications</h1>
                                 </div>
@@ -113,15 +116,8 @@ class Applications extends React.Component {
                                             <div className="col-3 float-left">
                                                 <a href="#" className="btn btn-primary start_new_app" onClick={this.handleModalShow}>START A NEW APPLICATION</a>
                                             </div>
-                                            <div className="float-right">
-                                                <i className="fa fa-step-backward"></i>&nbsp;
-                                    <i className="fa fa-chevron-left"></i>&nbsp;
-                                    <span>1 to 3 of 3 Applications</span>&nbsp;
-                                    <i className="fa fa-chevron-right"></i>&nbsp;
-                                    <i className="fa fa-step-forward"></i>
-                                            </div>
                                             <div className="col-3 float-right pt-1">
-                                                <div className="btn-group pl-3 float-right">
+                                                <div className="btn-group pl-3 float-right dropleft">
                                                     <i className="fas fa-bars" data-toggle="dropdown"
                                                         aria-haspopup="true" aria-expanded="false"></i>
                                                     <div className="dropdown-menu">
@@ -154,20 +150,35 @@ class Applications extends React.Component {
                         </Modal.Header>
                         <Modal.Body>
                             <div className="form-group">
+                                <label htmlFor="selectedDomain">Select Domain</label>
+                                <select className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain">
+                                    <option >Select</option>
+                                    <option value="dibs.com">dibs.com</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
                                 <label htmlFor="select_server">Select server in which you want to Add new application</label>
-                                <select name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server" className="form-control" >
+                                <select className="form-control" name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server" className="form-control" >
                                     <option value="">Select</option>
                                     {
                                         this.renderServers()
                                     }
                                 </select>
                             </div>
+                            <div className="form-group d-flex flex-column justify-content-center align-items-center">
+                                <label htmlFor="isWordpress">Wordpress</label>
+                                <input className="form-control" type="checkbox" name="isWordpress" checked={this.state.isWordpress} onChange={this.dataChange} style={{ width: "20px", height: "20px" }} />
+                            </div>
 
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="info" onClick={this.handleAddApplication}>
-                                ADD APPLICATION
-                        </Button>
+                                {
+                                    this.state.loadding?
+                                    <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                    :"ADD APPLICATION"
+                                }
+                            </Button>
                             <Button variant="default" onClick={this.handleModalClose}>
                                 CLOSE
                         </Button>
