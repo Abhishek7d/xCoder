@@ -11,7 +11,7 @@ class ResetScreen extends React.Component {
             email: "",
             newPassword: "",
             confirmPassword: "",
-            tocken: ""
+            token: ""
         }
 
         this.apiHandler = new ApiHandler();
@@ -22,6 +22,7 @@ class ResetScreen extends React.Component {
         let params = window.location.href
         let token = params.split("?")[0].split("/").pop()
         let email = params.split("?")[1].split("=").pop()
+        this.state.setState({email: email, token: token})
     }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
@@ -46,7 +47,7 @@ class ResetScreen extends React.Component {
     }
     render() {
          if(this.state.loggedIn){
-            return <Redirect to="/servers" />
+            return <Redirect to="/login" />
         }
         return (
             <div className="wrapper">
