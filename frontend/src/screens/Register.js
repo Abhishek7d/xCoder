@@ -1,5 +1,5 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+ import React from 'react';
+import {Link, Redirect} from 'react-router-dom';
 import ApiHandler from "../model/ApiHandler";
 
 class Register extends React.Component{
@@ -7,12 +7,13 @@ class Register extends React.Component{
         super();
         this.state = {
             loadding:false,
-            name:"Dibyendu Saha",
-            email:"dsaha1656@gmail.com",
-            password:"password",
-            confirmPassword:"password",
+            name:"",
+            email:"",
+            password:"",
+            confirmPassword:"",
             error:"",
-            success:""
+            success:"",
+            registered: false
         }
         this.apiHandler = new ApiHandler();
     }
@@ -27,10 +28,9 @@ class Register extends React.Component{
         }
         this.setState({error:"", success:"", loadding:true})
         this.apiHandler.register(this.state.name,this.state.email,this.state.password, this.state.confirmPassword, (message, data)=>{
-            this.setState({error:"", success:message, loadding:false})
-            console.log(data)
+            this.setState({error:"", success:message, loadding:false, registered:true})
         }, (data)=>{
-            this.setState({error:data, success:"", loadding:false})
+            this.setState({error:data, success:"", loadding:false, registered:false})
         });
     }
     dataChange = (event)=>{
@@ -40,11 +40,15 @@ class Register extends React.Component{
         document.title = "Register";
     }
     render(){
+
+         if(this.state.registered){
+            return <Redirect to="/login" />
+        }
         return(
             <div className="wrapper">
                 <div className="container-fluid">
                     <div className="row">
-                        
+
                         <div style={{textAlign:"center",margin:"auto"}} className="col-sm-6  login-page-fields">
                             <div className="login-box m-auto">
                                 <div className="login-logo mt-5">
@@ -103,14 +107,14 @@ class Register extends React.Component{
                                                     <p className="mb-1 font-weight-lighter un">
                                                         <Link to="/login" className="text-center">
                                                             <small><u>Already have a account?</u></small>
-                                                        </Link> 
+                                                        </Link>
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-0 font-weight-lighter">
                                                         <Link to="/forgot-password" className="text-center">
                                                             <small><u>Forgot Password?</u></small>
-                                                        </Link> 
+                                                        </Link>
                                                     </p>
                                                 </div>
                                             </div>

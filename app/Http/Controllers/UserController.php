@@ -5,13 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Mail\Message;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\helpers\CommonFunctions;
-
+use Auth;
 class UserController extends Controller
 {
     public function default(){
@@ -62,7 +61,7 @@ class UserController extends Controller
                 }else{
                     return CommonFunctions::sendResponse(0, "Email not found");
                 }
-                return CommonFunctions::sendResponse(1, "Password Reset Success", $user);
+                return CommonFunctions::sendResponse(1, "Password Reset Success");
             }
             return CommonFunctions::sendResponse(0,"Password Dont Match");
         }
@@ -193,19 +192,10 @@ class UserController extends Controller
                     $user->access_tokens = [];
                     $user->save();
                     Auth::logout();
-                    return CommonFunctions::sendResponse(0, "Logged out", $user->access_tokens);
+                    return CommonFunctions::sendResponse(1, "Logged out", $user->access_tokens);
                 }
-                if (($key = array_search($auth_header, $tokens)) !== false) {
-                    unset($tokens[$key]);
-                    if(!is_array($tokens)){
-                        $tokens = [];
-                    }
-                }
-                $user->access_tokens = $tokens;
-                $user->save();
             }
         }
-        Auth::logout();
-        return CommonFunctions::sendResponse(0, "Logged out");
+        return CommonFunctions::sendResponse(0, "Logged out faild");
     }
 }

@@ -3,43 +3,43 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ServerCard from '../components/ServerCard';
 import ApiHandler from '../model/ApiHandler';
-import { Redirect } from 'react-router';
+import { Redirect, Link } from 'react-router-dom';
 
-class Servers extends React.Component{
-    constructor(props){
+class Servers extends React.Component {
+    constructor(props) {
         super();
         this.state = {
-            servers:[]
+            servers: []
         }
         this.apiHandler = new ApiHandler();
     }
-    showError = (err)=>{
- 
+    showError = (err) => {
+
     }
-    componentDidMount(){
+    componentDidMount() {
         document.title = "Your Servers";
-        this.apiHandler.getServers((msg,data)=>{
-            this.setState({servers:data})
-        }, err=>{
-            this.showError(err);            
+        this.apiHandler.getServers((msg, data) => {
+            this.setState({ servers: data })
+        }, err => {
+            this.showError(err);
         })
     }
-    renderServers(){
+    renderServers() {
         let servers = [];
-        this.state.servers.forEach((data, index)=>{
-            servers.push(<ServerCard key={index} server={data}/>);
+        this.state.servers.forEach((data, index) => {
+            servers.push(<ServerCard key={index} server={data} />);
         })
         return servers;
     }
-    render(){
-        return(
+    render() {
+        return (
             <div className="container-fluid p-0">
-                <Navigation/>
-                <Sidebar/>
+                <Navigation />
+                <Sidebar />
                 <div className="content-wrapper">
                     <section className="content-header">
                         <div className="container-fluid">
-                            
+
                         </div>
                     </section>
 
@@ -50,9 +50,11 @@ class Servers extends React.Component{
                                     <div className="card card-primary card-outline">
                                         <div className="card-header">
                                             <div className="col-3 float-left">
-                                                <a href="createserver.php" className="btn btn-info ">+ Add Server</a>
+                                                <Link to="/server/create" className="text-center">
+                                                    <a href="#" className="btn btn-info ">+ Add Server</a>
+                                                </Link>
                                             </div>
-                                            
+
                                         </div>
                                         <div className="card-body">
                                             <div className="col-12 application_page_cards" id="huddles">
