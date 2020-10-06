@@ -229,22 +229,14 @@ class ApiHandler {
             }
         },faild);
     }
-    logout = (password, token, success = () => { }, faild = () => { }) => {
-        if (!token || !password) return;
-        let access_token = token;
+    logout = (success = () => { }, faild = () => { }) => {
         var authHeaders = new Headers();
-        authHeaders.append("Authorization", "Bearer " + access_token)
+        authHeaders.append("Authorization", "Bearer " + access_token);
 
-        const formData = new FormData();
-        formData.append("token", token);
-        formData.append("password", password);
-
-        this.getResult("/logout", "POST", formData, authHeaders, (response) => {
+        this.getResult("/logout", "POST", null, authHeaders, (response) => {
             if (response.status == 0) {
                 faild(response.message)
             } else if (response.status == 1) {
-        alert('hi')
-
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
