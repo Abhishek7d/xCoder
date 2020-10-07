@@ -69,8 +69,8 @@ class Servers extends React.Component {
                                     <div className="card card-primary card-outline">
                                         <div className="card-header">
                                             <div className="col-3 float-left">
-                                                <Link to="/server/create" className="text-center">
-                                                    <a href="#" className="btn btn-info ">Create Server</a>
+                                                <Link to="/server/create" className="btn btn-info text-center">
+                                                Create Server
                                                 </Link>
                                             </div>
 

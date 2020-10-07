@@ -1,5 +1,5 @@
 import * as conf from './config';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { read_cookie, delete_cookie } from 'sfcookies';
 
 class ApiHandler {
     constructor() {
@@ -37,9 +37,9 @@ class ApiHandler {
         formData.append("confirm_password", confPassword);
 
         this.getResult("/register", "POST", formData, null, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("someting went wrong");
@@ -53,9 +53,9 @@ class ApiHandler {
         formData.append("password", password);
 
         this.getResult("/login", "POST", formData, null, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
@@ -68,9 +68,9 @@ class ApiHandler {
         formData.append("email", email);
 
         this.getResult("/reset", "POST", formData, null, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
@@ -81,15 +81,15 @@ class ApiHandler {
         if (!email) return;
         const formData = new FormData();
         formData.append("email", email);
-        formData.append("newPassword", newPassword);
-        formData.append("confirmPassword", confirmPassword);
-        formData.append("tocken", tocken);
+        formData.append("password", newPassword);
+        formData.append("password_confirmation", confirmPassword);
+        formData.append("token", tocken);
 
 
-        this.getResult("/password/reset", "POST", formData, null, (response) => {
-            if (response.status == 0) {
+        this.getResult("/reset/password", "POST", formData, null, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
@@ -101,14 +101,14 @@ class ApiHandler {
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         this.getResult("/droplets", "GET", null, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }
                 failure(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 failure("something went wrong");
@@ -129,14 +129,14 @@ class ApiHandler {
 
         this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
             console.log(response)
-            if (response.status == 0) {
+            if (response.status === 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
@@ -152,14 +152,14 @@ class ApiHandler {
         formData.append("action", action);
 
         this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message);
             } else {
                 faild("something went wrong");
@@ -171,14 +171,14 @@ class ApiHandler {
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         this.getResult("/application", "GET", null, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }
                 failure(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 failure("something went wrong");
@@ -196,14 +196,14 @@ class ApiHandler {
         formData.append("wordpress", isWordpress);
 
         this.getResult("/application", "POST", formData, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
@@ -217,14 +217,14 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token)
 
         this.getResult("/application/"+applicationId, "POST", null, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 if (response.message === "Authenticatio Failed") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
                 }
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message);
             } else {
                 faild("something went wrong");
@@ -237,9 +237,9 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token);
 
         this.getResult("/logout", "POST", null, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.message, response.data);
             } else {
                 faild("something went wrong");
@@ -252,9 +252,9 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token);
 
         this.getResult("/sizes", "GET", null, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.data);
             } else {
                 faild("something went wrong");
@@ -267,9 +267,9 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token);
 
         this.getResult("/regions", "GET", null, authHeaders, (response) => {
-            if (response.status == 0) {
+            if (response.status === 0) {
                 faild(response.message)
-            } else if (response.status == 1) {
+            } else if (response.status === 1) {
                 success(response.data);
             } else {
                 faild("something went wrong");

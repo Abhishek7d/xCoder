@@ -19,10 +19,15 @@ class ResetScreen extends React.Component {
 
     }
     componentDidMount(){
-        let params = window.location.href
-        let token = params.split("?")[0].split("/").pop()
-        let email = params.split("?")[1].split("=").pop()
-        this.state.setState({email: email, token: token})
+        try{
+            let params = window.location.href
+            params = params.split("?")[1];
+            let token = params.split("&")[0].split("=").pop()
+            let email = params.split("&")[1].split("=").pop()
+            this.setState({email: email, token: token})
+        }catch(ex){
+            window.location.href = "/login";
+        }
     }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
@@ -34,7 +39,7 @@ class ResetScreen extends React.Component {
             return;
         }
         this.setState({error:"", success:"", loadding:true})
-        this.apiHandler.resetPassword(this.state.email,this.state.newPassword, this.state.confirmPassword, this.state.tocken,
+        this.apiHandler.resetPassword(this.state.email,this.state.newPassword, this.state.confirmPassword, this.state.token,
         (message, data)=>{
             this.setState({error:"", success:message, loadding:false, loggedIn:true})
 

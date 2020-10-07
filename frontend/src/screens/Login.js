@@ -60,8 +60,8 @@ class Login extends React.Component{
                                 <div className="card form-card" >
                                     <div className="card-body login-card-body">
                                         <h4 className="login-box-msg ">Login Here</h4>
-                                        <p style={{color:"red"}} dangerouslySetInnerHTML={this.state.error}></p>
-                                        <p style={{color:"green"}} dangerouslySetInnerHTML={this.state.success}></p>
+                                        <p style={{color:"red"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>
+                                        <p style={{color:"green"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
                                         <form action="#" method="post">
                                             <div className="input-group mb-3">
                                                 <input type="email" name="email" onChange={this.dataChange} defaultValue={this.state.email} className="form-control border-bottom" id="email" placeholder="Email"/>

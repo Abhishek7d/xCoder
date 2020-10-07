@@ -13,6 +13,9 @@ class ForgotPassword extends React.Component{
 
         this.apiHandler = new ApiHandler();
     }
+    componentDidMount(){
+        document.title = "Forgot Password";
+    }
     formAction = ()=>{
         let form = document.getElementsByTagName("form")[0]
         if(!form.checkValidity()){

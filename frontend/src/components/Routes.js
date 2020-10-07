@@ -5,7 +5,6 @@ import Login from '../screens/Login';
 import Register from '../screens/Register';
 import ForgotPassword from '../screens/ForgotPassword';
 import ResetScreen from '../screens/ResetScreen';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
@@ -26,16 +25,22 @@ import Logout from '../screens/Logout';
 
 let routes = [
     {
-        path: '/',
-        component: () =>{
-            let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <Redirect to="/servers" />;
-            }else{
-                return <Redirect to="/login" />;
-            }
-        }
+        path: '/reset',
+        title: 'Reset',
+        component: () => <ResetScreen />
     },
+    // {
+    //     path: '/',
+    //     component: () =>{
+    //         let cookie = read_cookie("auth")
+    //         if(typeof cookie !== "object"){
+    //             return <Redirect to="/servers" />;
+    //         }
+    //         else{
+    //             return <Redirect to="/login" />;
+    //         }
+    //     }
+    // },
     {
         path: '/login',
         component: () => <Login/>
@@ -59,11 +64,6 @@ let routes = [
         component: () => <CreateServerScreen />
     },
     {
-        path: '/reset',
-        title: 'Reset',
-        component: () => <ResetScreen />
-    },
-    {
         path: '/applications',
         title: 'Applications',
         component: () => <Applications />
@@ -76,3 +76,4 @@ let routes = [
 ];
 
 export default routes;
+//http://localhost:3000/reset?token=c51439fc9ef4032656e421bf1de9756f65567abf84d502ff2f1c2626bc91f0c9&email=dibyendu@ardentcollaborations.com
