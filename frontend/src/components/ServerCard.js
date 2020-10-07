@@ -57,7 +57,6 @@ class ServerCard extends React.Component {
             console.log(data, msg);
             this.setState({ resources: data })
         }, err => {
-            console.log(err);
             this.showError(err);
         })
     }
@@ -75,6 +74,9 @@ class ServerCard extends React.Component {
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
         });
+    }
+    showError(data){
+       // console.log(data)
     }
     render() {
         return (

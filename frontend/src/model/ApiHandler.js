@@ -282,7 +282,7 @@ class ApiHandler {
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/resouces/"+serverId, null, authHeaders, (response) => {
+        this.getResult("/resouces/"+serverId, "GET", null, authHeaders, (response) => {
             if(response.status == 0){
                 faild(response.message)
             }
