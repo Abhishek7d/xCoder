@@ -8,6 +8,7 @@ import ResetScreen from '../screens/ResetScreen';
 import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
+import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
 
 //let routes = [
@@ -25,22 +26,20 @@ import Logout from '../screens/Logout';
 
 let routes = [
     {
-        path: '/reset',
-        title: 'Reset',
-        component: () => <ResetScreen />
+        path: '/',
+        component: (obj) =>{
+            
+            let cookie = read_cookie("auth")
+            if(obj.location.pathname=="/reset"){
+                return <ResetScreen />;
+            }else if(typeof cookie !== "object"){
+                return <Redirect to="/servers" />;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
     },
-    // {
-    //     path: '/',
-    //     component: () =>{
-    //         let cookie = read_cookie("auth")
-    //         if(typeof cookie !== "object"){
-    //             return <Redirect to="/servers" />;
-    //         }
-    //         else{
-    //             return <Redirect to="/login" />;
-    //         }
-    //     }
-    // },
     {
         path: '/login',
         component: () => <Login/>

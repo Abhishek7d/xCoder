@@ -102,7 +102,7 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token)
         this.getResult("/droplets", "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
-                if (response.message === "Authenticatio Failed") {
+                if (response.message === "Authenticatio Faild") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
@@ -130,7 +130,7 @@ class ApiHandler {
         this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
             console.log(response)
             if (response.status === 0) {
-                if (response.message === "Authenticatio Failed") {
+                if (response.message === "Authenticatio Faild") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
@@ -153,7 +153,7 @@ class ApiHandler {
 
         this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
-                if (response.message === "Authenticatio Failed") {
+                if (response.message === "Authenticatio Faild") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
@@ -172,7 +172,7 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token)
         this.getResult("/application", "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
-                if (response.message === "Authenticatio Failed") {
+                if (response.message === "Authenticatio Faild") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
@@ -197,7 +197,7 @@ class ApiHandler {
 
         this.getResult("/application", "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
-                if (response.message === "Authenticatio Failed") {
+                if (response.message === "Authenticatio Faild") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
@@ -218,7 +218,7 @@ class ApiHandler {
 
         this.getResult("/application/"+applicationId, "POST", null, authHeaders, (response) => {
             if (response.status === 0) {
-                if (response.message === "Authenticatio Failed") {
+                if (response.message === "Authenticatio Faild") {
                     delete_cookie("auth");
                     window.location.href = "/login"
                     return;
