@@ -37,6 +37,6 @@ class checkAuth
                 }
             }
         }
-        return CommonFunctions::sendResponse(0, "Authenticatio Faild");
+        return CommonFunctions::sendResponse(0, "Authentication Faild");
     }
 }
