@@ -23,10 +23,45 @@ class ServerCard extends React.Component {
             error: "",
             success: "",
             dropdownOpen: false,
+            resourses: {
+                cpu: "1.11758%",
+                disk: {
+                    total: "25G",
+                    used: "2.5G",
+                    available: "22G",
+                    usage: "11%"
+                },
+                memory: {
+                    total: [
+                        "MemTotal:",
+                        "1015896",
+                        "kB"
+                    ],
+                    free: [
+                        "MemFree:",
+                        "137144",
+                        "kB"
+                    ],
+                    available: [
+                        "MemAvailable:",
+                        "460400",
+                        "kB"
+                    ]
+                }
+            },
         }
         this.apiHandler = new ApiHandler();
     }
-    toggleDropdown = () => this.setState(prevState => ({dropdownOpen: !prevState.dropdownOpen}))
+    componentDidMount() {
+        this.apiHandler.getResources(this.state.id, (msg, data) => {
+            console.log(data, msg);
+            this.setState({ resources: data })
+        }, err => {
+            console.log(err);
+            this.showError(err);
+        })
+    }
+    toggleDropdown = () => this.setState(prevState => ({ dropdownOpen: !prevState.dropdownOpen }))
 
 
     deleteHandle = () => {
@@ -55,7 +90,7 @@ class ServerCard extends React.Component {
                                     <div className="col-1">
                                         <img style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
                                     </div>
-                                    <div className="col-11">
+                                    <div className="col-5">
                                         <div className="d-flex">
                                             <p className="m-0">{this.state.name}</p>
                                             <span class="badge badge-info ml-4 pt-1">{this.state.status}</span>
@@ -63,6 +98,21 @@ class ServerCard extends React.Component {
                                         <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address}</p>
                                         <p className="m-0">{this.props.region}</p>
                                         <p className="mt-3"><small>Created: {new Date(this.state.created_at).toDateString()}</small></p>
+                                    </div>
+                                    <div className="col-md-5">
+                                        <h6 className="text-info font-weight-bold">Server Health</h6>
+                                        <span className="mt-1" style={{ fontSize: "12px" }}>CPU Usage - {this.state.resourses.cpu}</span>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style={{ width: "25%" }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                        </div>
+                                        <span className="mt-3" style={{ fontSize: "12px" }}>Memory Usage - {this.state.resourses.memory.free[1]}&nbsp;{this.state.resourses.memory.free[2]}  Free of {this.state.resourses.memory.total[1]}&nbsp;{this.state.resourses.memory.total[2]}</span>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style={{ width: "25%" }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                        </div>
+                                        <span className="mt-3" style={{ fontSize: "12px" }}>Disk Usage - {this.state.resourses.disk.available}&nbsp;Free of {this.state.resourses.disk.total}&nbsp; Used {this.state.resourses.disk.used}</span>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style={{ width: "25%" }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                        </div>
                                     </div>
                                 </div>
                             </a>

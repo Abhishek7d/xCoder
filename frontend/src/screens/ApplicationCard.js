@@ -24,7 +24,6 @@ class ApplicationCard extends React.Component {
             dropdownOpen: false,
         }
     }
-    toggleDropdown = () => this.setState(prevState => ({dropdownOpen: !prevState.dropdownOpen}))
     deleteHandle = () => {
         if (this.state.loadding) {
             return;
@@ -48,13 +47,25 @@ class ApplicationCard extends React.Component {
                                 <a href="application.php">
                                     <div className="row">
                                         <div className="col-1">
-                                            <img style={{width:"50%"}} src={require("../assets/images/wordpress.png")} />
+                                            <img style={{ width: "50%" }} src={require("../assets/images/wordpress.png")} />
                                         </div>
-                                        <div className="col-11">
-                                            <h6><b>Test</b></h6>
-                                            <p className="m-0">Server: Lifehacks Server</p>
-                                            <p className="m-0">Project: Lifehacks World Conquering</p>
-                                            <p className="mt-3"><small>Created: 12 March, 2020</small></p>
+                                        <div className="col-4">
+                                            <h6 className="text-info font-weight-bold">Domain Name : <span className="bg-primary px-2 pb-1 rounded">{this.state.domain}</span></h6>
+                                            <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">Lifehacks Server</p></span>
+                                            <span className="text-info d-flex font-weight-bold">Status : &nbsp;<span className="text-primary">{this.state.status}</span></span>
+                                            <p className="mt-3"><small>Created : {this.state.created_at}</small></p>
+
+                                        </div>
+                                        <div className="col-md-3">
+                                            <h6 className="text-info">App credentials</h6>
+                                            <div>User Name : {this.state.username}</div>
+                                            <div>Password : {this.state.password}</div>
+                                        </div>
+                                        <div className="col-md-3">
+                                            <h6 className="text-info">DB credentials</h6>
+                                            <div>DB Name : {this.state.db_name}</div>
+                                            <div>DB User Name : {this.state.db_username}</div>
+                                            <div>Password : {this.state.db_password}</div>
                                         </div>
                                     </div>
                                 </a>
@@ -62,23 +73,14 @@ class ApplicationCard extends React.Component {
                             <div className="col-2 text-right application_page_card_actions">
                                 <a href="" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
                                 <a href="" className="pl-3"><i className="fa fa-user"><span className="number_of_users">0</span></i></a>
-                                {/* <div className="btn-group pl-3 dropleft">
+                                <div className="btn-group pl-4 px-1 dropleft" style={{ cursor: "pointer" }}>
                                     <i className="fas fa-ellipsis-v" data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false"></i>
                                     <div className="dropdown-menu">
-                                        <a className="dropdown-item" href="#"><i className="fa fa-trash danger"></i>&nbsp;Delete</a>
+                                        <a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash danger"></i>&nbsp;Delete</a>
                                         <a className="dropdown-item" href="#"><i className="fa fa-clone info"></i>&nbsp;Clone App/Create Staging</a>
                                     </div>
-                                </div> */}
-                                <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
-                                    <DropdownToggle>
-                                        Dropdown
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        <DropdownItem><a href="#"><i className="fa fa-trash danger"></i>&nbsp;Delete</a></DropdownItem>
-                                        <DropdownItem><a href="#" onClick={this.deleteHandle}><i className="fa fa-clone info"></i>&nbsp;Clone App/Create Staging</a></DropdownItem>
-                                    </DropdownMenu>
-                                </Dropdown>
+                                </div>
                             </div>
                         </div>
                     </div>
