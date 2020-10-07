@@ -4,11 +4,13 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import "../App.css";
 
 class Sidebar extends React.Component {
-    constructor(props){
+    constructor(props) {
         super();
         this.state = {
-            name : read_cookie("name"),
-            page: window.location.pathname.split("/")[1]
+            name: read_cookie("name"),
+            page: window.location.pathname.split("/")[1],
+            sidebarToggle: false,
+
         }
     }
     hideSideBar(){
