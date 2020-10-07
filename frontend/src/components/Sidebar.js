@@ -15,6 +15,7 @@ class Sidebar extends React.Component {
         let tmpBody = document.getElementsByTagName("body")[0].classList;
         if(tmpBody.contains("sidebar-open")){
             tmpBody.remove("sidebar-open")
+            tmpBody.value = ("sidebar-closed sidebar-collapse")
         }
     }
     render() {
