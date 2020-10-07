@@ -58,7 +58,7 @@ class ServerCard extends React.Component {
                                     <div className="col-11">
                                         <div className="d-flex">
                                             <p className="m-0">{this.state.name}</p>
-                                            <span class="badge badge-info ml-4 pt-1">{this.state.status}</span>
+                                            <span className="badge badge-info ml-4 pt-1">{this.state.status}</span>
                                         </div>
                                         <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address}</p>
                                         <p className="m-0">{this.props.region}</p>

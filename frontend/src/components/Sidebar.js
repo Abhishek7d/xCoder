@@ -11,8 +11,15 @@ class Sidebar extends React.Component {
             page: window.location.pathname.split("/")[1]
         }
     }
+    hideSideBar(){
+        let tmpBody = document.getElementsByTagName("body")[0].classList;
+        if(tmpBody.contains("sidebar-open")){
+            tmpBody.remove("sidebar-open")
+        }
+    }
     render() {
         return (
+            <>
             <aside className="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
                 <a href="index3.html" className="brand-link">
                     <img src={require("../assets/images/logo.webp")} alt="admin Logo" className="brand-image img-circle elevation-3"
@@ -61,6 +68,8 @@ class Sidebar extends React.Component {
                     </nav>
                 </div>
             </aside>
+            <div onClick={this.hideSideBar} id="sidebar-overlay"></div>
+            </>
         );
     }
 }
