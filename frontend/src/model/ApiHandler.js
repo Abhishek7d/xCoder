@@ -276,6 +276,24 @@ class ApiHandler {
             }
         });
     }
+    getResources = (serverId, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+
+        this.getResult("/resouces/"+serverId, null, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message, response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
 }
 
 export default ApiHandler;
