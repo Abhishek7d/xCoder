@@ -4,21 +4,34 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import "../App.css";
 
 class Sidebar extends React.Component {
-    constructor(props){
+    constructor(props) {
         super();
         this.state = {
-            name : read_cookie("name"),
-            page: window.location.pathname.split("/")[1]
+            name: read_cookie("name"),
+            page: window.location.pathname.split("/")[1],
+            sidebarToggle: false,
+
         }
+    }
+
+    handleSidebarToggle = () => {
+        this.setState(prevState => ({ sidebarToggle: !prevState.sidebarToggle }))
     }
     render() {
         return (
-            <aside className="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
-                <a href="index3.html" className="brand-link">
-                    <img src={require("../assets/images/logo.webp")} alt="admin Logo" className="brand-image img-circle elevation-3"
-                    />
-                    <span className="brand-text font-weight-light">Parvaty Cloud</span>
-                </a>
+            <aside
+                className={`main-sidebar sidebar-dark-primary elevation-4 ${
+                    this.state.sidebarToggle?"sidebar_active"
+                    :"sidebar_inactive"}`}
+                id="sidebar" style={{ overflow: "visible" }}>
+                <div className="d-flex">
+                    <a href="index3.html" className="brand-link">
+                        <img src={require("../assets/images/logo.webp")} alt="admin Logo" className="brand-image img-circle elevation-3"
+                        />
+                        <span className="brand-text font-weight-light">Parvaty Cloud</span>
+                    </a>
+                    <a className="nav-link" style={{ position: "absolute", left: "250px", zIndex: "99999", color: "grey" }} onClick={this.handleSidebarToggle} data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars"></i></a>
+                </div>
                 <div className="sidebar">
                     <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                         <div className="image">
@@ -32,7 +45,7 @@ class Sidebar extends React.Component {
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <li className={'nav-item has-treeview '}>
                                 <Link to="/servers">
-                                    <a href="#" className={"nav-link "+((this.state.page=="servers")?"menu-opened":"")}>
+                                    <a href="#" className={"nav-link " + ((this.state.page == "servers") ? "menu-opened" : "")}>
                                         <i className="nav-icon fas fa-tachometer-alt"></i>
                                         <p>
                                             Servers
@@ -43,7 +56,7 @@ class Sidebar extends React.Component {
                             </li>
                             <li className="nav-item has-treeview">
                                 <Link to="/applications">
-                                    <a href="#" className={"nav-link "+((this.state.page=="applications")?"menu-opened":"")}>
+                                    <a href="#" className={"nav-link " + ((this.state.page == "applications") ? "menu-opened" : "")}>
                                         <i className="nav-icon fas fa-tachometer-alt"></i>
                                         <p>
                                             Applications
@@ -53,7 +66,7 @@ class Sidebar extends React.Component {
                                 </Link>
                             </li>
                             <li className="nav-item has-treeview">
-                                <a href="#" className={"nav-link "+((this.state.page=="teams")?"menu-opened":"")}>
+                                <a href="#" className={"nav-link " + ((this.state.page == "teams") ? "menu-opened" : "")}>
                                     <i className="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
                                         Teams

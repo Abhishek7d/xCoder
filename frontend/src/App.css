@@ -42,3 +42,13 @@
     transform: rotate(360deg);
   }
 }
+.sidebar_active{
+    position: relative;
+    left: 0;
+    transition: left 0.5s ease-in;
+}
+.sidebar_inactive{
+    position: relative;
+    left: -250px;
+    transition: left 0.5s ease-in;
+}

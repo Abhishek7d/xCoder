@@ -77,6 +77,9 @@ class ServerCard extends React.Component {
         });
     }
     render() {
+        let cpu_percentage = Math.round(this.state.resourses.cpu.slice(0, -1));
+        let ram_percentage = Math.round(((this.state.resourses.memory.total[1]-this.state.resourses.memory.free[1])*100)/this.state.resourses.memory.total[1]);
+        let disk_percentage = Math.round(this.state.resourses.disk.usage.slice(0, -1))
         return (
             <div className="card card-outline">
                 <div className="card-body">
@@ -102,16 +105,16 @@ class ServerCard extends React.Component {
                                     <div className="col-md-5">
                                         <h6 className="text-info font-weight-bold">Server Health</h6>
                                         <span className="mt-1" style={{ fontSize: "12px" }}>CPU Usage - {this.state.resourses.cpu}</span>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style={{ width: "25%" }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                        <div class="progress" style={{borderRadius: "10px", height: "10px"}}>
+                                            <div class="progress-bar bg-success" role="progressbar" style={{width: cpu_percentage + "%"}} aria-valuenow={`"${cpu_percentage}"`} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
-                                        <span className="mt-3" style={{ fontSize: "12px" }}>Memory Usage - {this.state.resourses.memory.free[1]}&nbsp;{this.state.resourses.memory.free[2]}  Free of {this.state.resourses.memory.total[1]}&nbsp;{this.state.resourses.memory.total[2]}</span>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style={{ width: "25%" }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                        <span className="mt-3" style={{ fontSize: "12px" }}>RAM Usage - {this.state.resourses.memory.free[1]}&nbsp;{this.state.resourses.memory.free[2]}  Free of {this.state.resourses.memory.total[1]}&nbsp;{this.state.resourses.memory.total[2]}</span>
+                                        <div class="progress" style={{borderRadius: "10px", height: "10px"}}>
+                                            <div class="progress-bar bg-success" role="progressbar" style={{ width: ram_percentage + "%" }} aria-valuenow={`"${ram_percentage}"`} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                         <span className="mt-3" style={{ fontSize: "12px" }}>Disk Usage - {this.state.resourses.disk.available}&nbsp;Free of {this.state.resourses.disk.total}&nbsp; Used {this.state.resourses.disk.used}</span>
-                                        <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style={{ width: "25%" }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                        <div class="progress" style={{borderRadius: "10px", height: "10px"}}>
+                                            <div class="progress-bar bg-success" role="progressbar" style={{ width: disk_percentage + "%" }} aria-valuenow={`"${disk_percentage}"`} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </div>
                                 </div>
