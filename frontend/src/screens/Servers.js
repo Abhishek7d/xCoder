@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import ServerCard from '../components/ServerCard';
 import ApiHandler from '../model/ApiHandler';
 import { Redirect, Link } from 'react-router-dom';
+import ServerDetails from '../components/ServerDetails'
 
 class Servers extends React.Component {
     constructor(props) {
@@ -11,6 +12,8 @@ class Servers extends React.Component {
         this.state = {
             servers: [],
             regions: {},
+            selectedSever:null,
+            isServerClicked:false
         }
         this.apiHandler = new ApiHandler();
     }
@@ -39,14 +42,25 @@ class Servers extends React.Component {
         return this.state.regions[slug];
     }
     renderServers() {
+        if (this.state.isServerClicked) {
+            return (<ServerDetails serverClickHandler={this.serverClickHandler} server={this.state.selectedSever} />)
+        }
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            servers.push(<ServerCard region={this.getRegionName(data.region)} key={index} server={data} />);
+            servers.push(<ServerCard serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={index} server={data} />);
         })
         if (servers.length < 1) {
             servers = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Servers Created</p>
         }
         return servers;
+    }
+    serverClickHandler = (server=null) => {
+        if(server){
+            this.setState({selectedSever:server});
+        }
+        this.setState({
+            isServerClicked: !this.state.isServerClicked,
+        })
     }
 
     render() {

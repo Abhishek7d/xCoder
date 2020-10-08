@@ -9,23 +9,7 @@ import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
-import ServerDetails from '../screens/ServerDetails';
 import ApplicationDetails from '../screens/ApplicationDetails';
-
-
-
-//let routes = [
-    // {
-    //     path: '/',
-    //     component: () =>{
-    //         console.log(localStorage.getItem("validation")===true)
-    //         if(localStorage.getItem("access_token") === "true"){
-    //             return <Redirect to="/servers" />;
-    //         }else{
-    //             return <Redirect to="/login" />;
-    //         }
-    //     }
-    // },
 
 let routes = [
     {
@@ -74,11 +58,6 @@ let routes = [
         path: '/logout',
         title: 'Logout',
         component: () => <Logout />
-    },
-    {
-        path: '/server/details',
-        title: 'Server Details',
-        component: () => <ServerDetails />
     },
     {
         path: '/application/details',
