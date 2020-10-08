@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 class Applications extends React.Component {
     constructor(props) {
@@ -76,6 +77,7 @@ class Applications extends React.Component {
         this.setState({ error: "", success: "", loadding: true })
         this.apiHandler.createApplication(this.state.selectedServerId, this.state.selectedDomain, this.state.isWordpress, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
+            window.location.href = "/applications"
             console.log(data, message);
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
@@ -131,7 +133,7 @@ class Applications extends React.Component {
                                         </div>
                                         <div className="card-body">
                                             <div className="col-12 application_page_cards" id="huddles">
-                                                {this.renderApplications()}
+                                                    {this.renderApplications()}
                                             </div>
                                         </div>
                                         <div className="card-footer"></div>
@@ -150,10 +152,7 @@ class Applications extends React.Component {
                         <Modal.Body>
                             <div className="form-group">
                                 <label htmlFor="selectedDomain">Select Domain</label>
-                                <select className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain">
-                                    <option >Select</option>
-                                    <option value="dibs.com">dibs.com</option>
-                                </select>
+                                <input type="text" className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="select_server">Select server in which you want to Add new application</label>

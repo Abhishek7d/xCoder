@@ -9,6 +9,9 @@ import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import ServerDetails from '../screens/ServerDetails';
+import ApplicationDetails from '../screens/ApplicationDetails';
+
 
 
 //let routes = [
@@ -28,7 +31,7 @@ let routes = [
     {
         path: '/',
         component: (obj) =>{
-            
+
             let cookie = read_cookie("auth")
             if(obj.location.pathname=="/reset"){
                 return <ResetScreen />;
@@ -71,6 +74,16 @@ let routes = [
         path: '/logout',
         title: 'Logout',
         component: () => <Logout />
+    },
+    {
+        path: '/server/details',
+        title: 'Server Details',
+        component: () => <ServerDetails />
+    },
+    {
+        path: '/application/details',
+        title: 'Application Details',
+        component: () => <ApplicationDetails />
     },
 ];
 
