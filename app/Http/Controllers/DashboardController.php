@@ -70,7 +70,7 @@ class DashboardController extends Controller
                     ];
                     $response = CommonFunctions::makeRequest($url, "POST",json_encode($body));
 		    $response = json_decode($response['data']);
-		    if($response->id &&  $response->id=="unprocessable_entity"){
+		    if(isset($response->id) && $response->id=="unprocessable_entity"){
                         return CommonFunctions::sendResponse(0, $response->message);   
                     }else{
                         return CommonFunctions::sendResponse(1, "Droplet Upgraded", $response);
