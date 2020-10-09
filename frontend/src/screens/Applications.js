@@ -191,19 +191,7 @@ class Applications extends React.Component {
                                                     }
                                                 </select>
                                             </div>
-                                            <div className="col-3 float-right pt-1">
-                                                <div className="btn-group pl-3 float-right dropleft">
-                                                    <i className="fas fa-bars" data-toggle="dropdown"
-                                                        aria-haspopup="true" aria-expanded="false"></i>
-                                                    <div className="dropdown-menu">
-                                                        <a className="dropdown-item" href="#">Name</a>
-                                                        <a className="dropdown-item" href="#">Created Date</a>
-                                                        <a className="dropdown-item" href="#">Projects</a>
-                                                        <a className="dropdown-item" href="#">Servers</a>
-                                                        <a className="dropdown-item" href="#">Staging</a>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            
                                         </div>
                                         <div className="card-body">
                                             <div className="col-12 application_page_cards" id="huddles">

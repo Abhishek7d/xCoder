@@ -1,5 +1,6 @@
 import React from 'react'
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import ApiHandler from '../model/ApiHandler';
 
 class ApplicationCard extends React.Component {
     constructor(props) {
@@ -25,6 +26,7 @@ class ApplicationCard extends React.Component {
             dropdownOpen: false,
             isApplicationClicked: false,
         }
+        this.apiHandler = new ApiHandler();
     }
     deleteHandle = () => {
         if (this.state.loadding) {
@@ -33,7 +35,7 @@ class ApplicationCard extends React.Component {
         this.setState({ error: "", success: "", loadding: true })
         this.apiHandler.deleteApplication(this.state.id, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
-            console.log(data, message);
+            window.location.href = "/servers";
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
             console.log(message);
@@ -54,7 +56,7 @@ class ApplicationCard extends React.Component {
                                         </div>
                                         <div className="col-11">
                                             <span className="text-info d-flex font-weight-bold">Domain Name : &nbsp;<p className="m-0 text-primary">{this.state.domain}</p></span>
-                                            <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">{this.server.domain}</p></span>
+                                            <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">{this.state.server.name}</p></span>
                                             <span className="text-info d-flex font-weight-bold">Status : &nbsp;<span className="text-primary">{this.state.status}</span></span>
                                             <p className="mt-3"><small>Created : {new Date(this.state.created_at).toDateString()}</small></p>
                                         </div>

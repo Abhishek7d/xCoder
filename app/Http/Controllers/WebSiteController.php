@@ -48,11 +48,10 @@ class WebSiteController extends Controller
         
         $domain = $request->get('domain');
         $server = $request->get('server');
-        $install_wp = $request->get("wordpress");
-        if(empty($server) || empty($domain) || empty($install_wp)){
+        if(empty($server) || empty($domain) ){
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
-        $install_wp =  (($install_wp=="true")?true:false);
+        $install_wp = true;
         if(!$this->is_valid_domain_name($domain)){
             return CommonFunctions::sendResponse(0, "Domain name is not valid");
         }

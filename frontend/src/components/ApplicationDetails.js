@@ -5,6 +5,7 @@ class ApplicationDetails extends Component {
         super()
         this.props = props;
         this.application = props.application;
+        this.server = props.application.server;
     }
 
     render() {
