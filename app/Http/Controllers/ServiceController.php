@@ -36,7 +36,7 @@ class ServiceController extends Controller
         
         $apache_status = $ssh->exec(str_replace("SERVICE", "apache2", $this->checkStatus));
         $mysql_status = $ssh->exec(str_replace("SERVICE", "mysql", $this->checkStatus));
-        $ngnix_status = $ssh->exec(str_replace("SERVICE", "mysql", $this->checkStatus));
+        $ngnix_status = $ssh->exec(str_replace("SERVICE", "nginx", $this->checkStatus));
         $cron_status = $ssh->exec(str_replace("SERVICE", "cron", $this->checkStatus));
         
         $data = ['nginx'=>trim($ngnix_status), 'apache'=>trim($apache_status), 'mysql'=>trim($mysql_status), 'cron'=>trim($cron_status)];

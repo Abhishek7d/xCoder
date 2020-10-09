@@ -150,7 +150,7 @@ class DashboardController extends Controller
     }
     public function droplets(Request $request){
         $user = auth()->user();
-        $servers = Server::where("user_id", $user->id)->get();
+        $servers = Server::where("user_id", $user->id)->with('applications')->get();
         return CommonFunctions::sendResponse(1, "Your droplets", $servers);
     }
 }

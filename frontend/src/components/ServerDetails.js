@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ApiHandler from '../model/ApiHandler';
 import "../index.css"
+import { findLastKey } from 'lodash';
 
 class ServerDetails extends Component {
     constructor(props) {
@@ -22,7 +23,12 @@ class ServerDetails extends Component {
                 percentage:20
             },
             regions:{},
-            loadding:false
+            loadding:false,
+            apache:false,
+            nginx:false,
+            mysql:false,
+            cron:false,
+            serviceLoadding:false
         }
         this.apiHandler = new ApiHandler();
     }
@@ -40,6 +46,35 @@ class ServerDetails extends Component {
             console.log(err)
         })
         this.loadResources()
+        this.getServices();
+    }
+    getServices = () =>{
+        this.apiHandler.getServicesStatus(this.server.id, (data)=>{
+            this.setState({
+                apache:(data.apache==="active"),
+                nginx:(data.nginx==="active"),
+                mysql:(data.mysql==="active"),
+                cron:(data.cron==="active")
+            })
+        }, (err)=>{
+            console.log(err);
+        })
+    }
+    updateService = (service)=>{
+        this.setState({serviceLoadding:true});
+        this.apiHandler.updateService(this.server.id, service, !this.state[service],()=>{
+            this.apiHandler.getServicesStatus(this.server.id, (data)=>{
+                this.setState({
+                    apache:(data.apache==="active"),
+                    nginx:(data.nginx==="active"),
+                    mysql:(data.mysql==="active"),
+                    cron:(data.cron==="active"),
+                    serviceLoadding:false
+                })
+            }, (err)=>{
+                console.log(err);
+            })
+        })
     }
     loadResources = ()=>{
         if(this.state.loadding){
@@ -61,7 +96,7 @@ class ServerDetails extends Component {
                     used:((parseInt(data.memory.total[1])-parseInt(data.memory.free[1]))/1024).toFixed(0)+" MB",
                     available:((parseInt(data.memory.free[1]))/1024).toFixed(0)+" MB",
                     total:((parseInt(data.memory.total[1]))/1024).toFixed(0)+" MB",
-                    percentage:20
+                    percentage:((((parseInt(data.memory.total[1])-parseInt(data.memory.free[1]))/1024)/((parseInt(data.memory.total[1]))/1024))*100).toFixed(0)
                 },
             })
             this.setState({loadding:false})
@@ -80,7 +115,6 @@ class ServerDetails extends Component {
                             <h5 className="nav-link font-weight-bold text-secondary" style={{minWidth:"max-content"}}>{this.server.name}</h5>
                             <span className="badge badge-info ml-4 pt-1" style={{height:"20px",margin:"auto"}}>{this.server.status}</span>
                         </div>
-
                     </div>
                     <div className="card-body">
                         <div className="col-12 application_page_cards" id="huddles">
@@ -157,7 +191,118 @@ class ServerDetails extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+                                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                                    <div class="card">
+                                        <div class="card-body p-0">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                <th style={{width: "10px"}}></th>
+                                                <th>Service</th>
+                                                <th>Status</th>
+                                                <th >Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {(this.state.serviceLoadding)?
+                                                <tr>
+                                                </tr>
+                                                :
+                                                <>
+                                                <tr>
+                                                    <td>#</td>
+                                                    <td>Apache</td>
+                                                    <td>
+                                                        <div style={{display:"flex"}}>
+                                                            {(this.state.apache)?
+                                                            <><div class="dot-green"></div>Running</>
+                                                            :
+                                                            <><div class="dot-red"></div>Stopped</>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {(this.state.apache)?
+                                                        <a class="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</a>
+                                                        :
+                                                        <a class="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>#</td>
+                                                    <td>MySQL</td>
+                                                    <td>
+                                                        <div style={{display:"flex"}}>
+                                                            {(this.state.mysql)?
+                                                            <><div class="dot-green"></div>Running</>
+                                                            :
+                                                            <><div class="dot-red"></div>Stopped</>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {(this.state.mysql)?
+                                                        <a class="btn btn-info white " onClick={()=>this.updateService("mysql")}>Stop</a>
+                                                        :
+                                                        <a class="btn btn-info white" onClick={()=>this.updateService("mysql")}>Start</a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>#</td>
+                                                    <td>Nginx</td>
+                                                    <td>
+                                                        <div style={{display:"flex"}}>
+                                                            {(this.state.nginx)?
+                                                            <><div class="dot-green"></div>Running</>
+                                                            :
+                                                            <><div class="dot-red"></div>Stopped</>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {(this.state.nginx)?
+                                                        <a class="btn btn-info white " onClick={()=>this.updateService("nginx")}>Stop</a>
+                                                        :
+                                                        <a class="btn btn-info white" onClick={()=>this.updateService("nginx")}>Start</a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>#</td>
+                                                    <td>CRON</td>
+                                                    <td>
+                                                        <div style={{display:"flex"}}>
+                                                            {(this.state.cron)?
+                                                            <><div class="dot-green"></div>Running</>
+                                                            :
+                                                            <><div class="dot-red"></div>Stopped</>
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {(this.state.cron)?
+                                                        <a class="btn btn-info white " onClick={()=>this.updateService("cron")}>Stop</a>
+                                                        :
+                                                        <a class="btn btn-info white" onClick={()=>this.updateService("cron")}>Start</a>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                </>
+                                                }
+                                            </tbody>
+                                            </table>
+                                            {(this.state.serviceLoadding)?
+                                                <div style={{width: "100%",paddingLeft: "40%"}}>
+                                                    <img src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+                                                </div>
+                                                :
+                                                <></>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

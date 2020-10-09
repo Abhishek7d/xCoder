@@ -20,3 +20,22 @@ code {
 .spin{
   animation: 4s linear 0s infinite normal none running spin
 }
+.dot-red{
+  width: 15px !important;
+  height: 15px;
+  background: red;
+  border-radius: 50%;
+  align-self: center;
+  margin-right: 5px;
+}
+.dot-green{
+  width: 15px !important;
+  height: 15px;
+  background: green;
+  border-radius: 50%;
+  align-self: center;
+  margin-right: 5px;
+}
+.white{
+  color:white !important
+}

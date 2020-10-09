@@ -294,6 +294,48 @@ class ApiHandler {
             }
         },faild);
     }
+    getServicesStatus = (serverId, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+
+        this.getResult("/server/"+serverId, "GET", null, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    updateService = (serverId, service, action, success = () => { }, faild = () => { } ) => {
+        action = action?"start":"stop";
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("service", service);
+        formData.append("action", action);
+
+        this.getResult("/server/"+serverId, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.data);
+            } else {
+                faild("something went wrong");
+            }
+        },faild);
+    }
 }
 
 export default ApiHandler;

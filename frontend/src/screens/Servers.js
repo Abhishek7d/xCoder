@@ -42,9 +42,7 @@ class Servers extends React.Component {
         return this.state.regions[slug];
     }
     renderServers() {
-        if (this.state.isServerClicked) {
-            return (<ServerDetails serverClickHandler={this.serverClickHandler} server={this.state.selectedSever} />)
-        }
+        
         let servers = [];
         this.state.servers.forEach((data, index) => {
             servers.push(<ServerCard serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={index} server={data} />);
@@ -82,24 +80,26 @@ class Servers extends React.Component {
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-12">
+                                        {(this.state.isServerClicked)?
+                                        <ServerDetails serverClickHandler={this.serverClickHandler} server={this.state.selectedSever} />
+                                        :
                                         <div className="card card-primary card-outline">
                                             <div className="card-header">
                                                 <div className="col-3 float-left">
                                                     <Link to="/server/create" className="btn btn-info text-center">
                                                         Create Server
-                                                </Link>
+                                                    </Link>
                                                 </div>
 
                                             </div>
                                             <div className="card-body">
                                                 <div className="col-12 application_page_cards" id="huddles">
-                                                    {
-                                                        this.renderServers()
-                                                    }
+                                                    {this.renderServers()}
                                                 </div>
                                             </div>
                                             <div className="card-footer"></div>
                                         </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
