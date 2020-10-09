@@ -58,7 +58,6 @@ class CreateServerScreen extends React.Component {
             return;
         }
         this.setState({ error: "", success: "", loadding: false })
-        console.log(this.apiHandler.createServer)
         this.apiHandler.createServer(this.state.name, this.state.size, this.state.location, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
             window.location.href = "/servers"
@@ -115,7 +114,6 @@ class CreateServerScreen extends React.Component {
             return;
         }
         tmp = tmp[flag].regions;
-        
         tmp.forEach((data)=>{
             let tmp = this.state.regions[data]
             tmp_data.push(<option value={data}>{tmp}</option>);
@@ -184,7 +182,7 @@ class CreateServerScreen extends React.Component {
                                                         <h3 className="card-title">Server Location</h3>
                                                     </div>
                                                     <div className="col-7">
-                                                    <select id="locations" required value={this.state.location} onChange={this.dataChange} name="region" className="form-control border-bottom">
+                                                    <select id="locations" required value={this.state.location} onChange={this.dataChange} name="location" className="form-control border-bottom">
                                                         {this.renderLocations()}
                                                     </select>
                                                     </div>

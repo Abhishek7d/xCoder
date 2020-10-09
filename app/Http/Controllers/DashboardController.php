@@ -69,10 +69,15 @@ class DashboardController extends Controller
                         "size"=> $size
                     ];
                     $response = CommonFunctions::makeRequest($url, "POST",json_encode($body));
-		    $response = json_decode($response['data']);
-		    if(isset($response->id) && $response->id=="unprocessable_entity"){
+                    $response = json_decode($response['data']);
+                    if(isset($response->id) && $response->id=="unprocessable_entity"){
                         return CommonFunctions::sendResponse(0, $response->message);   
                     }else{
+                        $server->size = $size;
+                        $tmp = explode("-",$size);
+                        $server->memory = (int)$tmp[2]*1024;
+                        $server->vcpus = (int)$tmp[1];
+                        $server->save();
                         return CommonFunctions::sendResponse(1, "Droplet Upgraded", $response);
                     }
                     
