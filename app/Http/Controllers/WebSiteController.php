@@ -41,7 +41,7 @@ class WebSiteController extends Controller
         return CommonFunctions::sendResponse(1, "Application Deleted Successfully", $output);
     }
     public function showDomains(){
-        $apps = Application::where("user_id", auth()->user()->id)->get();
+        $apps = Application::where("user_id", auth()->user()->id)->with('server')->get();
         return CommonFunctions::sendResponse(1, "List of applications",$apps);
     }
     public function addDomain(Request $request){

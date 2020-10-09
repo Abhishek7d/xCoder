@@ -500,6 +500,26 @@ class ApiHandler {
             }
         },faild);
     }
+    serverUpgrade  = (serverId, size, success = () => { }, faild = () => { } ) => {
+        if(!serverId || !size) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("size", size);
+        formData.append("action", "resize");
+        this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message,response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
 }
 
 export default ApiHandler;

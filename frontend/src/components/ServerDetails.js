@@ -8,6 +8,7 @@ import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
 import BlockStorage from "./server/BlockStorage";
+import UpgradeServer from "./server/UpgradeServer";
 
 class ServerDetails extends Component {
     constructor(props) {
@@ -47,9 +48,9 @@ class ServerDetails extends Component {
                                 <li class="nav-item">
                                     <a class="nav-link" id="pills-storage-tab" data-toggle="pill" href="#pills-storage" role="tab" aria-controls="pills-storage" aria-selected="false">Block Storage</a>
                                 </li>
-                                <li class="nav-item">
+                                {/* <li class="nav-item">
                                     <a class="nav-link" id="pills-upgrade-tab" data-toggle="pill" href="#pills-upgrade" role="tab" aria-controls="pills-upgrade" aria-selected="false">Upgrade Server</a>
-                                </li>
+                                </li> */}
                             </ul>
                             <div class="tab-content" id="pills-tabContent">
                                 <Summery tabId={"summery"} active={true} server={this.server} />
@@ -58,6 +59,7 @@ class ServerDetails extends Component {
                                 <Services tabId={"services"} server={this.server} />
                                 <CronJobs tabId={"cron"} server={this.server}/>
                                 <BlockStorage tabId={"storage"} server={this.server}/>
+                                {/* <UpgradeServer tabId={"upgrade"} server={this.server}/> */}
                             </div>
                         </div>
                     </div>

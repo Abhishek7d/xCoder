@@ -58,7 +58,7 @@ class Sidebar extends React.Component {
                                     </p>
                                 </Link>
                             </li>
-                            <li className="nav-item has-treeview">
+                            {/* <li className="nav-item has-treeview">
                                 <a href="#" className={"nav-link "+((this.state.page==="teams")?"menu-opened":"")}>
                                     <i className="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
@@ -66,7 +66,7 @@ class Sidebar extends React.Component {
                                         <i className="right fas "></i>
                                     </p>
                                 </a>
-                            </li>
+                            </li> */}
                         </ul>
                     </nav>
                 </div>

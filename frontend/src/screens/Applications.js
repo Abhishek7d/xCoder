@@ -6,6 +6,7 @@ import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ApplicationDetails from '../components/ApplicationDetails';
+import "../index.css";
 
 class Applications extends React.Component {
     constructor(props) {
@@ -19,7 +20,7 @@ class Applications extends React.Component {
             success: "",
             selectedServerId: "",
             selectedDomain: "",
-            isWordpress: false,
+            isWordpress: true,
             isApplicationClicked: false,
             selectedApplication: null,
             selectedServerFilter: "",
@@ -47,7 +48,9 @@ class Applications extends React.Component {
     renderServers() {
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            servers.push(<option key={index} value={data.id}>{data.name}</option>);
+            if(data.status==="READY"){
+                servers.push(<option key={index} value={data.id}>{data.name}</option>);
+            }
         })
         return servers;
     }
@@ -221,20 +224,23 @@ class Applications extends React.Component {
                             <Modal.Title>ADD APPLICATION</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
+                            <p style={{color:"red"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>
+                            <p style={{color:"green"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
+                            
                             <div className="form-group">
                                 <label htmlFor="selectedDomain">Select Domain</label>
-                                <input type="text" className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
+                                <input required type="text" className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="select_server">Select server in which you want to Add new application</label>
-                                <select className="form-control" name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server" className="form-control" >
+                                <select required className="form-control" name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server" className="form-control" >
                                     <option value="">Select</option>
                                     {
                                         this.renderServers()
                                     }
                                 </select>
                             </div>
-                            <div className="form-group d-flex flex-column justify-content-center align-items-center">
+                            <div style={{display:"none !important"}} className="hide">
                                 <label htmlFor="isWordpress">Wordpress</label>
                                 <input className="form-control" type="checkbox" name="isWordpress" checked={this.state.isWordpress} onChange={this.dataChange} style={{ width: "20px", height: "20px" }} />
                             </div>
