@@ -11,11 +11,13 @@ class BlockStorage extends React.Component{
             error:"",
             success:"",
             options:[],
-            value:0,
-            min:1
+            value:1,
+            min:1,
+            loadding:false
         }
         if(this.server.storage){
             this.state.min = this.server.storage.size
+            this.state.value = this.server.storage.size
         }
         this.apiHandler = new ApiHandler();
     
@@ -50,11 +52,40 @@ class BlockStorage extends React.Component{
     handleChange = (value)=>{
         let newSize = value.target.value;
         if(this.server.storage){
-            if(this.server.storage.size < newSize){
+            if(this.server.storage.size > newSize){
                 return;
             }
         }
         this.setState({value:newSize})
+    }
+    formAction = () => {
+        console.log(this.state.value)
+        if(!this.state.value){
+            return;
+        }
+        if (this.state.loadding) {
+            return;
+        }
+        this.setState({ error: "", success: "", loadding: true })
+        let action = (this.server.storage)?"resize":"attach"
+        this.apiHandler.addStorage(this.server.id, this.state.value, action, (message, data) => {
+            this.setState({ error: "", success: message, loadding: false })
+            setTimeout(()=>{
+                window.location.href = "/servers";
+            },1000)
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false })
+        });
+    }
+    deleteStorage = ()=>{
+        this.apiHandler.deleteStorage(this.server.id, (message, data) => {
+            this.setState({ error: "", success: message, loadding: false })
+            setTimeout(()=>{
+                window.location.href = "/servers";
+            },1000)
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false })
+        });
     }
     render(){
         return(
@@ -66,7 +97,9 @@ class BlockStorage extends React.Component{
 
                     <div class="row">
                         <div class="col-sm-12">
-                            <h5 class="">Add Storage To Server</h5>
+                            <h5 class="">Add Storage To Server 
+                            {(this.server.storage)?" ( Currently Added "+this.server.storage.size+"GB )":""}
+                            </h5>
                             <br/>
                         </div>
                         <div class="col-sm-2" style={{display: "inherit"}}>
@@ -83,10 +116,19 @@ class BlockStorage extends React.Component{
                     <button type="button" onClick={this.formAction} className="btn btn-primary">
                         {this.state.loadding ?
                             <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                            : "Attach Now"
+                            : ((this.server.storage)?"Resize":"Attach Now")
                         }
-
                     </button>
+                    {this.server.storage?
+                    <button type="button" style={{marginLeft:"10px"}} onClick={this.deleteStorage} className="btn btn-danger">
+                        {this.state.loadding ?
+                            <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                            : "DELETE"
+                        }
+                    </button>
+                    :
+                    <></>
+                    }
                 </div>
             </div>
         )

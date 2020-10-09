@@ -460,6 +460,46 @@ class ApiHandler {
             }
         },faild);
     }
+    addStorage = (serverId, size, action, success = () => { }, faild = () => { } ) => {
+        if(!serverId || !size || !action) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("server", serverId);
+        formData.append("size", size);
+        let url = (action==="resize")?"/storage/resize":"/storage"
+        this.getResult(url, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message,response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    deleteStorage  = (serverId, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("server", serverId);
+        this.getResult("/storage/delete", "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message,response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
 }
 
 export default ApiHandler;
