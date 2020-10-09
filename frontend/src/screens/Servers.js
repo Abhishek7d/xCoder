@@ -62,6 +62,11 @@ class Servers extends React.Component {
             }
         }
     }
+    goBack = ()=>{
+        this.setState({
+            isServerClicked: !this.state.isServerClicked,
+        })
+    }
 
     render() {
         return (
@@ -83,7 +88,7 @@ class Servers extends React.Component {
                                 <div className="row">
                                     <div className="col-12">
                                         {(this.state.isServerClicked)?
-                                        <ServerDetails serverClickHandler={this.serverClickHandler} server={this.state.selectedSever} />
+                                        <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedSever} />
                                         :
                                         <div className="card card-primary card-outline">
                                             <div className="card-header">
