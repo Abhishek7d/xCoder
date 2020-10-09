@@ -189,10 +189,14 @@ class ServiceController extends Controller
         $ssh->write("v-add-cron-job admin $min $hour $day $month $wday '$command'\n");
 
         $data = $ssh->read();
-        $data = $this->filterDisplayData($data);
-        // $data = json_decode($data);
-        $data = explode("::", $data);
-        if(count($data)>1){
+	$data = $this->filterDisplayData($data);
+	//var_dump($data);die;
+	$data = explode("$command'",$data);
+        $data = array_pop($data);
+	// $data = json_decode($data);
+        $data = explode("Error:", $data);
+	if(count($data)>1){
+		$data = explode("::", array_pop($data));
             return CommonFunctions::sendResponse(0, trim($data[0]));
         }
         return CommonFunctions::sendResponse(1, "Cron job added");
@@ -253,12 +257,13 @@ class ServiceController extends Controller
 
         $data = $ssh->read();
         $data = $this->filterDisplayData($data);
-        // $data = json_decode($data);
-        $data = explode("::", $data);
-        if(count($data)>1){
+	$data = explode("v-update-sys-vesta-all'",$data);
+	$data = array_pop($data);
+	$data = explode("::", $data);
+	if(count($data)>1){
             return CommonFunctions::sendResponse(0, trim($data[0]));
         }
-        return CommonFunctions::sendResponse(1, "Cron job successfully $action"."ed");
+        return CommonFunctions::sendResponse(1, "Cron job successfully $action"."ed", $data);
         
     }
 }
