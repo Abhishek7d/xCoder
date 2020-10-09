@@ -17,4 +17,7 @@ class Server extends Model{
     public function applications(){
         return $this->hasMany('App\Models\Application', 'server_id');
     }
+    public function storage(){
+        return $this->hasOne("App\Models\Storage", "server_id");
+    }
 }

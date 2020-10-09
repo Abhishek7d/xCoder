@@ -7,6 +7,7 @@ import CronJobs from "./server/CronJobs";
 import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
+import BlockStorage from "./server/BlockStorage";
 
 class ServerDetails extends Component {
     constructor(props) {
@@ -56,6 +57,7 @@ class ServerDetails extends Component {
                                 <Resources tabId={"resouces"} server={this.server} />
                                 <Services tabId={"services"} server={this.server} />
                                 <CronJobs tabId={"cron"} server={this.server}/>
+                                <BlockStorage tabId={"storage"} server={this.server}/>
                             </div>
                         </div>
                     </div>
