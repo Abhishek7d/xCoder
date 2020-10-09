@@ -15,4 +15,7 @@ class Application extends Model
     protected $hidden = [
         'user_id','ip_address','deleted_at'
     ];
+    public function server(){
+        return $this->belongsTo("App\Models\Server", "server_id");
+    }
 }

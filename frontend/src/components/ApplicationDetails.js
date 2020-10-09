@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 
 class ApplicationDetails extends Component {
     constructor(props) {
-        super(props)
+        super()
+        this.props = props;
+        this.application = props.application;
     }
 
     render() {
@@ -10,8 +12,11 @@ class ApplicationDetails extends Component {
             <>
                 <div className="card card-primary card-outline">
                     <div className="card-header">
-                        <div className="col-3 float-left">
-                            <h5 className="font-weight-bold text-secondary">{this.props.application.domain}</h5>
+                        <div className="col-3 float-left" style={{display: "flex"}}>
+                            <a className="nav-link" href="#" onClick={this.props.applicationClickHandler}><i className="fas fa-arrow-left"></i></a>
+                            <h5 className="nav-link font-weight-bold text-secondary" style={{minWidth:"max-content"}}>{this.application.domain}</h5>
+                            <span className="badge badge-info ml-4 pt-1" style={{height:"20px",margin:"auto"}}>{this.application.status}</span>
+
                         </div>
 
                     </div>
@@ -34,8 +39,8 @@ class ApplicationDetails extends Component {
                                             <span className="mt-3 font-weight-bold text-info">Password :</span>
                                         </div>
                                         <div className="col-md-2 d-flex flex-column">
-                                            <span className="mt-3 font-weight-bold text-primary">User Name</span>
-                                            <span className="mt-3 font-weight-bold text-primary">Password</span>
+                                            <span className="mt-3 font-weight-bold text-primary">{this.application.username}</span>
+                                            <span className="mt-3 font-weight-bold text-primary">{this.application.password}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -47,9 +52,9 @@ class ApplicationDetails extends Component {
                                             <span className="mt-3 font-weight-bold text-info">DB Password :</span>
                                         </div>
                                         <div className="col-md-2 d-flex flex-column">
-                                            <span className="mt-3 font-weight-bold text-primary">DB Name</span>
-                                            <span className="mt-3 font-weight-bold text-primary">DB User Name</span>
-                                            <span className="mt-3 font-weight-bold text-primary">DB Password</span>
+                                            <span className="mt-3 font-weight-bold text-primary">{this.application.db_name}</span>
+                                            <span className="mt-3 font-weight-bold text-primary">{this.application.db_username}</span>
+                                            <span className="mt-3 font-weight-bold text-primary">{this.application.db_password}</span>
                                         </div>
                                     </div>
                                 </div>

@@ -53,3 +53,6 @@ ul#server-details-tab-header{
   padding-bottom: 15px !important;
 
 }
+.hide {
+  display: none !important;
+}
