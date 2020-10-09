@@ -1,6 +1,7 @@
 import React from 'react';
 import ApiHandler from '../model/ApiHandler';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { Link } from 'react-router-dom';
 
 
 class Navigation extends React.Component {
@@ -8,23 +9,23 @@ class Navigation extends React.Component {
         super();
         this.state = {
             loadding: false,
-            error:"",
-            success:"",
+            error: "",
+            success: "",
             sidebarToggle: false,
         }
         this.apiHandler = new ApiHandler();
 
     }
     handleLogout = () => {
-        this.setState({error:"", success:"", loadding:true})
-        this.apiHandler.logout( (message, data)=>{
-            this.setState({error:"", success:message, loadding:false})
+        this.setState({ error: "", success: "", loadding: true })
+        this.apiHandler.logout((message, data) => {
+            this.setState({ error: "", success: message, loadding: false })
             delete_cookie("name");
             delete_cookie("email");
             delete_cookie("auth");
-            window.location.href="/login";
-        }, (message)=>{
-            this.setState({error:message, success:"", loadding:false})
+            window.location.href = "/login";
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false })
             console.log(message);
         });
     }
@@ -38,6 +39,13 @@ class Navigation extends React.Component {
                     </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
+                    <li className="nav-item">
+                        <Link to="/profile">
+                            <a href="#" className="nav-link" role="button">
+                                <i className="fas fa-user-circle"></i>
+                            </a>
+                        </Link>
+                    </li>
                     <li className="nav-item">
                         <a className="nav-link" href="#" role="button" onClick={this.handleLogout}>
                             {this.state.loadding ?

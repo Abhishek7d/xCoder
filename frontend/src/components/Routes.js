@@ -8,8 +8,8 @@ import ResetScreen from '../screens/ResetScreen';
 import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
+import Profile from '../screens/Profile';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
-import ApplicationDetails from '../screens/ApplicationDetails';
 
 let routes = [
     {
@@ -60,9 +60,9 @@ let routes = [
         component: () => <Logout />
     },
     {
-        path: '/application/details',
-        title: 'Application Details',
-        component: () => <ApplicationDetails />
+        path: '/profile',
+        title: 'Profile',
+        component: () => <Profile />
     },
 ];
 
