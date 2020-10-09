@@ -12,7 +12,7 @@ class ServiceController extends Controller
     private $step_one = "cd /usr/local/vesta/bin/\n";
     
     private function filterDisplayData($data){
-        $data = explode("\n", $data);
+	$data = explode("\n", $data);
         $data = array_slice($data, 2);
         array_pop($data);
         $data = implode("\n", $data);
@@ -151,8 +151,10 @@ class ServiceController extends Controller
         $ssh->write("v-list-cron-jobs admin json\n");
         $data = $ssh->read();
         $data = $this->filterDisplayData($data);
-        $data = json_decode($data);
-        return CommonFunctions::sendResponse(1, "List of Cron jobs", $data);
+	$data = explode("v-list-cron-jobs admin json",$data);
+	$data = array_pop($data);
+	$data = json_decode($data);
+	return CommonFunctions::sendResponse(1, "List of Cron jobs", $data);
     }
     public function addCronjob(Request $request, $server){
         $server = Server::find($server);
