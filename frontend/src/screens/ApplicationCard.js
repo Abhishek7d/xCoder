@@ -43,6 +43,7 @@ class ApplicationCard extends React.Component {
         this.setState(prevState => ({
             isApplicationClicked: !prevState.isApplicationClicked
         }))
+        this.props.applicationClick
     }
 
     render() {
@@ -56,7 +57,7 @@ class ApplicationCard extends React.Component {
                         <div className="card-body">
                             <div className="row mb-2">
                                 <div className="col-10 application_page_card_info">
-                                    <a href="#" onClick={this.applicationClickHandler}>
+                                    <a href="#" onClick={this.applicationClickHandler} >
                                         <div className="row">
                                             <div className="col-1">
                                                 <img style={{ width: "50%" }} src={require("../assets/images/wordpress.png")} />

@@ -19,6 +19,8 @@ class Applications extends React.Component {
             selectedServerId: "",
             selectedDomain: "",
             isWordpress: false,
+            isApplicationClicked: false,
+
         }
         this.apiHandler = new ApiHandler();
     }
@@ -48,7 +50,7 @@ class Applications extends React.Component {
     renderApplications() {
         let applications = [];
         this.state.applications.forEach((data, index) => {
-            applications.push(<ApplicationCard key={index} application={data} />);
+            applications.push(<ApplicationCard key={index} application={data} applicationClick = {this.applicationClick} />);
         })
         if(applications.length < 1){
             applications = <p style={{textAlign: "center", marginTop: "20px", color:"#949292"}}>No Application Created</p>
@@ -93,6 +95,10 @@ class Applications extends React.Component {
             this.setState({ [event.target.name]: event.target.value })
         }
     }
+    applicationClick = (isApplicationClicked) => {
+        this.setState({isApplicationClicked: isApplicationClicked})
+    }
+
     render() {
         return (
             <div className="container-fluid p-0">
