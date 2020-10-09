@@ -5,6 +5,7 @@ import ApiHandler from '../model/ApiHandler';
 import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import ApplicationDetails from '../components/ApplicationDetails';
 
 class Applications extends React.Component {
     constructor(props) {
@@ -20,6 +21,9 @@ class Applications extends React.Component {
             selectedDomain: "",
             isWordpress: false,
             isApplicationClicked: false,
+            selectedApplication: null,
+            selectedServerFilter: "",
+            selectedApplicationFilter: "",
 
         }
         this.apiHandler = new ApiHandler();
@@ -47,15 +51,55 @@ class Applications extends React.Component {
         })
         return servers;
     }
-    renderApplications() {
-        let applications = [];
-        this.state.applications.forEach((data, index) => {
-            applications.push(<ApplicationCard key={index} application={data} applicationClick = {this.applicationClick} />);
-        })
-        if(applications.length < 1){
-            applications = <p style={{textAlign: "center", marginTop: "20px", color:"#949292"}}>No Application Created</p>
+    renderApplicationsfilter = () => {
+        if (this.state.selectedServerFilter != "") {
+            let applications = [];
+            this.state.servers.forEach((data) => {
+                if (data.id == this.state.selectedServerFilter) {
+                    data.applications.forEach((application, index) => {
+                        applications.push(<option key={index} value={application.id}>{application.domain}</option>)
+                    })
+                }
+            })
+            return applications;
         }
-        return applications;
+    }
+    renderApplications() {
+        if (this.state.isApplicationClicked) {
+            return (<ApplicationDetails applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
+        }
+        if (this.state.selectedApplicationFilter != "" && this.state.selectedServerFilter != "") {
+            this.state.applications.forEach((application) => {
+                if (this.state.selectedApplicationFilter == application.id) {
+                    return (<ApplicationDetails applicationClickHandler={this.applicationClickHandler} application={application} />)
+                }
+            })
+        }
+        if (this.state.selectedServerFilter != "") {
+            let applications = [];
+            this.state.servers.forEach((data) => {
+                if (data.id == this.state.selectedServerFilter) {
+                    data.applications.forEach((application, index) => {
+                        applications.push(<ApplicationCard key={index} application={application} applicationClickHandler={this.applicationClickHandler} />);
+                    })
+                }
+            })
+            if (applications.length < 1) {
+                applications = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p>
+            }
+            return applications;
+        }
+        else {
+
+            let applications = [];
+            this.state.applications.forEach((data, index) => {
+                applications.push(<ApplicationCard key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
+            })
+            if (applications.length < 1) {
+                applications = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p>
+            }
+            return applications;
+        }
     }
     handleModalShow = () => {
         this.setState({
@@ -95,8 +139,13 @@ class Applications extends React.Component {
             this.setState({ [event.target.name]: event.target.value })
         }
     }
-    applicationClick = (isApplicationClicked) => {
-        this.setState({isApplicationClicked: isApplicationClicked})
+    applicationClickHandler = (application = null) => {
+        if (application) {
+            this.setState({ selectedApplication: application })
+        }
+        this.setState({
+            isApplicationClicked: !this.state.isApplicationClicked
+        })
     }
 
     render() {
@@ -119,9 +168,25 @@ class Applications extends React.Component {
                             <div className="row">
                                 <div className="col-12">
                                     <div className="card card-primary card-outline">
-                                        <div className="card-header">
+                                        <div className="card-header d-flex">
                                             <div className="col-3 float-left">
                                                 <a href="#" className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Application</a>
+                                            </div>
+                                            <div className="col-md-3">
+                                                <select className="form-control" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.dataChange} id="selectedServerFilter">
+                                                    <option value="">Select</option>
+                                                    {
+                                                        this.renderServers()
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div className="col-md-3">
+                                                <select className="form-control" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.dataChange} id="selectedApplicationFilter">
+                                                    <option value="">Select</option>
+                                                    {
+                                                        this.renderApplicationsfilter()
+                                                    }
+                                                </select>
                                             </div>
                                             <div className="col-3 float-right pt-1">
                                                 <div className="btn-group pl-3 float-right dropleft">
@@ -139,7 +204,7 @@ class Applications extends React.Component {
                                         </div>
                                         <div className="card-body">
                                             <div className="col-12 application_page_cards" id="huddles">
-                                                    {this.renderApplications()}
+                                                {this.renderApplications()}
                                             </div>
                                         </div>
                                         <div className="card-footer"></div>
@@ -178,9 +243,9 @@ class Applications extends React.Component {
                         <Modal.Footer>
                             <Button variant="info" onClick={this.handleAddApplication}>
                                 {
-                                    this.state.loadding?
-                                    <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                    :"ADD APPLICATION"
+                                    this.state.loadding ?
+                                        <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                        : "ADD APPLICATION"
                                 }
                             </Button>
                             <Button variant="default" onClick={this.handleModalClose}>

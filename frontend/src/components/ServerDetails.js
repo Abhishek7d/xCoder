@@ -22,7 +22,11 @@ class ServerDetails extends Component {
                 percentage:20
             },
             regions:{},
-            loadding:false
+            loadding:false,
+            nginx: "",
+            apache: "",
+            mysql: "",
+            cron: "",
         }
         this.apiHandler = new ApiHandler();
     }
@@ -40,6 +44,7 @@ class ServerDetails extends Component {
             console.log(err)
         })
         this.loadResources()
+        this.loadServices()
     }
     loadResources = ()=>{
         if(this.state.loadding){
@@ -47,9 +52,9 @@ class ServerDetails extends Component {
             return;
         }
         this.setState({loadding:true})
-        
+
         this.apiHandler.getResources(this.server.id, (msg, data) => {
-            this.setState({ 
+            this.setState({
                 cpu: parseFloat(data.cpu).toFixed(2),
                 disk:{
                     used:data.disk.used,
@@ -68,6 +73,31 @@ class ServerDetails extends Component {
         }, err => {
             // this.setState({loadding:false})
         })
+    }
+    loadServices = () => {
+        if(this.state.loadding){
+            console.log("still loading");
+            return
+        }
+        this.setState({loadding: true})
+        this.apiHandler.getServices(this.server.id, (msg, data) => {
+            console.log(msg);
+            this.setState({
+                nginx: data.nginx,
+                apache: data.apache,
+                mysql: data.mysql,
+                cron: data.cron
+            })
+            this.setState({loadding: false})
+        }, err => {
+            console.log(err);
+        })
+
+    }
+    renderControls = () => {
+        if(this.state.nginx == 'active'){
+            return(<span>Stop</span>)
+        }
     }
 
     render() {
@@ -157,7 +187,45 @@ class ServerDetails extends Component {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+                                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                                    <div className="row" style={{color: "grey"}}>
+                                        <div className="col-md-4">
+                                            <span className="font-weight-bold">
+                                                Service
+                                            </span>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <span className="font-weight-bold">
+                                                Status
+                                            </span>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <span className="font-weight-bold">
+                                                Control
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div className="row">
+                                        <div className="col-md-4">
+                                            <span className="font-weight-bold">
+                                                nginx
+                                            </span>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <span className="font-weight-bold">
+                                                {
+                                                    this.state.nginx
+                                                }
+                                            </span>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <span className="font-weight-bold">
+                                                {this.renderControls}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
