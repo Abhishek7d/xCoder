@@ -39,3 +39,12 @@ code {
 .white{
   color:white !important
 }
+.cron-action{
+  display: grid;
+}
+.cron-action > button {
+  margin-top: 4px;
+}
+.container-fluid.p-0{
+  background-color: #343a40;
+}

@@ -336,6 +336,71 @@ class ApiHandler {
             }
         },faild);
     }
+    getCronJobs = (serverId, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        //TODO : remove next line
+        success({"1":{"MIN":"15","HOUR":"02","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-sys-queue disk","JOB":"1","SUSPENDED":"no","TIME":"09:25:44","DATE":"2020-10-06"},"2":{"MIN":"10","HOUR":"00","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-sys-queue traffic","JOB":"2","SUSPENDED":"no","TIME":"09:25:44","DATE":"2020-10-06"},"3":{"MIN":"30","HOUR":"03","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-sys-queue webstats","JOB":"3","SUSPENDED":"no","TIME":"09:25:44","DATE":"2020-10-06"},"4":{"MIN":"*\/5","HOUR":"*","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-sys-queue backup","JOB":"4","SUSPENDED":"no","TIME":"09:25:44","DATE":"2020-10-06"},"5":{"MIN":"10","HOUR":"05","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-backup-users","JOB":"5","SUSPENDED":"no","TIME":"09:25:44","DATE":"2020-10-06"},"6":{"MIN":"20","HOUR":"00","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-user-stats","JOB":"6","SUSPENDED":"no","TIME":"09:25:44","DATE":"2020-10-06"},"7":{"MIN":"*\/5","HOUR":"*","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-sys-rrd","JOB":"7","SUSPENDED":"no","TIME":"09:25:45","DATE":"2020-10-06"},"8":{"MIN":"53","HOUR":"7","DAY":"*","MONTH":"*","WDAY":"*","CMD":"sudo \/usr\/local\/vesta\/bin\/v-update-sys-vesta-all","JOB":"8","SUSPENDED":"no","TIME":"09:25:47","DATE":"2020-10-06"}})
+        this.getResult("/cron/"+serverId, "GET", null, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    cronAction = (serverId, cronId, action, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("action", action);
+
+        this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    cronUpdate = (serverId, cronId, minute, hour,day, month, wday, command, success = () => { }, faild = () => { })=>{
+        if(!serverId || !cronId || !command) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("min", minute);
+        formData.append("hour", hour);
+        formData.append("day", day);
+        formData.append("month", month);
+        formData.append("wday", wday);
+        formData.append("command", command);
+        formData.append("action", "change");
+
+        this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message, response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
 }
 
 export default ApiHandler;
