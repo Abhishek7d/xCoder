@@ -48,3 +48,8 @@ code {
 .container-fluid.p-0{
   background-color: #343a40;
 }
+ul#server-details-tab-header{
+  border-bottom: 1px solid black;
+  padding-bottom: 15px !important;
+
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import EditCorn from './EditCorn';
+import AddCorn from './AddCorn';
 import ApiHandler from '../../model/ApiHandler';
 
 class CronJobs extends React.Component{
@@ -75,8 +76,12 @@ class CronJobs extends React.Component{
     render(){
         return(
             <div class="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+                <h5 className="col-md-12">Cron Jobs</h5>
                 {(this.state.editCorn===null)?
                     <div class="card">
+                        <div class="card-header">
+                            <button type="button" class="btn btn-primary" onClick={()=>this.setState({editCorn:-1})}>Add Corn</button>
+                        </div>
                         <div class="card-body p-0">
                         <table class="table">
                             <thead>
@@ -107,7 +112,10 @@ class CronJobs extends React.Component{
                         </div>
                     </div>
                     :
-                <EditCorn cron={this.state.editCorn} serverId={this.server.id} cancel={this.cancelEdit} />
+                    ((this.state.editCorn===-1)?
+                    <AddCorn cron={this.state.editCorn} cronUpdated={this.getCrons} serverId={this.server.id} cancel={this.cancelEdit} />
+                    :
+                    <EditCorn cron={this.state.editCorn} cronUpdated={this.getCrons} serverId={this.server.id} cancel={this.cancelEdit} />)
                 }
             </div>
         )

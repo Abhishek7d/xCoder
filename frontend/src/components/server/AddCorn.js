@@ -1,19 +1,18 @@
 import React from 'react';
 import ApiHandler from '../../model/ApiHandler';
 
-class EditCron extends React.Component{
+class AddCorn extends React.Component{
     constructor(props){
         super();
         this.props = props;
         this.cron = props.cron;
         this.state = {
-            minute:this.cron.MIN,
-            hour:this.cron.HOUR,
-            day:this.cron.DAY,
-            month:this.cron.MONTH,
-            wday:this.cron.WDAY,
-            command:this.cron.CMD,
-            cron:props.cron,
+            minute:"",
+            hour:"",
+            day:"",
+            month:"",
+            wday:"",
+            command:"",
             loadding:false,
             error:"",
             success:""
@@ -36,7 +35,7 @@ class EditCron extends React.Component{
             return;
         }
         this.setState({error:"", success:"", loadding:true})
-        this.apiHandler.cronUpdate(this.props.serverId, this.state.cron.JOB, this.state.minute,this.state.hour, this.state.day, this.state.month, this.state.wday, this.state.command, (message, data)=>{
+        this.apiHandler.addCron(this.props.serverId, this.state.minute,this.state.hour, this.state.day, this.state.month, this.state.wday, this.state.command, (message, data)=>{
             this.setState({
                 error:"", 
                 success:message,
@@ -53,7 +52,7 @@ class EditCron extends React.Component{
     render(){
         return(
             <form class="form-horizontal">
-                <h5 className="col-md-12">Editing Cron #{this.state.cron.JOB}</h5>
+                <h5 className="col-md-12">Add New Cron</h5>
                 <p style={{color:"red"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>
                 <p style={{color:"green"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
                 {this.state.loadding?
@@ -105,7 +104,7 @@ class EditCron extends React.Component{
                 </div>
                 }
                 <div class="card-footer">
-                  <button type="button" onClick={this.formSubmit} class="btn btn-info">Update</button>
+                  <button type="button" onClick={this.formSubmit} class="btn btn-info">Add</button>
                   <button type="button" class="btn btn-default float-right" onClick={this.props.cancel}>Cancel</button>
                 </div>
             </form>
@@ -113,4 +112,4 @@ class EditCron extends React.Component{
     }
 }
 
-export default EditCron;
+export default AddCorn;

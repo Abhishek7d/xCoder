@@ -27,7 +27,7 @@ class ServerDetails extends Component {
                     </div>
                     <div className="card-body">
                         <div className="col-12 application_page_cards" id="huddles">
-                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <ul class="nav nav-pills mb-3" id="server-details-tab-header" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" id="pills-summery-tab" data-toggle="pill" href="#pills-summery" role="tab" aria-controls="pills-summery" aria-selected="true">Summery</a>
                                 </li>
