@@ -54,11 +54,13 @@ class Servers extends React.Component {
     }
     serverClickHandler = (server=null) => {
         if(server){
-            this.setState({selectedSever:server});
+            if(server.status==="READY"){
+                this.setState({selectedSever:server});
+                this.setState({
+                    isServerClicked: !this.state.isServerClicked,
+                })
+            }
         }
-        this.setState({
-            isServerClicked: !this.state.isServerClicked,
-        })
     }
 
     render() {
