@@ -22,7 +22,7 @@ class ApiHandler {
                 ).catch((error) => {
                     faild(error.message);
                 }
-                ).done();
+                );
         } catch (error) {
             faild(error.message);
         }
@@ -381,6 +381,22 @@ class ApiHandler {
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
+        
+        if(minute=="*"){
+            minute="'*'";
+        }
+        if(hour=="*"){
+            hour="'*'";
+        }
+        if(day=="*"){
+            day="'*'";
+        }
+        if(month=="*"){
+            month="'*'";
+        }
+        if(wday=="*"){
+            wday="'*'";
+        }
         formData.append("min", minute);
         formData.append("hour", hour);
         formData.append("day", day);
