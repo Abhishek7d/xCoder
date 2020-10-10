@@ -82,7 +82,7 @@ class WebSiteController extends Controller
         //move to command path
         $ssh->write($this->step_one);
         //add webiste
-        $ssh->write("./v-add-domain admin $domain\n");
+        $ssh->write("./v-add-domain admin $domain $server->ip_address\n");
         
         //create Application
         $application = new Application();
