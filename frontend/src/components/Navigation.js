@@ -41,7 +41,7 @@ class Navigation extends React.Component {
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item">
                         <Link to="/profile">
-                            <a href="#" className="nav-link" role="button">
+                            <a href="#" className="nav-link" role="button" style={{objectFit: "contain", fontSize: "18px"}}>
                                 <i className="fas fa-user-circle"></i>
                             </a>
                         </Link>

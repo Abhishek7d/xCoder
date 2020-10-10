@@ -174,7 +174,7 @@ class Applications extends React.Component {
                                             </div>
                                             <div className="col-md-3">
                                                 <select className="form-control" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.dataChange} id="selectedServerFilter">
-                                                    <option value="">Select</option>
+                                                    <option value="">Select Server</option>
                                                     {
                                                         this.renderServers()
                                                     }
@@ -182,7 +182,7 @@ class Applications extends React.Component {
                                             </div>
                                             <div className="col-md-3">
                                                 <select className="form-control" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.dataChange} id="selectedApplicationFilter">
-                                                    <option value="">Select</option>
+                                                    <option value="">Select Application</option>
                                                     {
                                                         this.renderApplicationsfilter()
                                                     }
