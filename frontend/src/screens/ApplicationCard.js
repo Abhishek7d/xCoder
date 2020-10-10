@@ -49,6 +49,9 @@ class ApplicationCard extends React.Component {
                     <div className="card-body">
                         <div className="row mb-2">
                             <div className="col-10 application_page_card_info">
+                            {this.state.loadding?
+                                <img src={require("../assets/images/loading.gif")} style={{ width: "45px" }} />
+                                :
                                 <a href="#" onClick={() => this.props.applicationClickHandler(this.props.application)} >
                                     <div className="row">
                                         <div className="col-1">
@@ -62,6 +65,7 @@ class ApplicationCard extends React.Component {
                                         </div>
                                     </div>
                                 </a>
+                            }
                             </div>
                             <div className="col-2 text-right application_page_card_actions">
                                 <a href={"http://"+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>

@@ -95,6 +95,7 @@ class WebSiteController extends Controller
         if($install_wp){
             //create database
             $db_password = CommonFunctions::generateRandomString(8);
+            $ssh->write("./v-delete-database admin admin_$domain\n");
             $ssh->write("./v-add-database admin $domain $domain $db_password mysql\n");
             
             $ssh->write("cd /home/admin/web/$domain/public_html\n");
