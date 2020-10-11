@@ -99,7 +99,7 @@ class WebSiteController extends Controller
             // $ssh->write("./v-delete-database admin admin_$db_name\n");
             $ssh->write("./v-add-database admin $db_name $db_name $db_password mysql\n");
             
-            $ssh->write("cd /home/admin/web/$db_name/public_html\n");
+            $ssh->write("cd /home/admin/web/$domain/public_html\n");
             
             $ssh->write("su admin\n");
             $ssh->write("wget $this->wp_download_link\n");
