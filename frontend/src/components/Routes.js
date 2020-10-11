@@ -9,15 +9,115 @@ import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
 import Profile from '../screens/Profile';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { read_cookie } from 'sfcookies';
 
 let routes = [
     {
+        path: '/login',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Redirect to="/servers" />;
+            }
+            else{
+                return <Login />;
+            }
+        }
+    },
+    {
+        path: '/register',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Redirect to="/servers" />;
+            }
+            else{
+                return <Register />;
+            }
+        }
+    },
+    {
+        path: '/forgot-password',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Redirect to="/servers" />;
+            }
+            else{
+                return <ForgotPassword/>;
+            }
+        }
+    },
+    {
+        path: '/logout',
+        title: 'Logout',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Redirect to="/servers" />;
+            }
+            else{
+                return <Logout/>;
+            }
+        }
+    },
+    {
+        path: '/servers',
+        title: 'Dashboard',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Servers/>;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/server/create',
+        title: 'Create Server',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <CreateServerScreen/>;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/applications',
+        title: 'Applications',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Applications/>;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/profile',
+        title: 'Profile',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Profile/>;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
         path: '/',
         component: (obj) =>{
-
             let cookie = read_cookie("auth")
-            if(obj.location.pathname=="/reset"){
+            if(obj.location.pathname==="/reset"){
                 return <ResetScreen />;
             }else if(typeof cookie !== "object"){
                 return <Redirect to="/servers" />;
@@ -26,43 +126,6 @@ let routes = [
                 return <Redirect to="/login" />;
             }
         }
-    },
-    {
-        path: '/login',
-        component: () => <Login/>
-    },
-    {
-        path: '/register',
-        component: () => <Register/>
-    },
-    {
-        path: '/forgot-password',
-        component: () => <ForgotPassword/>
-    },
-    {
-        path: '/servers',
-        title: 'Dashboard',
-        component: () => <Servers />
-    },
-    {
-        path: '/server/create',
-        title: 'Create Server',
-        component: () => <CreateServerScreen />
-    },
-    {
-        path: '/applications',
-        title: 'Applications',
-        component: () => <Applications />
-    },
-    {
-        path: '/logout',
-        title: 'Logout',
-        component: () => <Logout />
-    },
-    {
-        path: '/profile',
-        title: 'Profile',
-        component: () => <Profile />
     },
 ];
 

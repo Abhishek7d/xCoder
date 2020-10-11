@@ -1,5 +1,4 @@
 import React from 'react'
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ApiHandler from '../model/ApiHandler';
 
 class ApplicationCard extends React.Component {
@@ -35,7 +34,7 @@ class ApplicationCard extends React.Component {
         this.setState({ error: "", success: "", loadding: true })
         this.apiHandler.deleteApplication(this.state.id, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
-            window.location.href = "/servers";
+            window.location.href = "/applications";
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
             console.log(message);

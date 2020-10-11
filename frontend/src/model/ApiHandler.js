@@ -284,10 +284,10 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token);
 
         this.getResult("/resouces/"+serverId, "GET", null, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.message, response.data)
             }
             else{
@@ -302,10 +302,10 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token);
 
         this.getResult("/server/"+serverId, "GET", null, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.data)
             }
             else{
@@ -344,10 +344,10 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token);
         
         this.getResult("/cron/"+serverId, "GET", null, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.data)
             }
             else{
@@ -364,10 +364,10 @@ class ApiHandler {
         formData.append("action", action);
 
         this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.data)
             }
             else{
@@ -406,10 +406,10 @@ class ApiHandler {
         formData.append("action", "change");
 
         this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.message, response.data)
             }
             else{
@@ -449,10 +449,10 @@ class ApiHandler {
         formData.append("action", "change");
 
         this.getResult("/cron/"+serverId, "POST", formData, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.message, response.data)
             }
             else{
@@ -470,10 +470,10 @@ class ApiHandler {
         formData.append("size", size);
         let url = (action==="resize")?"/storage/resize":"/storage"
         this.getResult(url, "POST", formData, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.message,response.data)
             }
             else{
@@ -489,10 +489,10 @@ class ApiHandler {
         const formData = new FormData();
         formData.append("server", serverId);
         this.getResult("/storage/delete", "POST", formData, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.message,response.data)
             }
             else{
@@ -509,10 +509,10 @@ class ApiHandler {
         formData.append("size", size);
         formData.append("action", "resize");
         this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
-            if(response.status == 0){
+            if(response.status === 0){
                 faild(response.message)
             }
-            else if(response.status == 1){
+            else if(response.status === 1){
                 success(response.message,response.data)
             }
             else{

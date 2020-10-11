@@ -115,14 +115,14 @@ class BlockStorage extends React.Component{
                 <div className="card-footer">
                     <button type="button" onClick={this.formAction} className="btn btn-primary">
                         {this.state.loadding ?
-                            <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                            <img src={require("../../assets/images/loading.gif")} alt="loadding" style={{ width: "25px", filter: "brightness(20)" }} />
                             : ((this.server.storage)?"Resize":"Attach Now")
                         }
                     </button>
                     {this.server.storage?
                     <button type="button" style={{marginLeft:"10px"}} onClick={this.deleteStorage} className="btn btn-danger">
                         {this.state.loadding ?
-                            <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                            <img src={require("../../assets/images/loading.gif")} alt="loadding" style={{ width: "25px", filter: "brightness(20)" }} />
                             : "DELETE"
                         }
                     </button>

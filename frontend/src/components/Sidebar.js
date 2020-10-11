@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { read_cookie } from 'sfcookies';
 import "../App.css";
 
 class Sidebar extends React.Component {
@@ -35,7 +35,7 @@ class Sidebar extends React.Component {
                             <img src={require("../assets/images/user.jpg")} className="img-circle elevation-2" alt="User Image" />
                         </div>
                         <div className="info">
-                            <a href="#" className="d-block">{this.state.name}</a>
+                            <a type="button" href="#" className="d-block">{this.state.name}</a>
                         </div>
                     </div>
                     <nav className="mt-2">

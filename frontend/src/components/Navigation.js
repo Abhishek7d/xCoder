@@ -1,6 +1,6 @@
 import React from 'react';
 import ApiHandler from '../model/ApiHandler';
-import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import { delete_cookie } from 'sfcookies';
 import { Link } from 'react-router-dom';
 
 
@@ -35,19 +35,17 @@ class Navigation extends React.Component {
             <nav className="main-header navbar navbar-expand navbar-white navbar-light">
                 <ul className="navbar-nav">
                     <li className="nav-item">
-                        <a className="nav-link" data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars"></i></a>
+                        <a className="nav-link" data-widget="pushmenu" type="button"><i className="fas fa-bars"></i></a>
                     </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
                     <li className="nav-item">
-                        <Link to="/profile">
-                            <a href="#" className="nav-link" role="button">
-                                <i className="fas fa-user-circle"></i>
-                            </a>
+                        <Link to="/profile"  className="nav-link" role="button">
+                            <i className="fas fa-user-circle"></i>
                         </Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" href="#" role="button" onClick={this.handleLogout}>
+                        <a className="nav-link" type="button" onClick={this.handleLogout}>
                             {this.state.loadding ?
                                 <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                 : <b>Logout</b>

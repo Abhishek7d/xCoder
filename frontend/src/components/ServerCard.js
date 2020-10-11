@@ -1,6 +1,7 @@
 import React from "react";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ApiHandler from '../model/ApiHandler';
+import { Link } from 'react-router-dom';
 
 class ServerCard extends React.Component {
     constructor(props) {
@@ -57,28 +58,26 @@ class ServerCard extends React.Component {
                             <div className="float-left">
                                 <span className="p-2 channel_green_dot btn-success"></span>
                             </div>
-                            <a href="#" onClick={()=>this.props.serverClickHandler(this.props.server)} >
-                                <div className="row">
-                                    <div className="col-1">
-                                        <img style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
-                                    </div>
-                                    <div className="col-5">
-                                        <div className="d-flex">
-                                            <p className="m-0">{this.state.name}</p>
-                                            <span className="badge badge-info ml-4 pt-1">{this.state.status}</span>
-                                        </div>
-                                        <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address}</p>
-                                        <p className="m-0">{this.props.region}</p>
-                                        <p className="mt-3"><small>Created: {new Date(this.state.created_at).toDateString()}</small></p>
-                                    </div>
+                            <div className="row" onClick={()=>this.props.serverClickHandler(this.props.server)}>
+                                <div className="col-1">
+                                    <img style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
                                 </div>
-                            </a>
+                                <div className="col-5">
+                                    <div className="d-flex">
+                                        <p className="m-0">{this.state.name}</p>
+                                        <span className="badge badge-info ml-4 pt-1">{this.state.status}</span>
+                                    </div>
+                                    <p className="m-0">{this.state.size.split("-").pop().toUpperCase()} {this.state.ip_address}</p>
+                                    <p className="m-0">{this.props.region}</p>
+                                    <p className="mt-3"><small>Created: {new Date(this.state.created_at).toDateString()}</small></p>
+                                </div>
+                            </div>
                         </div>
                         <div className="col-sm-3 col-md-3 text-right application_page_card_actions d-flex">
-                            <a href="" className="pl-3">Applications <span className="number_of_users"> {(this.server.applications)?this.server.applications.length:0}</span></a>
-                            {/* <a href="" className="pl-3"><i className="fa fa-folder-open"><span className="number_of_users">0</span></i></a>
-                            <a href="" className="pl-3"><i className="fa fa-user"><span className="number_of_users">0</span></i></a> */}
-
+                            <Link to="/applications" className="pl-3">
+                                Applications <span className="number_of_users"> {(this.server.applications)?this.server.applications.length:0}</span>
+                            </Link>
+                            
                             <Dropdown direction="left" isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                 <DropdownToggle className="btn btn-default ml-3">
                                     <i className="fas fa-ellipsis-v"></i>

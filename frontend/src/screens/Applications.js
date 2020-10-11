@@ -25,7 +25,7 @@ class Applications extends React.Component {
             selectedApplication: null,
             selectedServerFilter: "",
             selectedApplicationFilter: "",
-
+            appLoadding:true
         }
         this.apiHandler = new ApiHandler();
     }
@@ -34,16 +34,21 @@ class Applications extends React.Component {
     }
     componentDidMount() {
         document.title = "Your Applications";
-        this.apiHandler.getApplications((msg, data) => {
-            this.setState({ applications: data })
-        }, err => {
-            this.showError(err);
-        })
+        this.loadApplications();
         this.apiHandler.getServers((msg, data) => {
             this.setState({ servers: data })
         }, err => {
             this.showError(err);
         })
+    }
+    loadApplications(){
+        this.setState({appLoadding:true});
+        this.apiHandler.getApplications((msg, data) => {
+            this.setState({ applications: data, appLoadding: false})
+        }, err => {
+            this.showError(err);
+        })
+        
     }
     renderServers() {
         let servers = [];
@@ -68,41 +73,31 @@ class Applications extends React.Component {
         }
     }
     renderApplications() {
-        if (this.state.isApplicationClicked) {
+        if(this.state.appLoadding){
+            return <div style={{width: "100%",paddingLeft: "40%"}}>
+                    <img src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+                </div>        
+        }
+        if (this.state.selectedApplication) {
             return (<ApplicationDetails applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
         }
-        if (this.state.selectedApplicationFilter != "" && this.state.selectedServerFilter != "") {
-            this.state.applications.forEach((application) => {
-                if (this.state.selectedApplicationFilter == application.id) {
-                    return (<ApplicationDetails applicationClickHandler={this.applicationClickHandler} application={application} />)
-                }
-            })
-        }
-        if (this.state.selectedServerFilter != "") {
-            let applications = [];
-            this.state.servers.forEach((data) => {
-                if (data.id == this.state.selectedServerFilter) {
-                    data.applications.forEach((application, index) => {
-                        applications.push(<ApplicationCard key={index} application={application} applicationClickHandler={this.applicationClickHandler} />);
-                    })
-                }
-            })
-            if (applications.length < 1) {
-                applications = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p>
-            }
-            return applications;
-        }
-        else {
-
-            let applications = [];
+        let applications = [];
+        if(this.state.selectedServerFilter === ""){
             this.state.applications.forEach((data, index) => {
-                applications.push(<ApplicationCard key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
+                applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
             })
-            if (applications.length < 1) {
-                applications = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p>
-            }
-            return applications;
+        }else{
+            this.state.applications.forEach((data, index) => {
+                if(this.state.selectedServerFilter==data.server.id){
+                    applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
+                }
+            })
         }
+
+        if (applications.length < 1) {
+            applications = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p>
+        }
+        return applications;
     }
     handleModalShow = () => {
         this.setState({
@@ -126,8 +121,7 @@ class Applications extends React.Component {
         this.setState({ error: "", success: "", loadding: true })
         this.apiHandler.createApplication(this.state.selectedServerId, this.state.selectedDomain, this.state.isWordpress, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
-            window.location.href = "/applications"
-            console.log(data, message);
+            this.loadApplications();
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
             console.log(message);
@@ -142,13 +136,27 @@ class Applications extends React.Component {
             this.setState({ [event.target.name]: event.target.value })
         }
     }
-    applicationClickHandler = (application = null) => {
-        if (application) {
-            this.setState({ selectedApplication: application })
+    updateSelectedAplication  = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
+        if(!event.target.value){
+            this.setState({selectedApplication:null})
+        }else{
+            let selectedApplication = event.target.value;
+            this.state.applications.forEach(data=>{
+                if(data.id == selectedApplication){
+                    this.setState({selectedApplication:data})
+                }
+            }) 
         }
-        this.setState({
-            isApplicationClicked: !this.state.isApplicationClicked
-        })
+    }
+    updateSelectedServer = (event)=>{
+        this.setState({selectedApplication:null, selectedApplicationFilter:"", [event.target.name]: event.target.value })
+    }
+    applicationClickHandler = (application = null) => {
+        if(!application){
+            this.setState({selectedApplicationFilter:""})
+        }
+        this.setState({ selectedApplication: application })
     }
 
     render() {
@@ -176,16 +184,16 @@ class Applications extends React.Component {
                                                 <a href="#" className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Application</a>
                                             </div>
                                             <div className="col-md-3">
-                                                <select className="form-control" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.dataChange} id="selectedServerFilter">
-                                                    <option value="">Select</option>
+                                                <select className="form-control" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
+                                                    <option value="">All</option>
                                                     {
                                                         this.renderServers()
                                                     }
                                                 </select>
                                             </div>
                                             <div className="col-md-3">
-                                                <select className="form-control" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.dataChange} id="selectedApplicationFilter">
-                                                    <option value="">Select</option>
+                                                <select className="form-control" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.updateSelectedAplication} id="selectedApplicationFilter">
+                                                    <option value="">All</option>
                                                     {
                                                         this.renderApplicationsfilter()
                                                     }
@@ -216,7 +224,7 @@ class Applications extends React.Component {
                             <p style={{color:"green"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
                             
                             <div className="form-group">
-                                <label htmlFor="selectedDomain">Select Domain</label>
+                                <label htmlFor="selectedDomain">Enter Domain Name</label>
                                 <input required type="text" className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
                             </div>
                             <div className="form-group">

@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Routes from "./components/Routes";
-import { BrowserRouter as Router, Route, Redirect, IndexRoute } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect, Switch, IndexRoute } from "react-router-dom";
 // import { Router, Route, Link, browserHistory, IndexRoute } from 'react-router'
 
 import Login from './screens/Login';
@@ -20,12 +20,11 @@ function indexComponent(){
 function App() {
   return (
     <Router>
-      <Route path = "/" component = {indexComponent}>
-        {/* <IndexRoute component = {indexComponent} /> */}
+      <Switch>
         {Routes.map((x,i) =>
-            <Route key={i} path={x.path} component={x.component} />
+              <Route key={i} path={x.path} component={x.component} />
         )}
-      </Route>
+      </Switch>
     </Router>
   );
 }

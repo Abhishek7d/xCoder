@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
-import ApiHandler from '../model/ApiHandler';
 import "../index.css"
-import { findLastKey } from 'lodash';
 import Services from "./server/Services";
 import CronJobs from "./server/CronJobs";
 import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
 import BlockStorage from "./server/BlockStorage";
-import UpgradeServer from "./server/UpgradeServer";
+// import UpgradeServer from "./server/UpgradeServer";
 
 class ServerDetails extends Component {
     constructor(props) {

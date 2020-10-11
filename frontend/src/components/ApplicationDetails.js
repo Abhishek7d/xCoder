@@ -14,7 +14,7 @@ class ApplicationDetails extends Component {
                 <div className="card card-primary card-outline">
                     <div className="card-header">
                         <div className="col-3 float-left" style={{display: "flex"}}>
-                            <a className="nav-link" href="#" onClick={this.props.applicationClickHandler}><i className="fas fa-arrow-left"></i></a>
+                            <a className="nav-link" type="button" onClick={()=>this.props.applicationClickHandler()}><i className="fas fa-arrow-left"></i></a>
                             <h5 className="nav-link font-weight-bold text-secondary" style={{minWidth:"max-content"}}>{this.application.domain}</h5>
                             <span className="badge badge-info ml-4 pt-1" style={{height:"20px",margin:"auto"}}>{this.application.status}</span>
 

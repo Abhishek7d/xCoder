@@ -57,7 +57,7 @@ class CreateServerScreen extends React.Component {
         if (this.state.loadding) {
             return;
         }
-        this.setState({ error: "", success: "", loadding: false })
+        this.setState({ error: "", success: "", loadding: true })
         this.apiHandler.createServer(this.state.name, this.state.size, this.state.location, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
             window.location.href = "/servers"
@@ -100,7 +100,7 @@ class CreateServerScreen extends React.Component {
     }
     renderLocations (){
         let tmp_data = [];
-        if(this.state.sizes==undefined){
+        if(this.state.sizes===undefined){
             return;
         }
         let tmp = Object.values(this.state.sizes);
@@ -142,7 +142,6 @@ class CreateServerScreen extends React.Component {
                                     <div className="card card-primary card-outline">
                                         <div className="card-header">
                                             <div className="col-3 float-left" style={{display: "flex"}}>
-                                                <a  href="#" onClick={this.props.serverClickHandler}></a>
                                                 <Link className="nav-link" to="/servers">
                                                     <i className="fas fa-arrow-left"></i>
                                                 </Link>
@@ -192,7 +191,7 @@ class CreateServerScreen extends React.Component {
                                             <div className="card-footer">
                                                 <button type="button" onClick={this.formAction} className="btn btn-primary">
                                                     {this.state.loadding ?
-                                                        <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                        <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                                         : "LAUNCH NOW"
                                                     }
 
