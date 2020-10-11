@@ -25,9 +25,9 @@ class Summery extends React.Component{
     }
     render(){
         return(
-            // <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+            // <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                                 
-            <div class="tab-pane fade show active" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            <div className="tab-pane fade show active" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
                 <div className="row col-md-12">
                     <div className="col-sm-6 col-md-2 d-flex flex-column">
                         <span className="mt-3 font-weight-bold text-info">Size :</span>

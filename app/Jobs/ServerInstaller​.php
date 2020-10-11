@@ -25,7 +25,7 @@ class ServerInstaller​ implements ShouldQueue
     public $server = null;
     public $step_zero = "screen \n";
     public $step_one = "curl -O http://vestacp.com/pub/vst-install.sh";
-    public $step_two = 'bash vst-install.sh --nginx yes --apache yes --phpfpm no --named yes --remi yes --vsftpd yes --proftpd no --iptables yes --fail2ban yes --quota no --exim yes --dovecot yes --spamassassin yes --clamav yes --softaculous no --mysql yes --postgresql no --hostname IP_ADDRESS --email USER_EMAIL --password USER_PASSWORD -f -y no ';
+    public $step_two = 'bash vst-install.sh --nginx yes --apache yes --phpfpm no --named yes --remi yes --vsftpd yes --proftpd no --iptables yes --fail2ban yes --quota no --exim yes --dovecot yes --spamassassin yes --clamav yes --softaculous no --mysql yes --postgresql no --hostname IP_ADDRESS --email dsaha1656@gmail.com --password USER_PASSWORD -f -y no ';
     public $step_two_cmd = " && wget APP_URL/api/completed/SERVER_ID/HASHED";
     public function __construct(Server $server)
     {
@@ -94,7 +94,7 @@ class ServerInstaller​ implements ShouldQueue
                         }
                         $user = User::find($server->user_id);
                         $this->step_two = str_replace('IP_ADDRESS', $server->ip_address, $this->step_two);
-                        $this->step_two = str_replace('USER_EMAIL', $user->email, $this->step_two);
+                        // $this->step_two = str_replace('USER_EMAIL', $user->email, $this->step_two);
                         $this->step_two = str_replace('USER_PASSWORD', $server->password, $this->step_two);
                         $this->step_two_cmd = str_replace("APP_URL", env('APP_URL'), $this->step_two_cmd);
                         $this->step_two_cmd = str_replace("SERVER_ID", $server->id, $this->step_two_cmd);

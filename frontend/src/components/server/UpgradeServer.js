@@ -81,7 +81,7 @@ class UpgradeServer extends React.Component {
     }
     render() {
         return (
-            <div class="tab-pane fade show active" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            <div className="tab-pane fade show active" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
                 
                 <form action="#" method="post">
                     <p style={{color:"red",textAlign:"center"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>

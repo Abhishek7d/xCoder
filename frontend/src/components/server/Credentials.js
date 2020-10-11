@@ -8,7 +8,7 @@ class Credentials extends React.Component{
     }
     render(){
         return(
-            <div class="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
                 <div className="row ml-2">
                     <div className="col-md-12 d-flex flex-column">
                         <h5>SSH/SFTP Access

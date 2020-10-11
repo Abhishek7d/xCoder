@@ -89,25 +89,25 @@ class BlockStorage extends React.Component{
     }
     render(){
         return(
-            <div class="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
                 <p style={{color:"red",textAlign:"center"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>
                 <p style={{color:"green",textAlign:"center"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
     
                 <div className="card-body">
 
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h5 class="">Add Storage To Server 
+                    <div className="row">
+                        <div className="col-sm-12">
+                            <h5 className="">Add Storage To Server 
                             {(this.server.storage)?" ( Currently Added "+this.server.storage.size+"GB )":""}
                             </h5>
                             <br/>
                         </div>
-                        <div class="col-sm-2" style={{display: "inherit"}}>
+                        <div className="col-sm-2" style={{display: "inherit"}}>
 
                         <input value={this.state.value} min={this.state.min} onChange={this.handleChange} type="number" id="gb" style={{width:"80%"}}/>
                         GB
                         </div>
-                        <input class="col-sm-10" type="range" min={this.state.min} value={this.state.value}  onChange={this.handleChange} max="20" step="1"/>
+                        <input className="col-sm-10" type="range" min={this.state.min} value={this.state.value}  onChange={this.handleChange} max="20" step="1"/>
                     </div>    
                 <br />
 

@@ -8,18 +8,18 @@ class Resources extends React.Component{
         this.props = props;
         this.server = props.server;
         this.state = {
-            cpu:90,
+            cpu:0,
             disk:{
                 used:0,
                 available:10,
                 total:10,
-                percentage:20
+                percentage:0
             },
             memory:{
                 used:0,
                 available:10,
                 total:10,
-                percentage:20
+                percentage:0
             },
             loadding:false,
         }
@@ -58,9 +58,9 @@ class Resources extends React.Component{
     }
     render(){
         return(
-            <div class="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
                 <div onClick={this.loadResources} className="col-md-12" style={{ display: "flex"}}>
-                    <h5 class="col-sm-2" style={{minWidth: "max-content"}}>Refresh Data</h5>
+                    <h5 className="col-sm-2" style={{minWidth: "max-content"}}>Refresh Data</h5>
                     <i className={(this.state.loadding)?"fas fa-sync spin":"fas fa-sync "} style={{width: "17px", height: "17px"}}></i>
                 </div>
                 <div className="col-sm-12">

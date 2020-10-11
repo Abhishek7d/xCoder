@@ -51,21 +51,21 @@ class CronJobs extends React.Component{
                 <th>
                     <div style={{display:"flex"}}>
                         {(tmpout.SUSPENDED==="no")?
-                        <><div class="dot-green"></div>Running</>
+                        <><div className="dot-green"></div>Running</>
                         :
-                        <><div class="dot-red"></div>Suspended</>
+                        <><div className="dot-red"></div>Suspended</>
                         }
                     </div>
                 </th>
                 <th>
                     <div className="cron-action">
-                        <button type="button" class="btn btn-primary" jobid={tmpout.JOB} onClick={this.cronEdit}>Edit</button>
+                        <button type="button" className="btn btn-primary" jobid={tmpout.JOB} onClick={this.cronEdit}>Edit</button>
                         {(tmpout.SUSPENDED==="no")?
-                        <button type="button" class="btn btn-primary" onClick={()=>this.cronAction("suspend", tmpout.JOB)}>Suspend</button>
+                        <button type="button" className="btn btn-primary" onClick={()=>this.cronAction("suspend", tmpout.JOB)}>Suspend</button>
                         :
-                        <button type="button" class="btn btn-primary" onClick={()=>this.cronAction("unsuspend", tmpout.JOB)}>Unsuspend</button>
+                        <button type="button" className="btn btn-primary" onClick={()=>this.cronAction("unsuspend", tmpout.JOB)}>Unsuspend</button>
                         }
-                        <button type="button" class="btn btn-danger" onClick={()=>this.cronAction("delete", tmpout.JOB)}>Delete</button>
+                        <button type="button" className="btn btn-danger" onClick={()=>this.cronAction("delete", tmpout.JOB)}>Delete</button>
                     </div>
                 </th>
             </tr>
@@ -75,15 +75,15 @@ class CronJobs extends React.Component{
     }
     render(){
         return(
-            <div class="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
                 <h5 className="col-md-12">Cron Jobs</h5>
                 {(this.state.editCorn===null)?
-                    <div class="card">
-                        <div class="card-header">
-                            <button type="button" class="btn btn-primary" onClick={()=>this.setState({editCorn:-1})}>Add Corn</button>
+                    <div className="card">
+                        <div className="card-header">
+                            <button type="button" className="btn btn-primary" onClick={()=>this.setState({editCorn:-1})}>Add Corn</button>
                         </div>
-                        <div class="card-body p-0">
-                        <table class="table">
+                        <div className="card-body p-0">
+                        <table className="table">
                             <thead>
                                 <tr>
                                 <th style={{width: "10px"}}>ID</th>

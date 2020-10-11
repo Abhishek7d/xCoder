@@ -11,7 +11,8 @@ class Services extends React.Component{
             nginx:false,
             mysql:false,
             cron:false,
-            serviceLoadding:false
+            serviceLoadding:false,
+            loadding:false
         }
         this.apiHandler = new ApiHandler();
     }
@@ -35,12 +36,14 @@ class Services extends React.Component{
         })
     }
     getServices = () =>{
+        this.setState({serviceLoadding:true})
         this.apiHandler.getServicesStatus(this.server.id, (data)=>{
             this.setState({
                 apache:(data.apache==="active"),
                 nginx:(data.nginx==="active"),
                 mysql:(data.mysql==="active"),
-                cron:(data.cron==="active")
+                cron:(data.cron==="active"),
+                serviceLoadding:false
             })
         }, (err)=>{
             console.log(err);
@@ -48,10 +51,10 @@ class Services extends React.Component{
     }
     render(){
         return (
-            <div class="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
-                <div class="card">
-                    <div class="card-body p-0">
-                    <table class="table">
+            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+                <div className="card">
+                    <div className="card-body p-0">
+                    <table className="table">
                         <thead>
                             <tr>
                             <th style={{width: "10px"}}></th>
@@ -72,17 +75,17 @@ class Services extends React.Component{
                                 <td>
                                     <div style={{display:"flex"}}>
                                         {(this.state.apache)?
-                                        <><div class="dot-green"></div>Running</>
+                                        <><div className="dot-green"></div>Running</>
                                         :
-                                        <><div class="dot-red"></div>Stopped</>
+                                        <><div className="dot-red"></div>Stopped</>
                                         }
                                     </div>
                                 </td>
                                 <td>
                                     {(this.state.apache)?
-                                    <a class="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</a>
+                                    <a className="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</a>
                                     :
-                                    <a class="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</a>
+                                    <a className="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</a>
                                     }
                                 </td>
                             </tr>
@@ -92,17 +95,17 @@ class Services extends React.Component{
                                 <td>
                                     <div style={{display:"flex"}}>
                                         {(this.state.mysql)?
-                                        <><div class="dot-green"></div>Running</>
+                                        <><div className="dot-green"></div>Running</>
                                         :
-                                        <><div class="dot-red"></div>Stopped</>
+                                        <><div className="dot-red"></div>Stopped</>
                                         }
                                     </div>
                                 </td>
                                 <td>
                                     {(this.state.mysql)?
-                                    <a class="btn btn-info white " onClick={()=>this.updateService("mysql")}>Stop</a>
+                                    <a className="btn btn-info white " onClick={()=>this.updateService("mysql")}>Stop</a>
                                     :
-                                    <a class="btn btn-info white" onClick={()=>this.updateService("mysql")}>Start</a>
+                                    <a className="btn btn-info white" onClick={()=>this.updateService("mysql")}>Start</a>
                                     }
                                 </td>
                             </tr>
@@ -112,17 +115,17 @@ class Services extends React.Component{
                                 <td>
                                     <div style={{display:"flex"}}>
                                         {(this.state.nginx)?
-                                        <><div class="dot-green"></div>Running</>
+                                        <><div className="dot-green"></div>Running</>
                                         :
-                                        <><div class="dot-red"></div>Stopped</>
+                                        <><div className="dot-red"></div>Stopped</>
                                         }
                                     </div>
                                 </td>
                                 <td>
                                     {(this.state.nginx)?
-                                    <a class="btn btn-info white " onClick={()=>this.updateService("nginx")}>Stop</a>
+                                    <a className="btn btn-info white " onClick={()=>this.updateService("nginx")}>Stop</a>
                                     :
-                                    <a class="btn btn-info white" onClick={()=>this.updateService("nginx")}>Start</a>
+                                    <a className="btn btn-info white" onClick={()=>this.updateService("nginx")}>Start</a>
                                     }
                                 </td>
                             </tr>
@@ -132,17 +135,17 @@ class Services extends React.Component{
                                 <td>
                                     <div style={{display:"flex"}}>
                                         {(this.state.cron)?
-                                        <><div class="dot-green"></div>Running</>
+                                        <><div className="dot-green"></div>Running</>
                                         :
-                                        <><div class="dot-red"></div>Stopped</>
+                                        <><div className="dot-red"></div>Stopped</>
                                         }
                                     </div>
                                 </td>
                                 <td>
                                     {(this.state.cron)?
-                                    <a class="btn btn-info white " onClick={()=>this.updateService("cron")}>Stop</a>
+                                    <a className="btn btn-info white " onClick={()=>this.updateService("cron")}>Stop</a>
                                     :
-                                    <a class="btn btn-info white" onClick={()=>this.updateService("cron")}>Start</a>
+                                    <a className="btn btn-info white" onClick={()=>this.updateService("cron")}>Start</a>
                                     }
                                 </td>
                             </tr>

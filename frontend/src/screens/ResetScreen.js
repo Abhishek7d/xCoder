@@ -105,7 +105,7 @@ class ResetScreen extends React.Component {
                                                 </div>
                                                 <div className="col-6">
                                                     <p className="mb-0 font-weight-lighter">
-                                                        <Link to="/register" class="text-center">
+                                                        <Link to="/register" className="text-center">
                                                             <small><u>New to Parvaty? SignUp</u></small>
                                                         </Link>
                                                     </p>
