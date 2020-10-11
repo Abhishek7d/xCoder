@@ -95,10 +95,11 @@ class WebSiteController extends Controller
         if($install_wp){
             //create database
             $db_password = CommonFunctions::generateRandomString(8);
-            $ssh->write("./v-delete-database admin admin_$domain\n");
-            $ssh->write("./v-add-database admin $domain $domain $db_password mysql\n");
+            $db_name = CommonFunctions::generateRandomString(5);
+            // $ssh->write("./v-delete-database admin admin_$db_name\n");
+            $ssh->write("./v-add-database admin $db_name $db_name $db_password mysql\n");
             
-            $ssh->write("cd /home/admin/web/$domain/public_html\n");
+            $ssh->write("cd /home/admin/web/$db_name/public_html\n");
             
             $ssh->write("su admin\n");
             $ssh->write("wget $this->wp_download_link\n");
@@ -107,8 +108,8 @@ class WebSiteController extends Controller
             $ssh->write("rm -rf latest.zip wordpress index.html robots.txt\n");
             $table_prefix = '$table_prefix';
             $config = file_get_contents($this->sample_wp_config);
-            $config = str_replace("VESTA_DB_NAME", "admin_$domain", $config);
-            $config = str_replace("VESTA_DB_USER", "admin_$domain", $config);
+            $config = str_replace("VESTA_DB_NAME", "admin_$db_name", $config);
+            $config = str_replace("VESTA_DB_USER", "admin_$db_name", $config);
             $config = str_replace("VESTA_DB_PASSWORD", $db_password, $config);
             $ssh->write("$config\n");
             $application->db_name = "admin_$domain";
