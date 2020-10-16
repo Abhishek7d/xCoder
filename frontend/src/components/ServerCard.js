@@ -53,7 +53,7 @@ class ServerCard extends React.Component {
             <div className="card card-outline">
                 <div className="card-body">
                     <div className="row mb-2">
-                        <div className="col-sm-12 col-md-9 application_page_card_info">
+                        <div className="col-sm-9 col-md-9 application_page_card_info">
                             <div className="float-left">
                                 <span className="p-2 channel_green_dot btn-success"></span>
                             </div>
@@ -74,22 +74,22 @@ class ServerCard extends React.Component {
                                 </div>
                             </a>
                         </div>
-                        <div className="col-sm-12 col-md-3 text-right application_page_card_actions d-flex">
-                            <a href="" className="pl-3">www<span className="number_of_users"> 0</span></a>
-                            <a href="" className="pl-3"><i className="fa fa-folder-open"><span className="number_of_users">0</span></i></a>
-                            <a href="" className="pl-3"><i className="fa fa-user"><span className="number_of_users">0</span></i></a>
+                        <div className="col-sm-3 col-md-3 text-right application_page_card_actions d-flex">
+                            <a href="" className="pl-3">Applications <span className="number_of_users"> {(this.server.applications)?this.server.applications.length:0}</span></a>
+                            {/* <a href="" className="pl-3"><i className="fa fa-folder-open"><span className="number_of_users">0</span></i></a>
+                            <a href="" className="pl-3"><i className="fa fa-user"><span className="number_of_users">0</span></i></a> */}
 
                             <Dropdown direction="left" isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                 <DropdownToggle className="btn btn-default ml-3">
                                     <i className="fas fa-ellipsis-v"></i>
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem key="1"><a className="dropdown-item" href="#"><i className="fa fa-stop "></i>&nbsp;Stop</a></DropdownItem>
-                                    <DropdownItem key="2"><a className="dropdown-item" href="#"><i className="fa fa-redo" aria-hidden="true"></i>&nbsp;Restart</a></DropdownItem>
+                                    {/* <DropdownItem key="1"><a className="dropdown-item" href="#"><i className="fa fa-stop "></i>&nbsp;Stop</a></DropdownItem>
+                                    <DropdownItem key="2"><a className="dropdown-item" href="#"><i className="fa fa-redo" aria-hidden="true"></i>&nbsp;Restart</a></DropdownItem> */}
                                     <DropdownItem key="3"><a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash"></i>&nbsp;Delete</a></DropdownItem>
-                                    <DropdownItem key="4"><a className="dropdown-item" href="#"><i className="fa fa-globe"></i>&nbsp;Add Application</a></DropdownItem>
+                                    {/* <DropdownItem key="4"><a className="dropdown-item" href="#"><i className="fa fa-globe"></i>&nbsp;Add Application</a></DropdownItem>
                                     <DropdownItem key="5"><a className="dropdown-item" href="#"><i className="fa fa-server"></i>&nbsp;Transfer Server</a></DropdownItem>
-                                    <DropdownItem key="6"><a className="dropdown-item" href="#"><i className="fa fa-clone"></i>&nbsp;Clone Server</a></DropdownItem>
+                                    <DropdownItem key="6"><a className="dropdown-item" href="#"><i className="fa fa-clone"></i>&nbsp;Clone Server</a></DropdownItem> */}
                                 </DropdownMenu>
                             </Dropdown>
                         </div>

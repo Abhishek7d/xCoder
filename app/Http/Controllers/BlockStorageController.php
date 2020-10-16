@@ -151,6 +151,6 @@ class BlockStorageController extends Controller
         $block = CommonFunctions::makeRequest("/volumes/$storage->storage_id","DELETE");
         
         $storage->delete();
-        return CommonFunctions::sendResponse(1, "Block Storage Deleted successfully");
+        return CommonFunctions::sendResponse(1, "Block Storage Deleted successfully", $block);
     }
 }

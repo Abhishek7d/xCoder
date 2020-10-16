@@ -14,4 +14,10 @@ class Server extends Model{
     protected $hidden = [
         'droplet_id','hashed','deleted_at'
     ];
+    public function applications(){
+        return $this->hasMany('App\Models\Application', 'server_id');
+    }
+    public function storage(){
+        return $this->hasOne("App\Models\Storage", "server_id");
+    }
 }

@@ -18,6 +18,7 @@ class ApplicationCard extends React.Component {
             db_username: props.application.db_username,
             db_password: props.application.db_password,
             ssl_enabled: props.application.ssl_enabled,
+            server: props.application.server,
             loadding: false,
             error: "",
             success: "",
@@ -49,27 +50,24 @@ class ApplicationCard extends React.Component {
                                 <a href="#" onClick={() => this.props.applicationClickHandler(this.props.application)} >
                                     <div className="row">
                                         <div className="col-1">
-                                            <img style={{ width: "50%" }} src={require("../assets/images/wordpress.png")} />
+                                            <img style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />
                                         </div>
-                                        <div className="col-4">
-                                            <h6 className="text-info font-weight-bold">Domain Name : <span className="bg-primary px-2 pb-1 rounded">{this.state.domain}</span></h6>
-                                            <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">Lifehacks Server</p></span>
+                                        <div className="col-11">
+                                            <span className="text-info d-flex font-weight-bold">Domain Name : &nbsp;<p className="m-0 text-primary">{this.state.domain}</p></span>
+                                            <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">{this.server.domain}</p></span>
                                             <span className="text-info d-flex font-weight-bold">Status : &nbsp;<span className="text-primary">{this.state.status}</span></span>
-                                            <p className="mt-3"><small>Created : {this.state.created_at}</small></p>
-
+                                            <p className="mt-3"><small>Created : {new Date(this.state.created_at).toDateString()}</small></p>
                                         </div>
                                     </div>
                                 </a>
                             </div>
                             <div className="col-2 text-right application_page_card_actions">
-                                <a href="" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
-                                <a href="" className="pl-3"><i className="fa fa-user"><span className="number_of_users">0</span></i></a>
+                                <a href={"http://"+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
                                 <div className="btn-group pl-4 px-1 dropleft" style={{ cursor: "pointer" }}>
                                     <i className="fas fa-ellipsis-v" data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false"></i>
                                     <div className="dropdown-menu">
                                         <a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash danger"></i>&nbsp;Delete</a>
-                                        <a className="dropdown-item" href="#"><i className="fa fa-clone info"></i>&nbsp;Clone App/Create Staging</a>
                                     </div>
                                 </div>
                             </div>

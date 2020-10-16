@@ -20,9 +20,10 @@ class ApiHandler {
                     success(response);
                 }
                 ).catch((error) => {
+                    console.log(error)
                     faild(error.message);
                 }
-                ).done();
+                );
         } catch (error) {
             faild(error.message);
         }
@@ -294,13 +295,117 @@ class ApiHandler {
             }
         },faild);
     }
-    getServices = (serverId, success = () => { }, faild = () => { }) => {
+    getServicesStatus = (serverId, success = () => { }, faild = () => { } ) => {
         if(!serverId) return;
         let access_token = read_cookie("auth");
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
         this.getResult("/server/"+serverId, "GET", null, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    updateService = (serverId, service, action, success = () => { }, faild = () => { } ) => {
+        action = action?"start":"stop";
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("service", service);
+        formData.append("action", action);
+
+        this.getResult("/server/"+serverId, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.data);
+            } else {
+                faild("something went wrong");
+            }
+        },faild);
+    }
+    getCronJobs = (serverId, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        
+        this.getResult("/cron/"+serverId, "GET", null, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    cronAction = (serverId, cronId, action, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("action", action);
+
+        this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    cronUpdate = (serverId, cronId, minute, hour,day, month, wday, command, success = () => { }, faild = () => { })=>{
+        if(!serverId || !cronId || !command) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        
+        if(typeof typeof minute==="string"){
+            minute="'"+minute+"'";
+        }
+        if(typeof hour==="string"){
+            hour="'"+hour+"'";
+        }
+        if(typeof day==="string"){
+            day="'"+day+"'";
+        }
+        if(typeof month==="string"){
+            month="'"+month+"'"
+        }
+        if(typeof wday==="string"){
+            wday="'"+wday+"'"
+        }
+        formData.append("min", minute);
+        formData.append("hour", hour);
+        formData.append("day", day);
+        formData.append("month", month);
+        formData.append("wday", wday);
+        formData.append("command", command);
+        formData.append("action", "change");
+
+        this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
             if(response.status == 0){
                 faild(response.message)
             }
@@ -313,21 +418,102 @@ class ApiHandler {
         },faild);
     }
 
-    changePassword = (oldPassword, newPassword, success = () => { }, faild = () => { }) => {
-        if(!oldPassword || !newPassword) return;
+    addCron = (serverId, minute, hour,day, month, wday, command, success = () => { }, faild = () => { })=>{
+        if(!serverId || !command) return;
         let access_token = read_cookie("auth");
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
-        formData.append("oldPassword", oldPassword);
-        formData.append("newPassword", newPassword);
+        
+        if(typeof typeof minute==="string"){
+            minute="'"+minute+"'";
+        }
+        if(typeof hour==="string"){
+            hour="'"+hour+"'";
+        }
+        if(typeof day==="string"){
+            day="'"+day+"'";
+        }
+        if(typeof month==="string"){
+            month="'"+month+"'"
+        }
+        if(typeof wday==="string"){
+            wday="'"+wday+"'"
+        }
+        formData.append("min", minute);
+        formData.append("hour", hour);
+        formData.append("day", day);
+        formData.append("month", month);
+        formData.append("wday", wday);
+        formData.append("command", command);
+        formData.append("action", "change");
 
-        this.getResult("/change_password", "POST", formData, authHeaders, (response) => {
+        this.getResult("/cron/"+serverId, "POST", formData, authHeaders, (response) => {
             if(response.status == 0){
                 faild(response.message)
             }
             else if(response.status == 1){
                 success(response.message, response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    addStorage = (serverId, size, action, success = () => { }, faild = () => { } ) => {
+        if(!serverId || !size || !action) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("server", serverId);
+        formData.append("size", size);
+        let url = (action==="resize")?"/storage/resize":"/storage"
+        this.getResult(url, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message,response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    deleteStorage  = (serverId, success = () => { }, faild = () => { } ) => {
+        if(!serverId) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("server", serverId);
+        this.getResult("/storage/delete", "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message,response.data)
+            }
+            else{
+                faild("something went wrong")
+            }
+        },faild);
+    }
+    serverUpgrade  = (serverId, size, success = () => { }, faild = () => { } ) => {
+        if(!serverId || !size) return;
+        let access_token = read_cookie("auth");
+        let authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token);
+        const formData = new FormData();
+        formData.append("size", size);
+        formData.append("action", "resize");
+        this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
+            if(response.status == 0){
+                faild(response.message)
+            }
+            else if(response.status == 1){
+                success(response.message,response.data)
             }
             else{
                 faild("something went wrong")

@@ -5,7 +5,7 @@ import ApiHandler from '../model/ApiHandler';
 import 'jquery/dist/jquery.min.js';
 import 'popper.js/dist/popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import Select from "react-select";
+import {Link} from 'react-router-dom';
 
    
 class CreateServerScreen extends React.Component {
@@ -141,11 +141,15 @@ class CreateServerScreen extends React.Component {
                             <div className="row">
                                 
                                 <div className="col-12">
-                                    <div className="card">
+                                    <div className="card card-primary card-outline">
                                         <div className="card-header">
-                                            <h3 className="card-title">
-                                                Create Server
-                                            </h3>
+                                            <div className="col-3 float-left" style={{display: "flex"}}>
+                                                <a  href="#" onClick={this.props.serverClickHandler}></a>
+                                                <Link className="nav-link" to="/servers">
+                                                    <i className="fas fa-arrow-left"></i>
+                                                </Link>
+                                                <h5 className="nav-link font-weight-bold text-secondary" style={{minWidth:"max-content"}}>{"Create Server"}</h5>
+                                            </div>
                                         </div>
                                         <form action="#" method="post">
                                             <p style={{color:"red",textAlign:"center"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>

@@ -12,7 +12,7 @@ class ServiceController extends Controller
     private $step_one = "cd /usr/local/vesta/bin/\n";
     
     private function filterDisplayData($data){
-        $data = explode("\n", $data);
+	$data = explode("\n", $data);
         $data = array_slice($data, 2);
         array_pop($data);
         $data = implode("\n", $data);
@@ -36,7 +36,7 @@ class ServiceController extends Controller
         
         $apache_status = $ssh->exec(str_replace("SERVICE", "apache2", $this->checkStatus));
         $mysql_status = $ssh->exec(str_replace("SERVICE", "mysql", $this->checkStatus));
-        $ngnix_status = $ssh->exec(str_replace("SERVICE", "mysql", $this->checkStatus));
+        $ngnix_status = $ssh->exec(str_replace("SERVICE", "nginx", $this->checkStatus));
         $cron_status = $ssh->exec(str_replace("SERVICE", "cron", $this->checkStatus));
         
         $data = ['nginx'=>trim($ngnix_status), 'apache'=>trim($apache_status), 'mysql'=>trim($mysql_status), 'cron'=>trim($cron_status)];
@@ -151,8 +151,10 @@ class ServiceController extends Controller
         $ssh->write("v-list-cron-jobs admin json\n");
         $data = $ssh->read();
         $data = $this->filterDisplayData($data);
-        $data = json_decode($data);
-        return CommonFunctions::sendResponse(1, "List of Cron jobs", $data);
+	$data = explode("v-list-cron-jobs admin json",$data);
+	$data = array_pop($data);
+	$data = json_decode($data);
+	return CommonFunctions::sendResponse(1, "List of Cron jobs", $data);
     }
     public function addCronjob(Request $request, $server){
         $server = Server::find($server);
@@ -187,10 +189,14 @@ class ServiceController extends Controller
         $ssh->write("v-add-cron-job admin $min $hour $day $month $wday '$command'\n");
 
         $data = $ssh->read();
-        $data = $this->filterDisplayData($data);
-        // $data = json_decode($data);
-        $data = explode("::", $data);
-        if(count($data)>1){
+	$data = $this->filterDisplayData($data);
+	//var_dump($data);die;
+	$data = explode("$command'",$data);
+        $data = array_pop($data);
+	// $data = json_decode($data);
+        $data = explode("Error:", $data);
+	if(count($data)>1){
+		$data = explode("::", array_pop($data));
             return CommonFunctions::sendResponse(0, trim($data[0]));
         }
         return CommonFunctions::sendResponse(1, "Cron job added");
@@ -251,12 +257,13 @@ class ServiceController extends Controller
 
         $data = $ssh->read();
         $data = $this->filterDisplayData($data);
-        // $data = json_decode($data);
-        $data = explode("::", $data);
-        if(count($data)>1){
+	$data = explode("v-update-sys-vesta-all'",$data);
+	$data = array_pop($data);
+	$data = explode("::", $data);
+	if(count($data)>1){
             return CommonFunctions::sendResponse(0, trim($data[0]));
         }
-        return CommonFunctions::sendResponse(1, "Cron job successfully $action"."ed");
+        return CommonFunctions::sendResponse(1, "Cron job successfully $action"."ed", $data);
         
     }
 }

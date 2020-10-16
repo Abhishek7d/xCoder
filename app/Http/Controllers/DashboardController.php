@@ -42,26 +42,47 @@ class DashboardController extends Controller
         }
         return 0;
     }
-    public function destroyDroplet(Request $request, $id){
+    public function dropletAction(Request $request, $id){
         $action = $request->get('action');
-        if($action=="destroy"){
-            $server = Server::find($id);
-            $user = auth()->user();
-            if($server){
-                if($server->user_id==$user->id){
-
+        $server = Server::find($id);
+        $user = auth()->user();
+        if($server){
+            if($server->user_id==$user->id){
+                if($action=="destroy"){
                     $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
                     $response = CommonFunctions::makeRequest($url, "DELETE",null,"X-Dangerous: true");
                     Application::where("server_id", $server->id)->delete();
                     $server->delete();
                     return CommonFunctions::sendResponse(1, "Droplet Destroyed");
+                }elseif($action=="resize"){
+                    if($server->status!="READY"){
+                        return CommonFunctions::sendResponse(0, "Server is not ready yet");   
+                    }
+                    $size = $request->get("size");
+                    if(!$size){
+                        return CommonFunctions::sendResponse(0, "Invalid Size");   
+                    }
+                    $url = "/droplets/$server->droplet_id/actions";
+                    $body = [
+                        "type"=> "resize",
+                        "disk"=> true,
+                        "size"=> $size
+                    ];
+                    $response = CommonFunctions::makeRequest($url, "POST",json_encode($body));
+                    if($response->id &&  $response->id=="unprocessable_entity"){
+                        return CommonFunctions::sendResponse(0, $response->message);   
+                    }else{
+                        return CommonFunctions::sendResponse(1, "Droplet Upgraded", $response);
+                    }
+                    
                 }
-                return CommonFunctions::sendResponse(0, "You dont have access to this resource");
-            }else{
-                return CommonFunctions::sendResponse(0, "Invalid Droplet ID");
+                return CommonFunctions::sendResponse(0, "Invalid Droplet Action");
             }
+            return CommonFunctions::sendResponse(0, "You dont have access to this resource");
+        }else{
+            return CommonFunctions::sendResponse(0, "Invalid Droplet ID");
         }
-        return CommonFunctions::sendResponse(0, "Invalid Droplet Action");
+
     }
     public function createDroplet(Request $request){
         $name = $request->get('name');
@@ -150,7 +171,7 @@ class DashboardController extends Controller
     }
     public function droplets(Request $request){
         $user = auth()->user();
-        $servers = Server::where("user_id", $user->id)->get();
+        $servers = Server::where("user_id", $user->id)->with('applications')->with("storage")->get();
         return CommonFunctions::sendResponse(1, "Your droplets", $servers);
     }
 }
