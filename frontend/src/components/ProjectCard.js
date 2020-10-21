@@ -55,7 +55,7 @@ class ProjectCard extends Component {
                             </a>
                         </div>
                         <div className="col-sm-3 col-md-3 text-right application_page_card_actions d-flex">
-                            <a href="" className="px-4">Servers <span className="number_of_users"></span></a>
+                            <a href="" className="px-3">Team Members <span className="number_of_users"></span></a>
                             <Dropdown direction="left" isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                 <DropdownToggle className="btn btn-default ml-3">
                                     <i className="fas fa-ellipsis-v"></i>

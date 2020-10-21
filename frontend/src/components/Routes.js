@@ -13,21 +13,21 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 import Projects from '../screens/Projects';
 
 let routes = [
-    // {
-    //     path: '/',
-    //     component: (obj) => {
+    {
+        path: '/',
+        component: (obj) => {
 
-    //         let cookie = read_cookie("auth")
-    //         if (obj.location.pathname == "/reset") {
-    //             return <ResetScreen />;
-    //         } else if (typeof cookie !== "object") {
-    //             return <Redirect to="/servers" />;
-    //         }
-    //         else {
-    //             return <Redirect to="/login" />;
-    //         }
-    //     }
-    // },
+            let cookie = read_cookie("auth")
+            if (obj.location.pathname == "/reset") {
+                return <ResetScreen />;
+            } else if (typeof cookie !== "object") {
+                return <Redirect to="/servers" />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
     {
         path: '/login',
         component: () => <Login />

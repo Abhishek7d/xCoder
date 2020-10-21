@@ -25,7 +25,9 @@ class ProjectDetails extends Component {
                                 <li class="nav-item">
                                     <a class="nav-link" id="pills-credentials-tab" data-toggle="pill" href="#pills-credentials" role="tab" aria-controls="pills-credentials" aria-selected="true">Servers</a>
                                 </li>
-
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pills-credentials-tab" data-toggle="pill" href="#pills-credentials" role="tab" aria-controls="pills-credentials" aria-selected="true">Team Members</a>
+                                </li>
                             </ul>
                             <div class="tab-content" id="pills-tabContent">
 

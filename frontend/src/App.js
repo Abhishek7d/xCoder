@@ -10,7 +10,7 @@ import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 function indexComponent() {
   let cookie = read_cookie("auth")
   if (typeof cookie !== "object") {
-    return <Redirect to="/servers" />;
+    return <Redirect to="/projects" />;
   }
   else {
     return <Redirect to="/login" />;
