@@ -7,23 +7,23 @@ import { BrowserRouter as Router, Route, Redirect, IndexRoute } from "react-rout
 import Login from './screens/Login';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
 
-function indexComponent(){
+function indexComponent() {
   let cookie = read_cookie("auth")
-  if(typeof cookie !== "object"){
-      return <Redirect to="/servers" />;
+  if (typeof cookie !== "object") {
+    return <Redirect to="/servers" />;
   }
-  else{
-      return <Redirect to="/login" />;
+  else {
+    return <Redirect to="/login" />;
   }
 }
 
 function App() {
   return (
     <Router>
-      <Route path = "/" component = {indexComponent}>
+      <Route path="/" component={indexComponent}>
         {/* <IndexRoute component = {indexComponent} /> */}
-        {Routes.map((x,i) =>
-            <Route key={i} path={x.path} component={x.component} />
+        {Routes.map((x, i) =>
+          <Route key={i} path={x.path} component={x.component} />
         )}
       </Route>
     </Router>

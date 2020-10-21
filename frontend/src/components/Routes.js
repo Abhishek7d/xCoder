@@ -10,34 +10,35 @@ import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
 import Profile from '../screens/Profile';
 import { bake_cookie, read_cookie, delete_cookie } from 'sfcookies';
+import Projects from '../screens/Projects';
 
 let routes = [
-    {
-        path: '/',
-        component: (obj) =>{
+    // {
+    //     path: '/',
+    //     component: (obj) => {
 
-            let cookie = read_cookie("auth")
-            if(obj.location.pathname=="/reset"){
-                return <ResetScreen />;
-            }else if(typeof cookie !== "object"){
-                return <Redirect to="/servers" />;
-            }
-            else{
-                return <Redirect to="/login" />;
-            }
-        }
-    },
+    //         let cookie = read_cookie("auth")
+    //         if (obj.location.pathname == "/reset") {
+    //             return <ResetScreen />;
+    //         } else if (typeof cookie !== "object") {
+    //             return <Redirect to="/servers" />;
+    //         }
+    //         else {
+    //             return <Redirect to="/login" />;
+    //         }
+    //     }
+    // },
     {
         path: '/login',
-        component: () => <Login/>
+        component: () => <Login />
     },
     {
         path: '/register',
-        component: () => <Register/>
+        component: () => <Register />
     },
     {
         path: '/forgot-password',
-        component: () => <ForgotPassword/>
+        component: () => <ForgotPassword />
     },
     {
         path: '/servers',
@@ -63,6 +64,11 @@ let routes = [
         path: '/profile',
         title: 'Profile',
         component: () => <Profile />
+    },
+    {
+        path: '/projects',
+        title: 'Projects',
+        component: () => <Projects />
     },
 ];
 
