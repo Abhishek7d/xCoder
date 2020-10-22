@@ -83,9 +83,9 @@ class Services extends React.Component{
                                 </td>
                                 <td>
                                     {(this.state.apache)?
-                                    <a className="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</a>
+                                    <div className="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</div>
                                     :
-                                    <a className="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</a>
+                                    <div className="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</div>
                                     }
                                 </td>
                             </tr>

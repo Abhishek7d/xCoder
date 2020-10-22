@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "dotenv-cli": "^4.0.0",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
@@ -26,6 +27,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:dev": "dotenv -e .env.development react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -49,12 +49,12 @@ class ApplicationCard extends React.Component {
                         <div className="row mb-2">
                             <div className="col-10 application_page_card_info">
                             {this.state.loadding?
-                                <img src={require("../assets/images/loading.gif")} style={{ width: "45px" }} />
+                                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "45px" }} />
                                 :
-                                <a href="#" onClick={() => this.props.applicationClickHandler(this.props.application)} >
+                                <div onClick={() => this.props.applicationClickHandler(this.props.application)} >
                                     <div className="row">
                                         <div className="col-1">
-                                            <img style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />
+                                            <img  alt="wordpress" style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />
                                         </div>
                                         <div className="col-11">
                                             <span className="text-info d-flex font-weight-bold">Domain Name : &nbsp;<p className="m-0 text-primary">{this.state.domain}</p></span>
@@ -63,16 +63,16 @@ class ApplicationCard extends React.Component {
                                             <p className="mt-3"><small>Created : {new Date(this.state.created_at).toDateString()}</small></p>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                             }
                             </div>
                             <div className="col-2 text-right application_page_card_actions">
-                                <a href={"http://"+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
+                                <a rel="noopener noreferrer" href={"http://"+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
                                 <div className="btn-group pl-4 px-1 dropleft" style={{ cursor: "pointer" }}>
                                     <i className="fas fa-ellipsis-v" data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false"></i>
                                     <div className="dropdown-menu">
-                                        <a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash danger"></i>&nbsp;Delete</a>
+                                        <div className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash danger"></i>&nbsp;Delete</div>
                                     </div>
                                 </div>
                             </div>

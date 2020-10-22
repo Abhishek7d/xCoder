@@ -57,7 +57,7 @@ class AddCorn extends React.Component{
                 <p style={{color:"green"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
                 {this.state.loadding?
                 <div style={{width: "100%",paddingLeft: "40%"}}>
-                    <img src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+                    <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
                 </div>
                 :
                 <div className="card-body row">              

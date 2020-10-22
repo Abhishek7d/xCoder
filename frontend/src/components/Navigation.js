@@ -35,7 +35,7 @@ class Navigation extends React.Component {
             <nav className="main-header navbar navbar-expand navbar-white navbar-light">
                 <ul className="navbar-nav">
                     <li className="nav-item">
-                        <a className="nav-link" data-widget="pushmenu" type="button"><i className="fas fa-bars"></i></a>
+                        <div className="nav-link" data-widget="pushmenu" type="button"><i className="fas fa-bars"></i></div>
                     </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
@@ -45,13 +45,13 @@ class Navigation extends React.Component {
                         </Link>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link" type="button" onClick={this.handleLogout}>
+                        <div className="nav-link" type="button" onClick={this.handleLogout}>
                             {this.state.loadding ?
-                                <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                 : <b>Logout</b>
                             }
 
-                        </a>
+                        </div>
                     </li>
                 </ul>
             </nav>

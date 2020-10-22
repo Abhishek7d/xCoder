@@ -32,10 +32,10 @@ class Sidebar extends React.Component {
                 <div className="sidebar">
                     <div className="user-panel mt-3 pb-3 mb-3 d-flex">
                         <div className="image">
-                            <img src={require("../assets/images/user.jpg")} className="img-circle elevation-2" alt="User Image" />
+                            <img src={require("../assets/images/user.jpg")} alt="user" className="img-circle elevation-2" />
                         </div>
                         <div className="info">
-                            <a type="button" href="#" className="d-block">{this.state.name}</a>
+                            <div type="button" className="d-block">{this.state.name}</div>
                         </div>
                     </div>
                     <nav className="mt-2">

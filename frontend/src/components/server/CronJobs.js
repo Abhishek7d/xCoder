@@ -41,7 +41,6 @@ class CronJobs extends React.Component{
         let output = [];
         let tmpout = null;
         let tmpbuffer = null;
-        let count = 1;
         Object.keys(this.state.crons).forEach(key=>{
             tmpout = this.state.crons[key];
             tmpbuffer = <tr key={tmpout.JOB}>
@@ -104,7 +103,7 @@ class CronJobs extends React.Component{
                             </table>
                             {(this.state.serviceLoadding)?
                                 <div style={{width: "100%",paddingLeft: "40%"}}>
-                                    <img src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+                                    <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
                                 </div>
                                 :
                                 <></>

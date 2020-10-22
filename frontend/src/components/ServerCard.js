@@ -60,7 +60,7 @@ class ServerCard extends React.Component {
                             </div>
                             <div className="row" onClick={()=>this.props.serverClickHandler(this.props.server)}>
                                 <div className="col-1">
-                                    <img style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
+                                    <img alt="wordpress" style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
                                 </div>
                                 <div className="col-5">
                                     <div className="d-flex">

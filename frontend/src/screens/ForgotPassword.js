@@ -67,7 +67,7 @@ class ForgotPassword extends React.Component{
                                                 <div className="col-12">
                                                     <button type="button" className="btn btn-primary btn-block text-uppercase"onClick={this.formAction}>
                                                         {this.state.loadding?
-                                                        <img src={require("../assets/images/loading.gif")} style={{width: "25px", filter: "brightness(20)"}}/>
+                                                        <img alt="loadding" src={require("../assets/images/loading.gif")} style={{width: "25px", filter: "brightness(20)"}}/>
                                                         :
                                                         "Send Password Reset Mail"
                                                         }</button>

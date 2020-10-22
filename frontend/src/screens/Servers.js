@@ -45,7 +45,7 @@ class Servers extends React.Component {
     renderServers() {
         if(this.state.loadding){
             return <div style={{width: "100%",paddingLeft: "40%"}}>
-                    <img src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+                    <img alt="loadding" src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
                 </div>        
         }
         let servers = [];
@@ -75,7 +75,6 @@ class Servers extends React.Component {
 
     render() {
         return (
-            <>
                 <div className="container-fluid p-0">
                     <Navigation />
                     <Sidebar />
@@ -118,7 +117,6 @@ class Servers extends React.Component {
                         </section>
                     </div>
                 </div>
-            </>
         );
     }
 }

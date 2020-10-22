@@ -4,7 +4,6 @@ import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import ApplicationDetails from '../components/ApplicationDetails';
 import "../index.css";
 
@@ -60,10 +59,10 @@ class Applications extends React.Component {
         return servers;
     }
     renderApplicationsfilter = () => {
-        if (this.state.selectedServerFilter != "") {
+        if (this.state.selectedServerFilter !== "") {
             let applications = [];
             this.state.servers.forEach((data) => {
-                if (data.id == this.state.selectedServerFilter) {
+                if (data.id === parseInt(this.state.selectedServerFilter)) {
                     data.applications.forEach((application, index) => {
                         applications.push(<option key={index} value={application.id}>{application.domain}</option>)
                     })
@@ -75,7 +74,7 @@ class Applications extends React.Component {
     renderApplications() {
         if(this.state.appLoadding){
             return <div style={{width: "100%",paddingLeft: "40%"}}>
-                    <img src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+                    <img alt="loadding" src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
                 </div>        
         }
         if (this.state.selectedApplication) {
@@ -88,7 +87,7 @@ class Applications extends React.Component {
             })
         }else{
             this.state.applications.forEach((data, index) => {
-                if(this.state.selectedServerFilter==data.server.id){
+                if(data.server.id===parseInt(this.state.selectedServerFilter)){
                     applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
                 }
             })
@@ -143,7 +142,7 @@ class Applications extends React.Component {
         }else{
             let selectedApplication = event.target.value;
             this.state.applications.forEach(data=>{
-                if(data.id == selectedApplication){
+                if(data.id === selectedApplication){
                     this.setState({selectedApplication:data})
                 }
             }) 
