@@ -9,6 +9,8 @@ import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
 import Profile from '../screens/Profile';
+import Projects from '../screens/Projects';
+
 import { read_cookie } from 'sfcookies';
 
 let routes = [
@@ -58,6 +60,19 @@ let routes = [
             }
             else{
                 return <Logout/>;
+            }
+        }
+    },
+    {
+        path: '/projects',
+        title: 'Project',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Projects />;
+            }
+            else{
+                return <Redirect to="/login" />;
             }
         }
     },
@@ -126,6 +141,11 @@ let routes = [
                 return <Redirect to="/login" />;
             }
         }
+    },
+    {
+        path: '/projects',
+        title: 'Projects',
+        component: () => <Projects />
     },
 ];
 

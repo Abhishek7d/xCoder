@@ -27,13 +27,18 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);
     Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
-Route::post('/logout', [UserController::class, 'logout']);
-    
+    Route::post('/logout', [UserController::class, 'logout']);
+
     Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, 'serverCompleted']);
 
     Route::group(['middleware' => 'checkAuth'], function () {
         //Route::post('/logout', [UserController::class, 'logout']);
-    
+
+        //projects
+        Route::post('/project', [DashboardController::class, 'createProject']);
+        Route::get('/projects', [DashboardController::class, 'projects']);
+
+
         //droplets
         Route::get('/sizes', [DashboardController::class, 'availableSizes']);
         Route::get('/regions', [DashboardController::class, 'availableRegions']);
@@ -45,7 +50,7 @@ Route::post('/logout', [UserController::class, 'logout']);
         Route::get('/application', [WebSiteController::class, 'showDomains']);
         Route::post('/application', [WebSiteController::class, 'addDomain']);
         Route::post('/application/{application}', [WebSiteController::class, 'removeDomain']);
-    
+
         //services
         Route::get('/server/{server}', [ServiceController::class, 'getStatus']);
         Route::post('/server/{server}', [ServiceController::class, 'setService']);
@@ -60,7 +65,6 @@ Route::post('/logout', [UserController::class, 'logout']);
         Route::post('/storage', [BlockStorageController::class, 'createBlockStorage']);
         Route::post('/storage/resize', [BlockStorageController::class, 'resizeBlockStorage']);
         Route::post('/storage/delete', [BlockStorageController::class, 'deleteBlockStorage']);
-
     });
 });
 Route::view("/{path?}", "app");

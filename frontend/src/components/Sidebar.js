@@ -13,9 +13,9 @@ class Sidebar extends React.Component {
 
         }
     }
-    hideSideBar(){
+    hideSideBar() {
         let tmpBody = document.getElementsByTagName("body")[0].classList;
-        if(tmpBody.contains("sidebar-open")){
+        if (tmpBody.contains("sidebar-open")) {
             tmpBody.remove("sidebar-open")
             tmpBody.value = ("sidebar-closed sidebar-collapse")
         }
@@ -35,30 +35,39 @@ class Sidebar extends React.Component {
                             <img src={require("../assets/images/user.jpg")} alt="user" className="img-circle elevation-2" />
                         </div>
                         <div className="info">
-                            <div type="button" className="d-block">{this.state.name}</div>
+                            <div type="button" className="d-block white">{this.state.name}</div>
                         </div>
                     </div>
                     <nav className="mt-2">
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <li className={'nav-item has-treeview '}>
-                                <Link to="/servers" className={"nav-link "+((this.state.page==="servers")?"menu-opened":"")}>
+                                <Link to="/projects" className={"nav-link "+((this.state.page==="projects")?"menu-opened":"")}>
                                     <i className="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
-                                        Servers
+                                        Projects
                                     <i className="right fas "></i>
-                                    </p>
-                                </Link>
-                            </li>
-                            <li className="nav-item has-treeview">
-                                <Link to="/applications" className={"nav-link "+((this.state.page==="applications")?"menu-opened":"")}>
-                                    <i className="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Applications
+                                        </p>
+                                    </Link>
+                                </li>
+                                <li className={'nav-item has-treeview '}>
+                                    <Link to="/servers" className={"nav-link " + ((this.state.page === "servers") ? "menu-opened" : "")}>
+                                        <i className="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Servers
                                     <i className="right fas "></i>
-                                    </p>
-                                </Link>
-                            </li>
-                            {/* <li className="nav-item has-treeview">
+                                        </p>
+                                    </Link>
+                                </li>
+                                <li className="nav-item has-treeview">
+                                    <Link to="/applications" className={"nav-link " + ((this.state.page === "applications") ? "menu-opened" : "")}>
+                                        <i className="nav-icon fas fa-tachometer-alt"></i>
+                                        <p>
+                                            Applications
+                                    <i className="right fas "></i>
+                                        </p>
+                                    </Link>
+                                </li>
+                                {/* <li className="nav-item has-treeview">
                                 <a href="#" className={"nav-link "+((this.state.page==="teams")?"menu-opened":"")}>
                                     <i className="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
@@ -67,11 +76,11 @@ class Sidebar extends React.Component {
                                     </p>
                                 </a>
                             </li> */}
-                        </ul>
-                    </nav>
-                </div>
-            </aside>
-            <div onClick={this.hideSideBar} id="sidebar-overlay"></div>
+                            </ul>
+                        </nav>
+                    </div>
+                </aside>
+                <div onClick={this.hideSideBar} id="sidebar-overlay"></div>
             </>
         );
     }
