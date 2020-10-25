@@ -67,7 +67,10 @@ class WebSiteController extends Controller
         if(count($exists) > 0){
             return CommonFunctions::sendResponse(0, "Domain Already added to this server");
         }
-
+        $application = $this->createApplicationToServer($server, $domain, auth()->user());
+        return CommonFunctions::sendResponse(1,"Domain added to the server", $application);
+    }
+    public function createApplicationToServer($server, $name, $user){   
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         $connection =  @socket_connect($socket, $server->ip_address, 22);
         if(!$connection || !$server->ip_address){
@@ -82,27 +85,30 @@ class WebSiteController extends Controller
         //move to command path
         $ssh->write($this->step_one);
         //add webiste
-        $ssh->write("./v-add-domain admin $domain $server->ip_address\n");
+        $domain = CommonFunctions::generateRandomString(5).$user->ID;
+        $domain_name = $domain.".".env('DEFAULT_MASTER_DOMAIN');
+        $ssh->write("./v-add-domain admin $domain_name $server->ip_address\n");
         
         //create Application
         $application = new Application();
-        $application->domain = $domain;
+        $application->name = $name;
+        $application->domain = $domain_name;
         $application->server_id = $server->id;
         $application->ip_address = $server->ip_address;
-        $application->user_id = auth()->user()->id;
+        $application->user_id = $user->id;
         $application->status = CommonFunctions::$application_statuses[2];
-        
+        $install_wp = true;
         if($install_wp){
             //create database
             $db_password = CommonFunctions::generateRandomString(8);
-            $db_name = CommonFunctions::generateRandomString(5);
+            $db_name = $domain;
             // $ssh->write("./v-delete-database admin admin_$db_name\n");
             $ssh->write("./v-add-database admin $db_name $db_name $db_password mysql\n");
             
-            $ssh->write("cd /home/admin/web/$domain/public_html\n");
+            $ssh->write("cd /home/admin/web/$domain_name/public_html\n");
             
             $ssh->write("su admin\n");
-            $ssh->write("wget $this->wp_download_link\n");
+            $ssh->write("wget ".$this->wp_download_link."\n");
             $ssh->write("unzip latest.zip\n");
             $ssh->write("mv ./wordpress/* ./ && mv ./wordpress/.* ./ \n");
             $ssh->write("rm -rf latest.zip wordpress index.html robots.txt\n");
@@ -116,9 +122,13 @@ class WebSiteController extends Controller
             $application->db_username = "admin_$domain";
             $application->db_password = $db_password;
         }
-        
+        $ssh = new SSH2("127.0.0.1");
+        if ($ssh->login('root', "Dibyendu#1")) {
+            $ssh->exec("v-add-dns-record admin parvaty.me $domain_name A $server->ip_address");
+        }
         $application->save();
         $ssh->read();
-        return CommonFunctions::sendResponse(1,"Domain added to the server", $application);
+        
+        return [$application, $output];
     }
 }

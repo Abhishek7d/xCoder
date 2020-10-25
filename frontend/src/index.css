@@ -56,3 +56,6 @@ ul#server-details-tab-header{
 .hide {
   display: none !important;
 }
+.application_page_card_info , .nav-link{
+  cursor: pointer;
+}

@@ -58,7 +58,7 @@ class CreateServerScreen extends React.Component {
             return;
         }
         this.setState({ error: "", success: "", loadding: true })
-        this.apiHandler.createServer(this.state.name, this.state.size, this.state.location, (message, data) => {
+        this.apiHandler.createServer(this.state.name, this.state.size, this.state.location, this.state.appName, (message, data) => {
             this.setState({ error: "", success: message, loadding: false })
             window.location.href = "/servers"
         }, (message) => {
@@ -184,6 +184,17 @@ class CreateServerScreen extends React.Component {
                                                     <select id="locations" required value={this.state.location} onChange={this.dataChange} name="location" className="form-control border-bottom">
                                                         {this.renderLocations()}
                                                     </select>
+                                                    </div>
+                                                </div>
+                                                <br />
+
+                                                <div className="row">
+                                                    <div className="col-2">
+                                                        <h3 className="card-title">Application Name</h3>
+                                                    </div>
+                                                    <div className="col-7">
+                                                    <input type="text" required  value={this.state.appName} onChange={this.dataChange} name="appName" className="form-control border-bottom col-md-9" id="appName"
+                                                            placeholder="Application Name" />
                                                     </div>
                                                 </div>
 

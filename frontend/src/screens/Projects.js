@@ -3,7 +3,7 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ProjectCard from '../components/ProjectCard';
 import ApiHandler from '../model/ApiHandler';
-import ProjectDetails from '../components/ProjectDetails'
+import ProjectDetails from '../components/ProjectDetails';
 import { Modal, Button } from 'react-bootstrap';
 
 class Projects extends React.Component {
@@ -26,21 +26,21 @@ class Projects extends React.Component {
 
     componentDidMount() {
         document.title = "Your Projects";
-        // this.apiHandler.getProjects((msg, data) => {
-        //     this.setState({ projects: data })
-        // }, err => {
-        //     this.showError(err);
-        // })
+        this.apiHandler.getProjects((msg, data) => {
+            this.setState({ projects: data })
+        }, err => {
+            this.showError(err);
+        })
     }
     renderProjects() {
 
         let projects = [];
-        // this.state.projects.forEach((data, index) => {
-        projects.push(<ProjectCard key="1" projectClickHandler={this.projectClickHandler} />);
-        // })
-        // if (projects.length < 1) {
-        //     projects = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No projects Created</p>
-        // }
+        this.state.projects.forEach((data, index) => {
+            projects.push(<ProjectCard key={index} data={data} projectClickHandler={this.projectClickHandler} />);
+        })
+        if (projects.length < 1) {
+            projects = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No projects Created</p>
+        }
         return projects;
     }
     projectClickHandler = (project = null) => {
@@ -62,7 +62,6 @@ class Projects extends React.Component {
         })
     }
     dataChange = (event) => {
-
         this.setState({ [event.target.name]: event.target.value })
     }
     handleAddProject = () => {

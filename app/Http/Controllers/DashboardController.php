@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\helpers\CommonFunctions;
+use App\Http\Controllers\WebSiteController;
 use App\Models\Server;
 use App\Models\Application;
 use App\Jobs\ServerInstaller​;
 use App\Models\Project;
+use App\Models\User;
 use Artisan;
 use Illuminate\Support\Facades\Redis;
 
@@ -21,12 +23,12 @@ class DashboardController extends Controller
     }
     public function createProject(Request $request)
     {
-        $projectName = $request->get('projectName');
+        $projectName = $request->get('name');
         if (empty($projectName)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
         $project = new Project();
-        $project->project_name = $projectName;
+        $project->name = $projectName;
         $project->user_id = auth()->user()->id;
         $project->save();
         return CommonFunctions::sendResponse(1, "Project created successfully");
@@ -34,6 +36,7 @@ class DashboardController extends Controller
 
     public function test()
     {
+
         $server = Server::get();
         $a = ServerInstaller​::dispatch($server[0]);
     }
@@ -57,13 +60,19 @@ class DashboardController extends Controller
     }
     public function serverCompleted(Request $request, $server_id, $hashed)
     {
+        $domain = $request->get("appName");
         $server = Server::find($server_id);
         if ($server->hashed == $hashed) {
             $server->status = CommonFunctions::$server_statuses[3];
             $server->save();
-            return 1;
+            if($domain){
+                $controller = new WebSiteController();
+                $user = User::find($server->user_id);
+                return $controller->createApplicationToServer($server, $domain, $user);
+            }
+            // return 1;
         }
-        return 0;
+        // return 0;
     }
     public function dropletAction(Request $request, $id)
     {
@@ -117,8 +126,9 @@ class DashboardController extends Controller
         $name = $request->get('name');
         $size = $request->get('size');
         $region = $request->get('region');
+        $appName = $request->get('appName');
 
-        if (!empty($name) && !empty($size) && !empty($region)) {
+        if (!empty($name) && !empty($size) && !empty($region) && !empty($appName) ) {
 
             $sizes = CommonFunctions::makeRequest("/sizes", "GET");
             if (!$sizes['status']) {
@@ -190,9 +200,10 @@ class DashboardController extends Controller
                 ];
                 CommonFunctions::makeRequest("/tags/" . $server_id . "/resources", "POST", json_encode($body));
 
-                CommonFunctions::releaseResponse(1, "Server Created Successfully", $server);
-                ServerInstaller​::dispatch($server);
-                // return CommonFunctions::sendResponse(1, "Server Created Successfully", $server);
+                // CommonFunctions::releaseResponse(1, "Server Created Successfully", $server);
+                set_time_limit(0);
+                ServerInstaller​::dispatch($server, $appName);
+                return CommonFunctions::sendResponse(1, "Server Created Successfully", $server);
             }
             return CommonFunctions::sendResponse(0, "Something Went Wrong While creating a Droplet", $response);
         }

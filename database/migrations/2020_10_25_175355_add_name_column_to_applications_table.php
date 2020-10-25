@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProjectsTable extends Migration
+class AddNameColumnToApplicationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateProjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('projects', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('user_id');
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::table('applications', function (Blueprint $table) {
+            $table->string("name")->nullable();
         });
     }
 
@@ -29,6 +25,8 @@ class CreateProjectsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('projects');
+        Schema::table('applications', function (Blueprint $table) {
+            $table->dropColumn('access_tokens');
+        });
     }
 }

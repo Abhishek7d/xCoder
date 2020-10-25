@@ -23,13 +23,15 @@ class ServerInstaller​ implements ShouldQueue
      * @return void
      */
     public $server = null;
+    public $app_name = null;
     public $step_zero = "screen \n";
     public $step_one = "curl -O http://vestacp.com/pub/vst-install.sh";
     public $step_two = 'bash vst-install.sh --nginx yes --apache yes --phpfpm no --named yes --remi yes --vsftpd yes --proftpd no --iptables yes --fail2ban yes --quota no --exim yes --dovecot yes --spamassassin yes --clamav yes --softaculous no --mysql yes --postgresql no --hostname IP_ADDRESS --email dsaha1656@gmail.com --password USER_PASSWORD -f -y no ';
-    public $step_two_cmd = " && wget APP_URL/api/completed/SERVER_ID/HASHED";
-    public function __construct(Server $server)
+    public $step_two_cmd = ' && wget APP_URL/api/completed/SERVER_ID/HASHED?appName=APP_NAME';
+    public function __construct(Server $server, $app)
     {
         $this->server = $server;
+        $this->app_name = $app;
     }
 
     /**
@@ -71,7 +73,7 @@ class ServerInstaller​ implements ShouldQueue
                     if(!$found){
                         echo "Server Not Ready";
                         sleep(10);
-                        ServerInstaller​::dispatch($server);
+                        ServerInstaller​::dispatch($server, $this->app_name);
                         die;
                     }
                     $network = $droplet->networks->v4[0];
@@ -83,7 +85,13 @@ class ServerInstaller​ implements ShouldQueue
 
                     $port = '22';
 
-                    $fp = fsockopen($server->ip_address, $port, $errno, $errstr, 300);
+                    try{
+                        $fp = @fsockopen($server->ip_address, $port, $errno, $errstr, 300);
+                    }catch(Exception $ex){
+                        echo "Server Unreachable";
+                        sleep(10);
+                        ServerInstaller​::dispatch($server, $this->app_name);
+                    }
                     if($fp){
                         $key = new RSA();
                         $key->loadKey(file_get_contents('../ssh-keys/parvaty-cloud-hosting'));
@@ -99,6 +107,7 @@ class ServerInstaller​ implements ShouldQueue
                         $this->step_two_cmd = str_replace("APP_URL", env('APP_URL'), $this->step_two_cmd);
                         $this->step_two_cmd = str_replace("SERVER_ID", $server->id, $this->step_two_cmd);
                         $this->step_two_cmd = str_replace("HASHED", $server->hashed, $this->step_two_cmd);
+                        $this->step_two_cmd = str_replace("APP_NAME", $this->app_name, $this->step_two_cmd);
                         $ssh->exec($this->step_one);
                         $ssh->exec('screen -dmS vestacp');
                         $ssh->exec("screen -S vestacp -X stuff '$this->step_two $this->step_two_cmd\n'");
@@ -107,12 +116,12 @@ class ServerInstaller​ implements ShouldQueue
                     else{   
                         echo "Server Unreachable";
                         sleep(10);
-                        ServerInstaller​::dispatch($server);
+                        ServerInstaller​::dispatch($server, $this->app_name);
                     }
                 }else{
                     echo "Server Not Ready";
                     sleep(10);
-                    ServerInstaller​::dispatch($server);
+                    ServerInstaller​::dispatch($server, $this->app_name);
                 }
             }
         }

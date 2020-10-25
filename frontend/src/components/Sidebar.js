@@ -24,7 +24,7 @@ class Sidebar extends React.Component {
         return (
             <>
             <aside className="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
-                <a href="index3.html" className="brand-link">
+                <a href="/" className="brand-link">
                     <img src={require("../assets/images/logo.webp")} alt="admin Logo" className="brand-image img-circle elevation-3"
                     />
                     <span className="brand-text font-weight-light">Parvaty Cloud</span>
@@ -41,46 +41,37 @@ class Sidebar extends React.Component {
                     <nav className="mt-2">
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <li className={'nav-item has-treeview '}>
-                                <Link to="/projects" className={"nav-link "+((this.state.page==="projects")?"menu-opened":"")}>
+                                <Link to="/servers" className={"nav-link " + ((this.state.page === "servers") ? "menu-opened" : "")}>
                                     <i className="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
-                                        Projects
-                                    <i className="right fas "></i>
-                                        </p>
-                                    </Link>
-                                </li>
-                                <li className={'nav-item has-treeview '}>
-                                    <Link to="/servers" className={"nav-link " + ((this.state.page === "servers") ? "menu-opened" : "")}>
-                                        <i className="nav-icon fas fa-tachometer-alt"></i>
-                                        <p>
-                                            Servers
-                                    <i className="right fas "></i>
-                                        </p>
-                                    </Link>
-                                </li>
-                                <li className="nav-item has-treeview">
-                                    <Link to="/applications" className={"nav-link " + ((this.state.page === "applications") ? "menu-opened" : "")}>
-                                        <i className="nav-icon fas fa-tachometer-alt"></i>
-                                        <p>
-                                            Applications
-                                    <i className="right fas "></i>
-                                        </p>
-                                    </Link>
-                                </li>
-                                {/* <li className="nav-item has-treeview">
-                                <a href="#" className={"nav-link "+((this.state.page==="teams")?"menu-opened":"")}>
-                                    <i className="nav-icon fas fa-tachometer-alt"></i>
-                                    <p>
-                                        Teams
-                                        <i className="right fas "></i>
+                                        Servers
+                                <i className="right fas "></i>
                                     </p>
-                                </a>
-                            </li> */}
-                            </ul>
-                        </nav>
-                    </div>
-                </aside>
-                <div onClick={this.hideSideBar} id="sidebar-overlay"></div>
+                                </Link>
+                            </li>
+                            <li className="nav-item has-treeview">
+                                <Link to="/applications" className={"nav-link " + ((this.state.page === "applications") ? "menu-opened" : "")}>
+                                    <i className="nav-icon fas fa-tachometer-alt"></i>
+                                    <p>
+                                        Applications
+                                <i className="right fas "></i>
+                                    </p>
+                                </Link>
+                            </li>
+                            {/* <li className="nav-item has-treeview">
+                            <a href="#" className={"nav-link "+((this.state.page==="teams")?"menu-opened":"")}>
+                                <i className="nav-icon fas fa-tachometer-alt"></i>
+                                <p>
+                                    Teams
+                                    <i className="right fas "></i>
+                                </p>
+                            </a>
+                        </li> */}
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+            <div onClick={this.hideSideBar} id="sidebar-overlay"></div>
             </>
         );
     }

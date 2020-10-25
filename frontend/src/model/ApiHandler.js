@@ -5,6 +5,9 @@ class ApiHandler {
     constructor() {
         this._url = conf.apiUrl;
     }
+    showError =(err)=>{
+        console.log(err)
+    }
     getResult = (url, method = "GET", data = null, headers = null, success = () => { }, faild = () => { }) => {
         let parameters = {};
         parameters.method = method;
@@ -117,9 +120,8 @@ class ApiHandler {
         }, failure);
     }
 
-    createServer = (serverName, serverSize, serverLocation, success = () => { }, faild = () => { }) => {
-        console.log(!serverName || !serverSize || !serverLocation, "---")
-        if (!serverName || !serverSize || !serverLocation) return;
+    createServer = (serverName, serverSize, serverLocation, appName, success = () => { }, faild = () => { }) => {
+        if (!serverName || !serverSize || !serverLocation || !appName) return;
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
@@ -127,7 +129,8 @@ class ApiHandler {
         formData.append("name", serverName);
         formData.append("size", serverSize);
         formData.append("region", serverLocation);
-
+        formData.append("appName", appName);
+        
         this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
             console.log(response)
             if (response.status === 0) {
@@ -547,7 +550,6 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
         formData.append("name", projectName);
-
         this.getResult("/project", "POST", formData, authHeaders, (response) => {
             console.log(response)
             if (response.status === 0) {

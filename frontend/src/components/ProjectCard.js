@@ -11,6 +11,7 @@ class ProjectCard extends Component {
             dropdownOpen: false,
             loadding: false,
         }
+        this.project = props.data;
         this.apiHandler = new ApiHandler();
     }
     toggleDropdown = () => this.setState(prevState => ({ dropdownOpen: !prevState.dropdownOpen }))
@@ -48,7 +49,7 @@ class ProjectCard extends Component {
                                     </div>
                                     <div className="col-5">
                                         <div className="d-flex">
-                                            <p className="m-0">Project 1</p>
+                                            <p className="m-0">{this.project.name}</p>
                                         </div>
                                     </div>
                                 </div>
