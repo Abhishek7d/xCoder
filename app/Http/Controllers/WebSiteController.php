@@ -85,10 +85,11 @@ class WebSiteController extends Controller
         //move to command path
         $ssh->write($this->step_one);
         //add webiste
-        $domain = CommonFunctions::generateRandomString(5).$user->ID;
-        $domain_name = $domain.".".env('DEFAULT_MASTER_DOMAIN');
-        $ssh->write("./v-add-domain admin $domain_name $server->ip_address\n");
-        
+        $domain = CommonFunctions::generateRandomString(5).strval($user->ID);
+	$doamin = strtolower($domain);
+	$domain_name = $domain.".".env('DEFAULT_MASTER_DOMAIN');
+	$domain_name = strtolower($domain_name);
+	$ssh->write("./v-add-domain admin $domain_name $server->ip_address\n");
         //create Application
         $application = new Application();
         $application->name = $name;
@@ -106,7 +107,6 @@ class WebSiteController extends Controller
             $ssh->write("./v-add-database admin $db_name $db_name $db_password mysql\n");
             
             $ssh->write("cd /home/admin/web/$domain_name/public_html\n");
-            
             $ssh->write("su admin\n");
             $ssh->write("wget ".$this->wp_download_link."\n");
             $ssh->write("unzip latest.zip\n");
@@ -132,6 +132,6 @@ class WebSiteController extends Controller
         $application->save();
         $output2 = $ssh->read();
         
-        return [$application, $output, $output2];
+        return $application;
     }
 }
