@@ -122,10 +122,12 @@ class WebSiteController extends Controller
             $application->db_username = "admin_$domain";
             $application->db_password = $db_password;
         }
-        $ssh = new SSH2("127.0.0.1");
+        $ssh2 = new SSH2("127.0.0.1");
         $output = null;
-        if ($ssh->login('root', "Dibyendu#1")) {
-            $output = $ssh->exec("v-add-dns-record admin parvaty.me $domain_name A $server->ip_address");
+        if ($ssh2->login('root', "Dibyendu#1")) {
+            $ssh2->write($this->step_one);
+            $ssh2->write("./v-add-dns-record admin parvaty.me $domain_name A $server->ip_address");
+            $output = $ssh2->read();
         }
         $application->save();
         $ssh->read();
