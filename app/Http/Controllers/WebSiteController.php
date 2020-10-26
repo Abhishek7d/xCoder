@@ -130,8 +130,8 @@ class WebSiteController extends Controller
             $output = $ssh2->read();
         }
         $application->save();
-        $ssh->read();
+        $output2 = $ssh->read();
         
-        return [$application, $output];
+        return [$application, $output, $output2];
     }
 }
