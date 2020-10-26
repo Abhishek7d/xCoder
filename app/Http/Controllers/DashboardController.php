@@ -70,9 +70,9 @@ class DashboardController extends Controller
                 $user = User::find($server->user_id);
                 return $controller->createApplicationToServer($server, $domain, $user);
             }
-            // return 1;
+            return 1;
         }
-        // return 0;
+        return 0;
     }
     public function dropletAction(Request $request, $id)
     {
@@ -200,10 +200,10 @@ class DashboardController extends Controller
                 ];
                 CommonFunctions::makeRequest("/tags/" . $server_id . "/resources", "POST", json_encode($body));
 
-                // CommonFunctions::releaseResponse(1, "Server Created Successfully", $server);
+                CommonFunctions::releaseResponse(1, "Server Created Successfully", $server);
                 set_time_limit(0);
                 ServerInstaller​::dispatch($server, $appName);
-                return CommonFunctions::sendResponse(1, "Server Created Successfully", $server);
+                // return CommonFunctions::sendResponse(1, "Server Created Successfully", $server);
             }
             return CommonFunctions::sendResponse(0, "Something Went Wrong While creating a Droplet", $response);
         }
