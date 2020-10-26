@@ -126,12 +126,12 @@ class WebSiteController extends Controller
         $output = null;
         if ($ssh2->login('root', "Dibyendu#1")) {
             $ssh2->write($this->step_one);
-            $ssh2->write("./v-add-dns-record admin parvaty.me $domain_name A $server->ip_address");
+            $ssh2->write("./v-add-dns-record admin parvaty.me $domain_name A $server->ip_address\n");
             $output = $ssh2->read();
         }
         $application->save();
-        $ssh->read();
+        $output2 = $ssh->read();
         
-        return [$application, $output];
+        return [$application, $output, $output2];
     }
 }
