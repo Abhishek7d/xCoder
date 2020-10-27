@@ -24,7 +24,11 @@ class Navigation extends React.Component {
             this.showError(err);
         })
     }
-    makeHashString = (string=null) => {
+
+    showError = (err)=>{
+        console.log(err)
+    }    
+makeHashString = (string=null) => {
         // TODO : add crypto in repo replace with timestamp
         let tmp = new Date();
         tmp = tmp.getTime();
