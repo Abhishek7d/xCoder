@@ -65,6 +65,9 @@ makeHashString = (string=null) => {
             showModal: false,
         })
     }
+    showError = (err)=>{
+        console.log(err)
+    }
     handleAddProject = () => {
         let form = document.getElementsByTagName("form")[0]
         if (!form.checkValidity()) {
