@@ -51,22 +51,11 @@ class WebSiteController extends Controller
         if(empty($server) || empty($domain) ){
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
-        $install_wp = true;
-        if(!$this->is_valid_domain_name($domain)){
-            return CommonFunctions::sendResponse(0, "Domain name is not valid");
-        }
         $server = Server::find($server);
-
         if(!$server || $server->user_id != auth()->user()->id){
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if( gethostbyname($domain) != $server->ip_address ){
-            return CommonFunctions::sendResponse(0, "Add an A record of $server->ip_address on your domain name provider");
-        }
-        $exists = Application::where(["domain"=>$domain, 'server_id'=>$server->id])->get();
-        if(count($exists) > 0){
-            return CommonFunctions::sendResponse(0, "Domain Already added to this server");
-        }
+        
         $application = $this->createApplicationToServer($server, $domain, auth()->user());
         return CommonFunctions::sendResponse(1,"Domain added to the server", $application);
     }

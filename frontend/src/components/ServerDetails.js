@@ -60,7 +60,7 @@ class ServerDetails extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="card-footer"></div>
+                {/* <div className="card-footer"></div> */}
             </div>
         )
     }
