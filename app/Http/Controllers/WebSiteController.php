@@ -237,7 +237,7 @@ class WebSiteController extends Controller
 
         $application->save();
         $output = $ssh->read();
-        return CommonFunctions::sendResponse(1, "FTP user added to Domain Successfully", $output);
+        return CommonFunctions::sendResponse(1, "FTP user added to Domain Successfully");
     }
     public function removeFTPToApplication(Request $request, $application){
         $username = $request->get("username");
@@ -272,7 +272,7 @@ class WebSiteController extends Controller
 
         $application->save();
         $output = $ssh->read();
-        return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully", $output);
+        return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully");
     }
     public function changeFTPPassword(Request $request, $application){
         $username = $request->get("username");
@@ -311,6 +311,6 @@ class WebSiteController extends Controller
         $application->ftp_credentials = json_encode($ftp_credentials);
         $application->save();
         $output = $ssh->read();
-        return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully", $output);
+        return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully");
     }
 }
