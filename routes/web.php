@@ -49,6 +49,12 @@ Route::group(['prefix' => 'api'], function () {
         //application
         Route::get('/application', [WebSiteController::class, 'showDomains']);
         Route::post('/application', [WebSiteController::class, 'addDomain']);
+        Route::post('/application/{application}/update-domain', [WebSiteController::class, 'updateDomainName']);
+        Route::post('/application/{application}/add-ssl', [WebSiteController::class, 'addSSLToDomain']);
+        Route::post('/application/{application}/remove-ssl', [WebSiteController::class, 'removeSSLToDomain']);
+        Route::post('/application/{application}/add-ftp', [WebSiteController::class, 'addFTPToApplication']);
+        Route::post('/application/{application}/delete-ftp', [WebSiteController::class, 'removeFTPToApplication']);
+        Route::post('/application/{application}/change-ftp-pass', [WebSiteController::class, 'changeFTPPassword']);
         Route::post('/application/{application}', [WebSiteController::class, 'removeDomain']);
 
         //services

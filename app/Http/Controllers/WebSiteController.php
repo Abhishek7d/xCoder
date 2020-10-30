@@ -59,7 +59,7 @@ class WebSiteController extends Controller
         $application = $this->createApplicationToServer($server, $domain, auth()->user());
         return CommonFunctions::sendResponse(1,"Domain added to the server", $application);
     }
-    public function createApplicationToServer($server, $name, $user){   
+    public function createApplicationToServer($server, $name, $user){  
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         $connection =  @socket_connect($socket, $server->ip_address, 22);
         if(!$connection || !$server->ip_address){
@@ -75,18 +75,23 @@ class WebSiteController extends Controller
         $ssh->write($this->step_one);
         //add webiste
         $domain = CommonFunctions::generateRandomString(5).strval($user->ID);
-	$doamin = strtolower($domain);
-	$domain_name = $domain.".".env('DEFAULT_MASTER_DOMAIN');
-	$domain_name = strtolower($domain_name);
-	$ssh->write("./v-add-domain admin $domain_name $server->ip_address\n");
+        $doamin = strtolower($domain);
+        $domain_name = $domain.".".env('DEFAULT_MASTER_DOMAIN');
+        $domain_name = strtolower($domain_name);
+        $ssh->write("./v-add-domain admin $domain_name $server->ip_address\n");
         //create Application
         $application = new Application();
         $application->name = $name;
+        $application->ftp_credentials = json_encode([]);
         $application->domain = $domain_name;
         $application->server_id = $server->id;
         $application->ip_address = $server->ip_address;
         $application->user_id = $user->id;
+        $application->ssl_enabled = 1;
         $application->status = CommonFunctions::$application_statuses[2];
+        $application->save();
+        CommonFunctions::releaseResponse(1, "Application Created Successfully", $application);
+        set_time_limit(0);
         $install_wp = true;
         if($install_wp){
             //create database
@@ -111,16 +116,201 @@ class WebSiteController extends Controller
             $application->db_username = "admin_$domain";
             $application->db_password = $db_password;
         }
+        $application->save();
+        $output2 = $ssh->read();
+
         $ssh2 = new SSH2("127.0.0.1");
         $output = null;
         if ($ssh2->login('root', "Dibyendu#1")) {
             $ssh2->write($this->step_one);
             $ssh2->write("./v-add-dns-record admin parvaty.me $domain A $server->ip_address\n");
+            $ssh2->write("./v-add-dns-record admin parvaty.me www.$domain A $server->ip_address\n");
+            $ssh->write("./v-add-letsencrypt-domain admin $domain");
             $output = $ssh2->read();
         }
-        $application->save();
-        $output2 = $ssh->read();
-        
         return $application;
+    }
+    public function updateDomainName(Request $request, $application){
+        $application = Application::find($application);
+        if(!$application){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if($application->user_id != auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($application->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+        $new_domain = $request->get('domain');
+        if(!$this->is_valid_domain_name($new_domain)){
+            return CommonFunctions::sendResponse(0, "Invalid Domain name");
+        }
+        $ssh->write($this->step_one);
+        $ssh->write("./v-change-web-domain-name admin $application->domain $new_domain\n");
+        $ssh->write("./v-add-web-domain-alias admin $new_domain www.$new_domain\n");
+        $application->domain = $new_domain;
+        $application->ssl_enabled = 0;
+        $application->save();
+        $output = $ssh->read();
+        return CommonFunctions::sendResponse(1, "Domain name changed Successfully");
+    }
+
+    public function addSSLToDomain(Request $request, $application){
+        $application = Application::find($application);
+        if(!$application){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if($application->user_id != auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($application->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+
+        $ip_addr = gethostbyname($application->domain);
+        $alise_ip_addr = gethostbyname("www.".$application->domain);
+
+        if($ip_addr != $application->ip_address || $alise_ip_addr != $application->ip_address ){
+            return CommonFunctions::sendResponse(0, "please add two A record with $application->domain and www.$application->domain to $application->ip_address");
+        }
+
+        $ssh->write($this->step_one);
+        $ssh->write("./v-add-letsencrypt-domain admin $application->domain\n");
+        $application->ssl_enabled = 1;
+        $application->save();
+        $output = $ssh->read();
+        return CommonFunctions::sendResponse(1, "SSL added to Domain Successfully");
+    }
+    public function removeSSLToDomain(Request $request, $application){
+        $application = Application::find($application);
+        if(!$application){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if($application->user_id != auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($application->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+
+        $ssh->write($this->step_one);
+        $ssh->write("./v-delete-letsencrypt-domain admin $application->domain\n");
+        $application->ssl_enabled = 0;
+        $application->save();
+        $output = $ssh->read();
+        return CommonFunctions::sendResponse(1, "SSL deleted to Domain Successfully");
+    }
+    public function addFTPToApplication(Request $request, $application){
+        $username = $request->get("username");
+        $password = $request->get("password");
+        if (empty($username) || empty($password)) {
+            return CommonFunctions::sendResponse(0, "All Fields are required");
+        }
+        if (strlen($username) < 6 || strlen($password) < 6 ) {
+            return CommonFunctions::sendResponse(0, "minimum lengh 6");
+        }
+        $application = Application::find($application);
+        if(!$application){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if($application->user_id != auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($application->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+
+        $ssh->write($this->step_one);
+        $ssh->write("./v-add-web-domain-ftp admin $application->domain $username $password '/public_html'\n");
+        
+        $ftp_credentials = json_decode($application->ftp_credentials);
+        $ftp = ['host'=>$application->ip_address, 'username'=>"admin_".$username, "password"=>$password];
+        if(!$ftp_credentials){
+            $ftp_credentials = [];
+        }
+        array_push($ftp_credentials, $ftp);
+        $application->ftp_credentials = json_encode($ftp_credentials);
+
+        $application->save();
+        $output = $ssh->read();
+        return CommonFunctions::sendResponse(1, "FTP user added to Domain Successfully", $output);
+    }
+    public function removeFTPToApplication(Request $request, $application){
+        $username = $request->get("username");
+        if (empty($username)) {
+            return CommonFunctions::sendResponse(0, "All Fields are required");
+        }
+        $application = Application::find($application);
+        if(!$application){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if($application->user_id != auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($application->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+
+        $ssh->write($this->step_one);
+        $ssh->write("./v-delete-web-domain-ftp admin $application->domain $username\n");
+    
+        $ftp_credentials = json_decode($application->ftp_credentials);
+        if(!$ftp_credentials){
+            $ftp_credentials = [];
+        }
+        foreach($ftp_credentials as $key => $ftp){
+            if($ftp->username==$username){
+                unset($ftp_credentials[$key]);
+            }
+        }
+        $application->ftp_credentials = json_encode($ftp_credentials);
+
+        $application->save();
+        $output = $ssh->read();
+        return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully", $output);
+    }
+    public function changeFTPPassword(Request $request, $application){
+        $username = $request->get("username");
+        $password = $request->get("password");
+        if (empty($username) || empty($password)) {
+            return CommonFunctions::sendResponse(0, "All Fields are required");
+        }
+        if (strlen($username) < 6 || strlen($password) < 6 ) {
+            return CommonFunctions::sendResponse(0, "minimum lengh 6");
+        }
+        
+        $application = Application::find($application);
+        if(!$application){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        if($application->user_id != auth()->user()->id){
+            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        }
+        $ssh = CommonFunctions::connect($application->ip_address);
+        if (!$ssh) {
+            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+        }
+
+        $ssh->write($this->step_one);
+        $ssh->write("./v-change-web-domain-ftp-password admin $application->domain $username $password\n");
+    
+        $ftp_credentials = json_decode($application->ftp_credentials);
+        if(!$ftp_credentials){
+            $ftp_credentials = [];
+        }
+        foreach($ftp_credentials as $key => $ftp){
+            if($ftp->username==$username){
+                $ftp_credentials[$key]->password = $password;
+            }
+        }
+        $application->ftp_credentials = json_encode($ftp_credentials);
+        $application->save();
+        $output = $ssh->read();
+        return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully", $output);
     }
 }
