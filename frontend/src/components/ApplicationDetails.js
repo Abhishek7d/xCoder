@@ -26,16 +26,16 @@ class ApplicationDetails extends Component {
                         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             
                             <li className="nav-item">
-                                <a className="nav-link active" id="app-summary-tab" data-toggle="pill" href="#app-summary-tab" role="tab" aria-controls="pills-home" aria-selected="true">Summary</a>
+                                <a className="nav-link active" id="app-summary-tab" data-toggle="pill" href="#summary-tab" role="tab" aria-controls="pills-home" aria-selected="true">Summary</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" id="app-database-tab" data-toggle="pill" href="#app-database-tab" role="tab" aria-controls="app-database-tab" aria-selected="false">DB Credentials</a>
+                                <a className="nav-link" id="app-database-tab" data-toggle="pill" href="#database-tab" role="tab" aria-controls="app-database-tab" aria-selected="false">DB Credentials</a>
                             </li>
 
                         </ul>
                         <div className="tab-content" id="pills-tabContent">
-                            <Summary tabId={"app-summary-tab"} active={true} server={this.server} application={this.application} />
-                            <Database tabId={"app-database-tab"} active={true} server={this.server} application={this.application} />
+                            <Summary tabId={"summary-tab"} active={true} server={this.server} application={this.application} />
+                            <Database tabId={"database-tab"} active={true} server={this.server} application={this.application} />
                         </div>
                     </div>
                 </div>
