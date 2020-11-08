@@ -23,13 +23,22 @@ class ApplicationDetails extends Component {
                 </div>
                 <div className="card-body">
                     <div className="col-12 application_page_cards" id="huddles">
-                        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                            
+                        <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">  
                             <li className="nav-item">
                                 <a className="nav-link active" id="app-summary-tab" data-toggle="pill" href="#summary-tab" role="tab" aria-controls="pills-home" aria-selected="true">Summary</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" id="app-database-tab" data-toggle="pill" href="#database-tab" role="tab" aria-controls="app-database-tab" aria-selected="false">DB Credentials</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" id="app-domain-name-tab" data-toggle="pill" href="#domain-name-tab" role="tab" aria-controls="app-domain-name-tab" aria-selected="false">Domain Name</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" id="app-SSL-tab" data-toggle="pill" href="#ssl-tab" role="tab" aria-controls="app-ssl-tab" aria-selected="false">SSL Settings</a>
+                            </li>
+
+                            <li className="nav-item">
+                                <a className="nav-link" id="app-ftp-tab" data-toggle="pill" href="#ftp-tab" role="tab" aria-controls="app-ftp-tab" aria-selected="false">FTP Settings</a>
                             </li>
 
                         </ul>
