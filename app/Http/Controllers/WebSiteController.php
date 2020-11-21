@@ -15,7 +15,9 @@ class WebSiteController extends Controller
     private $step_one = "cd /usr/local/vesta/bin/\n";
     private $wp_download_link = "https://wordpress.org/latest.zip";
     private $sample_wp_config = __DIR__."/helpers/wp-config.sample.txt";
- 
+    private $domainNameChangeSql = "update wp_options set option_value = 'NEW_VALUE' where option_value like '%OLD_VALUE%'";
+    private $domainNameChangeSqlPrefix = 'mysql -u USER_NAME -D DATABASE_NAME -pPASSWORD -e "SQL"';
+
     private function is_valid_domain_name($domain_name){
         return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name) 
                 && preg_match("/^.{1,253}$/", $domain_name) 
@@ -149,11 +151,27 @@ class WebSiteController extends Controller
         $ssh->write($this->step_one);
         $ssh->write("./v-change-web-domain-name admin $application->domain $new_domain\n");
         $ssh->write("./v-add-web-domain-alias admin $new_domain www.$new_domain\n");
+        
+        $domainName = "http://".$new_domain;
+        $sql_data = $this->updateDBScript($application, $domainName);
+        $ssh->write("$sql_data\n");
+
         $application->domain = $new_domain;
         $application->ssl_enabled = 0;
         $application->save();
         $output = $ssh->read();
         return CommonFunctions::sendResponse(1, "Domain name changed Successfully");
+    }
+
+    public function updateDBScript($application, $domainName){
+        $sql_data = $this->domainNameChangeSql;
+        $sql_data = str_replace("OLD_VALUE", $application->domain, $sql_data);
+        $sql_data = str_replace("NEW_VALUE", $domainName, $sql_data);
+        $sql_data = str_replace('SQL', $sql_data, $this->domainNameChangeSqlPrefix);
+        $sql_data = str_replace('DATABASE_NAME', $application->db_name, $sql_data);
+        $sql_data = str_replace('USER_NAME', $application->db_username, $sql_data);
+        $sql_data = str_replace('PASSWORD', $application->db_password, $sql_data);
+        return $sql_data;
     }
 
     public function addSSLToDomain(Request $request, $application){
@@ -178,6 +196,11 @@ class WebSiteController extends Controller
 
         $ssh->write($this->step_one);
         $ssh->write("./v-add-letsencrypt-domain admin $application->domain\n");
+
+        $domainName = "https://".$application->domain;
+        $sql_data = $this->updateDBScript($application, $domainName);
+        $ssh->write("$sql_data\n");
+
         $application->ssl_enabled = 1;
         $application->save();
         $output = $ssh->read();
@@ -198,10 +221,15 @@ class WebSiteController extends Controller
 
         $ssh->write($this->step_one);
         $ssh->write("./v-delete-letsencrypt-domain admin $application->domain\n");
+
+        $domainName = "http://".$application->domain;
+        $sql_data = $this->updateDBScript($application, $domainName);
+        $ssh->write("$sql_data\n");
+
         $application->ssl_enabled = 0;
         $application->save();
         $output = $ssh->read();
-        return CommonFunctions::sendResponse(1, "SSL deleted to Domain Successfully");
+        return CommonFunctions::sendResponse(1, "SSL removed from Domain Successfully");
     }
     public function addFTPToApplication(Request $request, $application){
         $username = $request->get("username");

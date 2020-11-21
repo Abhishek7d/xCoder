@@ -47,7 +47,10 @@ class Applications extends React.Component {
         }, err => {
             this.showError(err);
         })
-        
+    }
+    refreshApplications = ()=>{
+        this.setState({selectedApplication:null, selectedServerFilter:""})
+        this.loadApplications();
     }
     renderServers() {
         let servers = [];
@@ -78,7 +81,7 @@ class Applications extends React.Component {
                 </div>        
         }
         if (this.state.selectedApplication) {
-            return (<ApplicationDetails applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
+            return (<ApplicationDetails loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
         }
         let applications = [];
         if(this.state.selectedServerFilter === ""){
@@ -142,7 +145,7 @@ class Applications extends React.Component {
         }else{
             let selectedApplication = event.target.value;
             this.state.applications.forEach(data=>{
-                if(data.id === selectedApplication){
+                if(data.id === parseInt(selectedApplication)){
                     this.setState({selectedApplication:data})
                 }
             }) 

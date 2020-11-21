@@ -566,6 +566,60 @@ class ApiHandler {
             }
         }, faild);
     }
+    
+    updateDomainName = (domainName, applicationId, success=()=>{}, faild=()=>{}) => {
+        if(!domainName || !applicationId){
+            faild("invalid name");
+            return;
+        }
+        
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("domain", domainName);
+
+        this.getResult("/application/"+applicationId+"/update-domain", "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message);
+            } else {
+                faild("something went wrong");
+            }
+        }, faild);
+    }
+    updateSSL = (applicationId, ssl, success=()=>{}, faild=()=>{}) => {
+        if(!applicationId){
+            faild("invalid name");
+            return;
+        }
+        
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        let url = (ssl)?"/application/"+applicationId+"/add-ssl":"/application/"+applicationId+"/remove-ssl";
+        this.getResult(url, "POST", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message);
+            } else {
+                faild("something went wrong");
+            }
+        }, faild);
+    }
+    
 }
 
 export default ApiHandler;

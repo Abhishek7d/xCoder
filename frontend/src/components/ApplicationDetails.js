@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Summary from "./application/Summary";
 import Database from "./application/Database";
+import Domain from "./application/Domain";
+import SSL from "./application/SSL";
 
 class ApplicationDetails extends Component {
     constructor(props) {
@@ -45,6 +47,8 @@ class ApplicationDetails extends Component {
                         <div className="tab-content" id="pills-tabContent">
                             <Summary tabId={"summary-tab"} active={true} server={this.server} application={this.application} />
                             <Database tabId={"database-tab"} active={true} server={this.server} application={this.application} />
+                            <Domain loadApplications={this.props.loadApplications} tabId={"domain-name-tab"} active={true} server={this.server} application={this.application} />
+                            <SSL loadApplications={this.props.loadApplications} tabId={"ssl-tab"} active={true} server={this.server} application={this.application} />
                         </div>
                     </div>
                 </div>
