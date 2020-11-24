@@ -204,7 +204,7 @@ class WebSiteController extends Controller
         $application->ssl_enabled = 1;
         $application->save();
         $output = $ssh->read();
-        return CommonFunctions::sendResponse(1, "SSL added to Domain Successfully");
+        return CommonFunctions::sendResponse(1, "SSL added to Domain Successfully", $output);
     }
     public function removeSSLToDomain(Request $request, $application){
         $application = Application::find($application);
