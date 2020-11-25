@@ -67,7 +67,7 @@ class ApplicationCard extends React.Component {
                             }
                             </div>
                             <div className="col-2 text-right application_page_card_actions">
-                                <a rel="noopener noreferrer" href={"https://"+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
+                                <a rel="noopener noreferrer" href={((this.application.ssl_enabled=='1')?"https://":"http://")+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
                                 <div className="btn-group pl-4 px-1 dropleft" style={{ cursor: "pointer" }}>
                                     <i className="fas fa-ellipsis-v" data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false"></i>
