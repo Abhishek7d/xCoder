@@ -3,6 +3,7 @@ import Summary from "./application/Summary";
 import Database from "./application/Database";
 import Domain from "./application/Domain";
 import SSL from "./application/SSL";
+import FTP from "./application/FTP";
 
 class ApplicationDetails extends Component {
     constructor(props) {
@@ -49,6 +50,7 @@ class ApplicationDetails extends Component {
                             <Database tabId={"database-tab"} active={true} server={this.server} application={this.application} />
                             <Domain loadApplications={this.props.loadApplications} tabId={"domain-name-tab"} active={true} server={this.server} application={this.application} />
                             <SSL loadApplications={this.props.loadApplications} tabId={"ssl-tab"} active={true} server={this.server} application={this.application} />
+                            <FTP loadApplications={this.props.loadApplications} tabId={"ftp-tab"} active={true} server={this.server} application={this.application} />
                         </div>
                     </div>
                 </div>

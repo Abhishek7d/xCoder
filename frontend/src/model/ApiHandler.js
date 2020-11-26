@@ -619,6 +619,63 @@ class ApiHandler {
             }
         }, faild);
     }
+    deleteFtpAccount  = (applicationId, username, success=()=>{}, faild=()=>{}) => {
+        if(!applicationId || !username){
+            faild("invalid name");
+            return;
+        }
+        
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        let url = "/application/"+applicationId+"/delete-ftp";
+        const formData = new FormData();
+        formData.append("username", username);
+
+        this.getResult(url, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message);
+            } else {
+                faild("something went wrong");
+            }
+        }, faild);
+    }
+    addFtpAccount  = (applicationId, username, password, success=()=>{}, faild=()=>{}) => {
+        if(!applicationId || !username || !password){
+            faild("invalid name");
+            return;
+        }
+        
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        let url = "/application/"+applicationId+"/add-ftp";
+        const formData = new FormData();
+        formData.append("username", username);
+        formData.append("password", password);
+
+        this.getResult(url, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message);
+            } else {
+                faild("something went wrong");
+            }
+        }, faild);
+    }
     
 }
 

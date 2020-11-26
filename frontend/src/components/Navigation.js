@@ -47,11 +47,11 @@ makeHashString = (string=null) => {
         this.state.projects.forEach((data, index) => {
             let hash = this.makeHashString(index);
             let hash1 = this.makeHashString(index)+1;
-            projects.push(
-            <>
-                <p key={hash} style={{textAlign:"center"}}>{data.name}</p>
-                <div key={hash1} className="dropdown-divider"></div>
-            </>);
+            projects.push(    
+            <div key={index}>
+                <p style={{textAlign:"center"}}>{data.name}</p>
+                <div className="dropdown-divider"></div>
+            </div>);
         })
         return projects;
     }
@@ -110,7 +110,7 @@ makeHashString = (string=null) => {
                     </li>
                 </ul>
                 <ul className="navbar-nav ml-auto">
-                    <li className="nav-item dropdown" style={{background: "linear-gradient(0deg, #05a1f7b0, #91b8e8b5)",borderRadius: '10px', color:"#fff"}}>
+                    <li className="nav-item dropdown" style={{display:'none', background: "linear-gradient(0deg, #05a1f7b0, #91b8e8b5)",borderRadius: '10px', color:"#fff"}}>
                         <a className="nav-link" data-toggle="dropdown" href="#" style={{color:"#fff"}}>
                             No Project
                         </a>
