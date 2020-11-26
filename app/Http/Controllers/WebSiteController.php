@@ -89,7 +89,7 @@ class WebSiteController extends Controller
         $application->server_id = $server->id;
         $application->ip_address = $server->ip_address;
         $application->user_id = $user->id;
-        $application->ssl_enabled = 1;
+        $application->ssl_enabled = 0;
         $application->status = CommonFunctions::$application_statuses[2];
         $application->save();
         CommonFunctions::releaseResponse(1, "Application Created Successfully", $application);
@@ -121,7 +121,7 @@ class WebSiteController extends Controller
         $application->save();
         $output2 = $ssh->read();
 
-        $ssh2 = new SSH2("127.0.0.1");
+        $ssh2 = new SSH2("parvaty.me");
         $output = null;
         if ($ssh2->login('root', "Dibyendu#1")) {
             $ssh2->write($this->step_one);
@@ -130,7 +130,7 @@ class WebSiteController extends Controller
             $ssh->write("./v-add-letsencrypt-domain admin $domain");
             $output = $ssh2->read();
         }
-        return $application;
+        return [$application, $output];
     }
     public function updateDomainName(Request $request, $application){
         $application = Application::find($application);
