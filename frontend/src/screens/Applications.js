@@ -6,10 +6,14 @@ import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button } from 'react-bootstrap';
 import ApplicationDetails from '../components/ApplicationDetails';
 import "../index.css";
+import {withRouter, Redirect} from 'react-router';
+import { browserHistory } from 'react-router'
 
 class Applications extends React.Component {
     constructor(props) {
         super();
+        let serverId = new URLSearchParams(props.location.search).get("serverId");
+        let appId = props.match.params.appId;
         this.state = {
             applications: [],
             showModal: false,
@@ -17,13 +21,14 @@ class Applications extends React.Component {
             servers: [],
             error: "",
             success: "",
-            selectedServerId: "",
+            rspmsg:"",
+            selectedServerId: serverId,
             selectedDomain: "",
             isWordpress: true,
             isApplicationClicked: false,
             selectedApplication: null,
-            selectedServerFilter: "",
-            selectedApplicationFilter: "",
+            selectedServerFilter: serverId,
+            selectedApplicationFilter: appId,
             appLoadding:true
         }
         this.apiHandler = new ApiHandler();
@@ -40,9 +45,17 @@ class Applications extends React.Component {
             this.showError(err);
         })
     }
+    setMessage(message){
+        this.setState({rspmsg:message})
+    }
     loadApplications(){
         this.setState({appLoadding:true});
         this.apiHandler.getApplications((msg, data) => {
+            data.forEach((app, index) => {
+                if(app.id===parseInt(this.state.selectedApplicationFilter)){
+                    this.setState({selectedApplication: app});
+                }
+            })
             this.setState({ applications: data, appLoadding: false})
         }, err => {
             this.showError(err);
@@ -81,10 +94,11 @@ class Applications extends React.Component {
                 </div>        
         }
         if (this.state.selectedApplication) {
-            return (<ApplicationDetails loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
+            window.history.replaceState(null, null, "/applications/"+this.state.selectedApplication.id)
+            return (<ApplicationDetails setMessage={this.setMessage} loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
         }
         let applications = [];
-        if(this.state.selectedServerFilter === ""){
+        if(this.state.selectedServerFilter === "" || this.state.selectedServerFilter === null ){
             this.state.applications.forEach((data, index) => {
                 applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
             })
@@ -157,8 +171,9 @@ class Applications extends React.Component {
     applicationClickHandler = (application = null) => {
         if(!application){
             this.setState({selectedApplicationFilter:""})
+            window.history.replaceState(null, null, "/applications")
         }
-        this.setState({ selectedApplication: application })
+        this.setState({ selectedApplication: application})
     }
 
     render() {
@@ -170,7 +185,8 @@ class Applications extends React.Component {
                     <section className="content-header">
                         <div className="container-fluid">
                             <div className="row mb-2">
-
+                            <p style={{color:"green", textAlign:"center", width:"100%"}} dangerouslySetInnerHTML={{__html: this.state.rspmsg}}></p>
+                           
                             </div>
                         </div>
                     </section>
@@ -185,6 +201,7 @@ class Applications extends React.Component {
                                             <div className="col-3 float-left">
                                                 <a href="#" className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Application</a>
                                             </div>
+                                            
                                             <div className="col-md-3">
                                                 <select className="form-control" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
                                                     <option value="">All</option>
@@ -262,4 +279,4 @@ class Applications extends React.Component {
         )
     }
 }
-export default Applications;
+export default withRouter(Applications);

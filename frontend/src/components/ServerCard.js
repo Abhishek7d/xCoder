@@ -74,7 +74,7 @@ class ServerCard extends React.Component {
                             </div>
                         </div>
                         <div className="col-sm-3 col-md-3 text-right application_page_card_actions d-flex">
-                            <Link to="/applications" className="pl-3">
+                            <Link to={'/applications?serverId='+this.server.id} params={{ testvalue: "hello" }} className="pl-3">
                                 Applications <span className="number_of_users"> {(this.server.applications)?this.server.applications.length:0}</span>
                             </Link>
                             

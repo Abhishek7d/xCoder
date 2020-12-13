@@ -61,6 +61,9 @@ class Servers extends React.Component {
         if(server){
             if(server.status==="READY"){
                 this.setState({selectedSever:server});
+                if(!this.state.isServerClicked){
+                    window.history.replaceState(null, null, "/servers/"+server.id)
+                }
                 this.setState({
                     isServerClicked: !this.state.isServerClicked,
                 })
@@ -68,6 +71,9 @@ class Servers extends React.Component {
         }
     }
     goBack = ()=>{
+        if(this.state.isServerClicked){
+            window.history.replaceState(null, null, "/servers")
+        }
         this.setState({
             isServerClicked: !this.state.isServerClicked,
         })

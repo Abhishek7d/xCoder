@@ -154,7 +154,15 @@ class ServiceController extends Controller
 	$data = explode("v-list-cron-jobs admin json",$data);
 	$data = array_pop($data);
 	$data = json_decode($data);
-	return CommonFunctions::sendResponse(1, "List of Cron jobs", $data);
+    $newList = [];
+    $i=1;
+    foreach($data as $key => $d){
+        if($i>9){
+            array_push($newList,$d);
+        }
+        $i++;
+    }
+	return CommonFunctions::sendResponse(1, "List of Cron jobs", $newList);
     }
     public function addCronjob(Request $request, $server){
         $server = Server::find($server);

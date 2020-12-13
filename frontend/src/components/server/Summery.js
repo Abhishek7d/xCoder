@@ -43,7 +43,7 @@ class Summery extends React.Component{
                         <span className="mt-3 font-weight-bold text-primary">: {this.server.disk} GB</span>
                         <span className="mt-3 font-weight-bold text-primary">: {(this.server.storage)?this.server.storage.size+" GB":"N/A"}</span>
                         <span className="mt-3 font-weight-bold text-primary">: {this.server.vcpus}</span>
-                        <span className="mt-3 font-weight-bold text-primary">: {this.server.ip_address}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>: {this.server.ip_address}</span>
                         <span className="mt-3 font-weight-bold text-primary">: {this.state.regions[this.server.region]}</span>
                     </div>
                     :

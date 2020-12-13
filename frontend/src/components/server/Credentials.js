@@ -20,9 +20,9 @@ class Credentials extends React.Component{
                         <span className="mt-3 font-weight-bold text-info">IP Address :</span>
                     </div>
                     <div className="col-sm-6 col-md-2 d-flex flex-column">
-                        <span className="mt-3 font-weight-bold text-primary">{"admin"}</span>
-                        <span className="mt-3 font-weight-bold text-primary">{this.server.password}</span>
-                        <span className="mt-3 font-weight-bold text-primary">{this.server.ip_address}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{"admin"}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.server.password}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.server.ip_address}</span>
                     </div>
                 </div>
             </div>

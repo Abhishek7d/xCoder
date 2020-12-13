@@ -9,6 +9,7 @@ class ApplicationCard extends React.Component {
         this.state = {
             created_at: props.application.created_at,
             id: props.application.id,
+            name: props.application.name,
             domain: props.application.domain,
             server_id: props.application.server_id,
             status: props.application.status,
@@ -57,6 +58,7 @@ class ApplicationCard extends React.Component {
                                             <img  alt="wordpress" style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />
                                         </div>
                                         <div className="col-11">
+                                            <span className="text-info d-flex font-weight-bold">App Name : &nbsp;<p className="m-0 text-primary">{this.state.name}</p></span>
                                             <span className="text-info d-flex font-weight-bold">Domain Name : &nbsp;<p className="m-0 text-primary">{this.state.domain}</p></span>
                                             <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">{this.state.server.name}</p></span>
                                             <span className="text-info d-flex font-weight-bold">Status : &nbsp;<span className="text-primary">{this.state.status}</span></span>

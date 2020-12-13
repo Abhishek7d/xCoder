@@ -48,7 +48,7 @@ Route::group(['prefix' => 'api'], function () {
 
         //application
         Route::get('/application', [WebSiteController::class, 'showDomains']);
-        Route::post('/application', [WebSiteController::class, 'addDomain']);
+        Route::post('/application/new', [WebSiteController::class, 'addDomain']);
         Route::post('/application/{application}/update-domain', [WebSiteController::class, 'updateDomainName']);
         Route::post('/application/{application}/add-ssl', [WebSiteController::class, 'addSSLToDomain']);
         Route::post('/application/{application}/remove-ssl', [WebSiteController::class, 'removeSSLToDomain']);

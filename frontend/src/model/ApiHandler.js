@@ -199,7 +199,7 @@ class ApiHandler {
         formData.append("server", selectedServerId);
         formData.append("wordpress", isWordpress);
 
-        this.getResult("/application", "POST", formData, authHeaders, (response) => {
+        this.getResult("/application/new", "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");

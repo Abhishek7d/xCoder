@@ -24,9 +24,9 @@ class Database extends React.Component{
                         <span className="mt-3 font-weight-bold text-info">Access :</span>
                     </div>
                     <div className="col-md-5 d-flex flex-column">
-                        <span className="mt-3 font-weight-bold text-primary">{this.application.db_name}</span>
-                        <span className="mt-3 font-weight-bold text-primary">{this.application.db_username}</span>
-                        <span className="mt-3 font-weight-bold text-primary">{this.application.db_password}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.db_name}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.db_username}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.db_password}</span>
                         <span className="mt-3 font-weight-bold" style={{textDecoration:"underline"}}><a href={'//'+this.application.domain+"/phpmyadmin"} target="_blank" rel="noopener noreferrer">Access DB</a></span>
                     </div>
                 </div>

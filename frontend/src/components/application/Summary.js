@@ -25,9 +25,9 @@ class Summary extends React.Component{
                     </div>
                     <div className="col-md-5 d-flex flex-column">
                         <span className="mt-3 font-weight-bold text-primary">{this.application.name}</span>
-                        <span className="mt-3 font-weight-bold text-primary">{this.application.domain}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.domain}</span>
                         <span className="mt-3 font-weight-bold text-primary">{this.application.status}</span>
-                        <span className="mt-3 font-weight-bold text-primary">{this.application.server.ip_address}</span>
+                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.server.ip_address}</span>
                     </div>
                 </div>
             </div>

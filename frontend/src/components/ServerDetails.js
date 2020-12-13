@@ -6,6 +6,7 @@ import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
 import BlockStorage from "./server/BlockStorage";
+import copy from 'copy-to-clipboard';
 // import UpgradeServer from "./server/UpgradeServer";
 
 class ServerDetails extends Component {
@@ -13,6 +14,10 @@ class ServerDetails extends Component {
         super();
         this.props = props;
         this.server = props.server;
+    }
+    copyToClipBoard = (event) =>{
+        let text = event.currentTarget.innerText;
+        copy(text);
     }
     render() {
         return (
@@ -50,12 +55,12 @@ class ServerDetails extends Component {
                             </li> */}
                         </ul>
                         <div className="tab-content" id="pills-tabContent">
-                            <Summery tabId={"summery"} active={true} server={this.server} />
-                            <Credentials tabId={"credentials"} server={this.server} />
-                            <Resources tabId={"resouces"} server={this.server} />
-                            <Services tabId={"services"} server={this.server} />
-                            <CronJobs tabId={"cron"} server={this.server}/>
-                            <BlockStorage tabId={"storage"} server={this.server}/>
+                            <Summery copyToClipBoard={this.copyToClipBoard} tabId={"summery"} active={true} server={this.server} />
+                            <Credentials copyToClipBoard={this.copyToClipBoard} tabId={"credentials"} server={this.server} />
+                            <Resources copyToClipBoard={this.copyToClipBoard} tabId={"resouces"} server={this.server} />
+                            <Services copyToClipBoard={this.copyToClipBoard} tabId={"services"} server={this.server} />
+                            <CronJobs copyToClipBoard={this.copyToClipBoard} tabId={"cron"} server={this.server}/>
+                            <BlockStorage copyToClipBoard={this.copyToClipBoard} tabId={"storage"} server={this.server}/>
                             {/* <UpgradeServer tabId={"upgrade"} server={this.server}/> */}
                         </div>
                     </div>

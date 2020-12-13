@@ -62,9 +62,9 @@ class FTP extends React.Component{
             list.push(
                 <tr key={index}>
                     <th scope="row">{index+1}</th>
-                    <td>{data.host}</td>
-                    <td>{data.username}</td>
-                    <td>{data.password}</td>
+                    <td onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{data.host}</td>
+                    <td onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{data.username}</td>
+                    <td onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{data.password}</td>
                     <td>
                         <button className={"btn btn-danger"} onClick={()=>this.deleteFtp(data.username)} style={{marginLeft:'10px'}}>
                         {

@@ -103,6 +103,19 @@ let routes = [
         }
     },
     {
+        path: '/applications/:appId',
+        title: 'Applications',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Applications/>;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
         path: '/applications',
         title: 'Applications',
         component: () => {

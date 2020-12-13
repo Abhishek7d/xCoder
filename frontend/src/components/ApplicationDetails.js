@@ -4,6 +4,7 @@ import Database from "./application/Database";
 import Domain from "./application/Domain";
 import SSL from "./application/SSL";
 import FTP from "./application/FTP";
+import copy from 'copy-to-clipboard';
 
 class ApplicationDetails extends Component {
     constructor(props) {
@@ -12,7 +13,13 @@ class ApplicationDetails extends Component {
         this.application = props.application;
         this.server = props.application.server;
     }
-
+    copyToClipBoard = (event) =>{
+        let text = event.currentTarget.innerText;
+        copy(text);
+    }
+    setMessage (message){
+        this.props.setMessage(message)
+    }
     render() {
         return (
             <div className="card card-primary card-outline">
@@ -46,11 +53,11 @@ class ApplicationDetails extends Component {
 
                         </ul>
                         <div className="tab-content" id="pills-tabContent">
-                            <Summary tabId={"summary-tab"} active={true} server={this.server} application={this.application} />
-                            <Database tabId={"database-tab"} active={true} server={this.server} application={this.application} />
-                            <Domain loadApplications={this.props.loadApplications} tabId={"domain-name-tab"} active={true} server={this.server} application={this.application} />
-                            <SSL loadApplications={this.props.loadApplications} tabId={"ssl-tab"} active={true} server={this.server} application={this.application} />
-                            <FTP loadApplications={this.props.loadApplications} tabId={"ftp-tab"} active={true} server={this.server} application={this.application} />
+                            <Summary copyToClipBoard={this.copyToClipBoard} tabId={"summary-tab"} active={true} server={this.server} application={this.application} />
+                            <Database copyToClipBoard={this.copyToClipBoard} tabId={"database-tab"} active={true} server={this.server} application={this.application} />
+                            <Domain copyToClipBoard={this.copyToClipBoard} loadApplications={this.props.loadApplications} tabId={"domain-name-tab"} active={true} server={this.server} application={this.application} />
+                            <SSL copyToClipBoard={this.copyToClipBoard} setMessage={this.props.setMessage} loadApplications={this.props.loadApplications} tabId={"ssl-tab"} active={true} server={this.server} application={this.application} />
+                            <FTP copyToClipBoard={this.copyToClipBoard} loadApplications={this.props.loadApplications} tabId={"ftp-tab"} active={true} server={this.server} application={this.application} />
                         </div>
                     </div>
                 </div>
