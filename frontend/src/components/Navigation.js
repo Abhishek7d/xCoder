@@ -1,5 +1,6 @@
 import React from 'react';
 import ApiHandler from '../model/ApiHandler';
+import { read_cookie } from 'sfcookies';
 import { delete_cookie } from 'sfcookies';
 import { Link } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
@@ -10,6 +11,7 @@ class Navigation extends React.Component {
         this.state = {
             loadding: false,
             error: "",
+            name: read_cookie("name"),
             success: "",
             sidebarToggle: false,
             showModal: false,
@@ -127,17 +129,16 @@ makeHashString = (string=null) => {
                         </div>
                     </li>
                     <li className="nav-item">
-                        <Link to="/profile"  className="nav-link" role="button">
-                            <i className="fas fa-user-circle"></i>
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <div className="nav-link" type="button" onClick={this.handleLogout}>
-                            {this.state.loadding ?
-                                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                : <b>Logout</b>
-                            }
-
+                        <div class="dropdown show prifile-dropdown">
+                            <div className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Hello, <b>{this.state.name}</b>
+                            </div>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <Link to="/profile"  className="dropdown-item" role="button">
+                                    Profile
+                                </Link>
+                                <a class="dropdown-item" onClick={this.handleLogout} href="#">Logout</a>
+                            </div>
                         </div>
                     </li>
                 </ul>

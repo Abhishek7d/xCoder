@@ -5,6 +5,7 @@ import ServerCard from '../components/ServerCard';
 import ApiHandler from '../model/ApiHandler';
 import { Link } from 'react-router-dom';
 import ServerDetails from '../components/ServerDetails'
+import "../assets/css/dashboard.css";
 
 class Servers extends React.Component {
     constructor(props) {
@@ -81,14 +82,43 @@ class Servers extends React.Component {
 
     render() {
         return (
+            <div className="container-fluid p-0">
+                    <Navigation />
+                    <Sidebar />
+                    <div className="content-wrapper">
+                        <div className="section-container">
+                            <div className="row">
+                                <div className="col-6 screen-title">
+                                    <h5 className="col-sm-12">My Servers</h5>
+                                    <p  className="col-sm-12">10+ Servers</p>
+                                </div>
+                                <div className="col-6">
+                                    <Link to="/server/create" className="theme-btn float-right">
+                                        Create Server
+                                        <i class="fa fa-plus"></i>
+                                    </Link>
+                                </div>
+                            </div>
+                            <div className="row servers-container">
+                                {(this.state.isServerClicked)?
+                                    <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedSever} />
+                                    :
+                                    this.renderServers()
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            /*
                 <div className="container-fluid p-0">
                     <Navigation />
                     <Sidebar />
                     <div className="content-wrapper">
                         <section className="content-header">
                             <div className="container-fluid">
-                                <div className="row mb-2">
-
+                                <div className="row screen-title">
+                                    <h4 className="col-sm-12">My Servers</h4>
+                                    <p  className="col-sm-12">10+ Servers</p>
                                 </div>
                             </div>
                         </section>
@@ -123,6 +153,7 @@ class Servers extends React.Component {
                         </section>
                     </div>
                 </div>
+            */
         );
     }
 }

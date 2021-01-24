@@ -51,6 +51,30 @@ class ServerCard extends React.Component {
 
     render() {
         return (
+            <div className="col-md-4 col-sm-12 server-card">
+                <div className="server-card-header row">
+                    <div className="col-sm-2 server-card-image">
+                        <img alt="wordpress" style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
+                    </div>
+                    <div className="col-sm-8 server-card-lebel">
+                        <h5>Main Server</h5>
+                        <p>Created on 12 Jan, 2020</p>
+                    </div>
+                    <div className="col-sm-2 server-card-status">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 27.5C8.09625 27.5 2.5 21.9037 2.5 15C2.5 8.09625 8.09625 2.5 15 2.5C21.9037 2.5 27.5 8.09625 27.5 15C27.5 21.9037 21.9037 27.5 15 27.5ZM13.7537 20L22.5912 11.1613L20.8237 9.39375L13.7537 16.465L10.2175 12.9288L8.45 14.6962L13.7537 20Z" fill="#58D71D"/>
+                    </svg>
+
+                    </div>
+                </div>
+                <div className="col-sm-12 server-card-content">
+                    <div className="col-sm-12">
+                        <div className="col-sm-4">Icon</div>
+                        <div className="col-sm-8">12.343.23.32</div>
+                    </div>
+                </div>
+            </div>
+            /*
             <div className="card card-outline">
                 <div className="card-body">
                     <div className="row mb-2">
@@ -83,18 +107,14 @@ class ServerCard extends React.Component {
                                     <i className="fas fa-ellipsis-v"></i>
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    {/* <DropdownItem key="1"><a className="dropdown-item" href="#"><i className="fa fa-stop "></i>&nbsp;Stop</a></DropdownItem>
-                                    <DropdownItem key="2"><a className="dropdown-item" href="#"><i className="fa fa-redo" aria-hidden="true"></i>&nbsp;Restart</a></DropdownItem> */}
                                     <DropdownItem key="3"><a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash"></i>&nbsp;Delete</a></DropdownItem>
-                                    {/* <DropdownItem key="4"><a className="dropdown-item" href="#"><i className="fa fa-globe"></i>&nbsp;Add Application</a></DropdownItem>
-                                    <DropdownItem key="5"><a className="dropdown-item" href="#"><i className="fa fa-server"></i>&nbsp;Transfer Server</a></DropdownItem>
-                                    <DropdownItem key="6"><a className="dropdown-item" href="#"><i className="fa fa-clone"></i>&nbsp;Clone Server</a></DropdownItem> */}
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
                     </div>
                 </div>
             </div>
+            */
         )
     }
 }
