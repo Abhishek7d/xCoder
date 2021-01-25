@@ -175,3 +175,24 @@ a.form-link {
 body {
     background: #f4f6f9;
 }
+.server-card-content > div > div > p {
+    color: #7b7c84;
+}
+
+.stipe {
+    width: 100%;
+    padding: 3px 0px;
+    text-align: center !important;
+}
+.server-card-content > div > div > p {
+    font-size: medium;
+}
+.server-card-content > div > div > img {
+    width: 40px;
+}
+.server-card-content.service > div > div {
+    text-align: center;
+}
+.server-card-content.service > .row {
+    margin: 15px 0px;
+}

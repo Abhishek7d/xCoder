@@ -77,6 +77,19 @@ let routes = [
         }
     },
     {
+        path: '/servers/:serverId',
+        title: 'Server',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if(typeof cookie !== "object"){
+                return <Servers/>;
+            }
+            else{
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
         path: '/servers',
         title: 'Dashboard',
         component: () => {

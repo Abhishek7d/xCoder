@@ -1,5 +1,6 @@
 import React from 'react';
 import ApiHandler from '../../model/ApiHandler';
+import Status from '../../components/Status';
 
 class Services extends React.Component{
     constructor(props){
@@ -51,118 +52,186 @@ class Services extends React.Component{
     }
     render(){
         return (
-            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
-                <div className="card">
-                    <div className="card-body p-0">
-                    <table className="table">
-                        <thead>
-                            <tr>
-                            <th style={{width: "10px"}}></th>
-                            <th>Service</th>
-                            <th>Status</th>
-                            <th >Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {(this.state.serviceLoadding)?
-                            <tr>
-                            </tr>
-                            :
-                            <>
-                            <tr>
-                                <td>#</td>
-                                <td>Apache</td>
-                                <td>
-                                    <div style={{display:"flex"}}>
-                                        {(this.state.apache)?
-                                        <><div className="dot-green"></div>Running</>
-                                        :
-                                        <><div className="dot-red"></div>Stopped</>
-                                        }
-                                    </div>
-                                </td>
-                                <td>
-                                    {(this.state.apache)?
-                                    <div className="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</div>
-                                    :
-                                    <div className="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</div>
-                                    }
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#</td>
-                                <td>MySQL</td>
-                                <td>
-                                    <div style={{display:"flex"}}>
-                                        {(this.state.mysql)?
-                                        <><div className="dot-green"></div>Running</>
-                                        :
-                                        <><div className="dot-red"></div>Stopped</>
-                                        }
-                                    </div>
-                                </td>
-                                <td>
-                                    {(this.state.mysql)?
-                                    <a className="btn btn-info white " onClick={()=>this.updateService("mysql")}>Stop</a>
-                                    :
-                                    <a className="btn btn-info white" onClick={()=>this.updateService("mysql")}>Start</a>
-                                    }
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#</td>
-                                <td>Nginx</td>
-                                <td>
-                                    <div style={{display:"flex"}}>
-                                        {(this.state.nginx)?
-                                        <><div className="dot-green"></div>Running</>
-                                        :
-                                        <><div className="dot-red"></div>Stopped</>
-                                        }
-                                    </div>
-                                </td>
-                                <td>
-                                    {(this.state.nginx)?
-                                    <a className="btn btn-info white " onClick={()=>this.updateService("nginx")}>Stop</a>
-                                    :
-                                    <a className="btn btn-info white" onClick={()=>this.updateService("nginx")}>Start</a>
-                                    }
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#</td>
-                                <td>CRON</td>
-                                <td>
-                                    <div style={{display:"flex"}}>
-                                        {(this.state.cron)?
-                                        <><div className="dot-green"></div>Running</>
-                                        :
-                                        <><div className="dot-red"></div>Stopped</>
-                                        }
-                                    </div>
-                                </td>
-                                <td>
-                                    {(this.state.cron)?
-                                    <a className="btn btn-info white " onClick={()=>this.updateService("cron")}>Stop</a>
-                                    :
-                                    <a className="btn btn-info white" onClick={()=>this.updateService("cron")}>Start</a>
-                                    }
-                                </td>
-                            </tr>
-                            </>
-                            }
-                        </tbody>
-                        </table>
-                        {(this.state.serviceLoadding)?
-                            <div style={{width: "100%",paddingLeft: "40%"}}>
-                                <img src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
-                            </div>
-                            :
-                            <></>
-                        }
+            <div className="col-md-4 col-12 server-card">
+                <div className="server-card-header row">
+                    <div className="col-10 server-card-lebel">
+                        <h6>Services</h6>
+                        <p>Cureent running services</p>
                     </div>
                 </div>
+                {(this.state.serviceLoadding)?
+                    <div className="row" style={{height:"75%"}}>
+                        <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{width: "50px", margin:"auto"}}/>
+                    </div>
+                    :
+                    <div className="col-12 server-card-content service">
+                        <div className="row">
+                            <div className="col-4">
+                                Apache
+                            </div>
+                            <div className="col-3">
+                                {(this.state.apache)?
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15 27.5C8.09625 27.5 2.5 21.9037 2.5 15C2.5 8.09625 8.09625 2.5 15 2.5C21.9037 2.5 27.5 8.09625 27.5 15C27.5 21.9037 21.9037 27.5 15 27.5ZM13.7537 20L22.5912 11.1613L20.8237 9.39375L13.7537 16.465L10.2175 12.9288L8.45 14.6962L13.7537 20Z" fill="#58D71D"/>
+                                    </svg>
+                                    :
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15 27.5C8.09625 27.5 2.5 21.9037 2.5 15C2.5 8.09625 8.09625 2.5 15 2.5C21.9037 2.5 27.5 8.09625 27.5 15C27.5 21.9037 21.9037 27.5 15 27.5ZM13.75 18.75V21.25H16.25V18.75H13.75ZM13.75 8.75V16.25H16.25V8.75H13.75Z" fill="#FFD302"/>
+                                    </svg>
+                                }
+                            </div>
+                            <div className="col-5"  onClick={()=>this.updateService("apache")} >
+                                <button type="button" className="theme-btn stipe">
+                                    {(this.state.apache)?
+                                        "Stop"
+                                        :
+                                        "Start"
+                                    }
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col-4">
+                                MySQL
+                            </div>
+                            <div className="col-3">
+                                {(this.state.mysql)?
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15 27.5C8.09625 27.5 2.5 21.9037 2.5 15C2.5 8.09625 8.09625 2.5 15 2.5C21.9037 2.5 27.5 8.09625 27.5 15C27.5 21.9037 21.9037 27.5 15 27.5ZM13.7537 20L22.5912 11.1613L20.8237 9.39375L13.7537 16.465L10.2175 12.9288L8.45 14.6962L13.7537 20Z" fill="#58D71D"/>
+                                    </svg>
+                                    :
+                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15 27.5C8.09625 27.5 2.5 21.9037 2.5 15C2.5 8.09625 8.09625 2.5 15 2.5C21.9037 2.5 27.5 8.09625 27.5 15C27.5 21.9037 21.9037 27.5 15 27.5ZM13.75 18.75V21.25H16.25V18.75H13.75ZM13.75 8.75V16.25H16.25V8.75H13.75Z" fill="#FFD302"/>
+                                    </svg>
+                                }
+                            </div>
+                            <div className="col-5"  onClick={()=>this.updateService("mysql")} >
+                                <button type="button" className="theme-btn stipe">
+                                    {(this.state.mysql)?
+                                        "Stop"
+                                        :
+                                        "Start"
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                }
             </div>
+            // <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
+            //     <div className="card">
+            //         <div className="card-body p-0">
+            //         <table className="table">
+            //             <thead>
+            //                 <tr>
+            //                 <th style={{width: "10px"}}></th>
+            //                 <th>Service</th>
+            //                 <th>Status</th>
+            //                 <th >Action</th>
+            //                 </tr>
+            //             </thead>
+            //             <tbody>
+            //                 {(this.state.serviceLoadding)?
+            //                 <tr>
+            //                 </tr>
+            //                 :
+            //                 <>
+            //                 <tr>
+            //                     <td>#</td>
+            //                     <td>Apache</td>
+            //                     <td>
+            //                         <div style={{display:"flex"}}>
+            //                             {(this.state.apache)?
+            //                             <><div className="dot-green"></div>Running</>
+            //                             :
+            //                             <><div className="dot-red"></div>Stopped</>
+            //                             }
+            //                         </div>
+            //                     </td>
+            //                     <td>
+            //                         {(this.state.apache)?
+            //                         <div className="btn btn-info white " onClick={()=>this.updateService("apache")}>Stop</div>
+            //                         :
+            //                         <div className="btn btn-info white" onClick={()=>this.updateService("apache")}>Start</div>
+            //                         }
+            //                     </td>
+            //                 </tr>
+            //                 <tr>
+            //                     <td>#</td>
+            //                     <td>MySQL</td>
+            //                     <td>
+            //                         <div style={{display:"flex"}}>
+            //                             {(this.state.mysql)?
+            //                             <><div className="dot-green"></div>Running</>
+            //                             :
+            //                             <><div className="dot-red"></div>Stopped</>
+            //                             }
+            //                         </div>
+            //                     </td>
+            //                     <td>
+            //                         {(this.state.mysql)?
+            //                         <a className="btn btn-info white " onClick={()=>this.updateService("mysql")}>Stop</a>
+            //                         :
+            //                         <a className="btn btn-info white" onClick={()=>this.updateService("mysql")}>Start</a>
+            //                         }
+            //                     </td>
+            //                 </tr>
+            //                 <tr>
+            //                     <td>#</td>
+            //                     <td>Nginx</td>
+            //                     <td>
+            //                         <div style={{display:"flex"}}>
+            //                             {(this.state.nginx)?
+            //                             <><div className="dot-green"></div>Running</>
+            //                             :
+            //                             <><div className="dot-red"></div>Stopped</>
+            //                             }
+            //                         </div>
+            //                     </td>
+            //                     <td>
+            //                         {(this.state.nginx)?
+            //                         <a className="btn btn-info white " onClick={()=>this.updateService("nginx")}>Stop</a>
+            //                         :
+            //                         <a className="btn btn-info white" onClick={()=>this.updateService("nginx")}>Start</a>
+            //                         }
+            //                     </td>
+            //                 </tr>
+            //                 <tr>
+            //                     <td>#</td>
+            //                     <td>CRON</td>
+            //                     <td>
+            //                         <div style={{display:"flex"}}>
+            //                             {(this.state.cron)?
+            //                             <><div className="dot-green"></div>Running</>
+            //                             :
+            //                             <><div className="dot-red"></div>Stopped</>
+            //                             }
+            //                         </div>
+            //                     </td>
+            //                     <td>
+            //                         {(this.state.cron)?
+            //                         <a className="btn btn-info white " onClick={()=>this.updateService("cron")}>Stop</a>
+            //                         :
+            //                         <a className="btn btn-info white" onClick={()=>this.updateService("cron")}>Start</a>
+            //                         }
+            //                     </td>
+            //                 </tr>
+            //                 </>
+            //                 }
+            //             </tbody>
+            //             </table>
+            //             {(this.state.serviceLoadding)?
+            //                 <div style={{width: "100%",paddingLeft: "40%"}}>
+            //                     <img src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
+            //                 </div>
+            //                 :
+            //                 <></>
+            //             }
+            //         </div>
+            //     </div>
+            // </div>
             
         )
     }

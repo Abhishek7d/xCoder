@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import ServerCard from '../components/ServerCard';
 import ApiHandler from '../model/ApiHandler';
 import { Link } from 'react-router-dom';
+import {withRouter, Redirect} from 'react-router';
 import ServerDetails from '../components/ServerDetails';
 import "../assets/css/dashboard.css";
 import CreateServerScreen from "./CreateServerScreen";
@@ -11,13 +12,15 @@ import CreateServerScreen from "./CreateServerScreen";
 class Servers extends React.Component {
     constructor(props) {
         super();
+        let serverId = props.match.params.serverId;
         this.state = {
             servers: [],
             regions: {},
             selectedSever:null,
             isServerClicked:false,
             loadding:true,
-            showModal:false
+            showModal:false,
+            serverId:serverId
         }
         this.apiHandler = new ApiHandler();
         this.createServer = React.createRef();
@@ -29,6 +32,14 @@ class Servers extends React.Component {
     componentDidMount() {
         document.title = "Your Servers";
         this.apiHandler.getServers((msg, data) => {
+            data.forEach((s)=>{
+                if(s.id==this.state.serverId){
+                    this.setState({
+                        selectedSever:s,
+                        isServerClicked:true
+                    })
+                }
+            })
             this.setState({ servers: data, loadding: false })
         }, err => {
             this.showError(err);
@@ -123,4 +134,4 @@ class Servers extends React.Component {
         );
     }
 }
-export default Servers;
+export default withRouter(Servers);

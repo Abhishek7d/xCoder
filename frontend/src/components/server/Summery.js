@@ -10,6 +10,7 @@ class Summery extends React.Component{
             regions:{},
             loadding:false
         }
+        console.log(this.server)
         this.apiHandler = new ApiHandler();
     }
     componentDidMount(){
@@ -25,30 +26,46 @@ class Summery extends React.Component{
     }
     render(){
         return(
-            <div className="tab-pane fade show active" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
-                <div className="row col-md-12">
-                    <div className="col-sm-6 col-md-2 d-flex flex-column">
-                        <span className="mt-3 font-weight-bold text-info">Size </span>
-                        <span className="mt-3 font-weight-bold text-info">Memory </span>
-                        <span className="mt-3 font-weight-bold text-info">Disk </span>
-                        <span className="mt-3 font-weight-bold text-info">Storage </span>
-                        <span className="mt-3 font-weight-bold text-info">vCPUs </span>
-                        <span className="mt-3 font-weight-bold text-info">IP Address </span>
-                        <span className="mt-3 font-weight-bold text-info">Region </span>
+            <div className="col-md-4 col-12 server-card">
+                <div className="server-card-header row">
+                    <div className="col-8 server-card-lebel">
+                        <h6>Summary</h6>
+                        <p>Genral Details</p>
                     </div>
-                    {this.server?
-                    <div className="col-sm-6 col-md-2 d-flex flex-column">
-                        <span className="mt-3 font-weight-bold text-primary">: {this.server.size}</span>
-                        <span className="mt-3 font-weight-bold text-primary">: {this.server.memory} MB</span>
-                        <span className="mt-3 font-weight-bold text-primary">: {this.server.disk} GB</span>
-                        <span className="mt-3 font-weight-bold text-primary">: {(this.server.storage)?this.server.storage.size+" GB":"N/A"}</span>
-                        <span className="mt-3 font-weight-bold text-primary">: {this.server.vcpus}</span>
-                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>: {this.server.ip_address}</span>
-                        <span className="mt-3 font-weight-bold text-primary">: {this.state.regions[this.server.region]}</span>
+                </div>
+                <div className="col-12 server-card-content">
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-ram.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10"><p>{this.server.size}</p></div>
                     </div>
-                    :
-                    <></>
-                    }
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-ip.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10"><p>{this.server.ip_address}</p></div>
+                    </div>
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-location.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10"><p>{this.state.regions[this.server.region]}</p></div>
+                    </div>
+                
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-memory.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10"><p>{this.server.memory} MB</p></div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-storage.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10"><p>{this.server.disk} GB</p></div>
+                    </div>
                 </div>
             </div>
         )

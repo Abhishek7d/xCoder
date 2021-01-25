@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 class Credentials extends React.Component{
     constructor(props){
@@ -8,25 +9,62 @@ class Credentials extends React.Component{
     }
     render(){
         return(
-            <div className="tab-pane fade" id={"pills-"+this.props.tabId} role="tabpanel" aria-labelledby={"pills-"+this.props.tabId+"-tab"}>
-                <div className="row ml-2">
-                    <div className="col-md-12 d-flex flex-column">
-                        <h5>SSH/SFTP Access
-                        </h5>
+            <div className="col-md-4 col-12 server-card">
+                <div className="server-card-header row">
+                    <div className="col-8 server-card-lebel">
+                        <h6>Credentials</h6>
+                        <p>SSH/SFTP Access</p>
                     </div>
-                    <div className="col-sm-6 col-md-2 d-flex flex-column">
-                        <span className="mt-3 font-weight-bold text-info">Username :</span>
-                        <span className="mt-3 font-weight-bold text-info">Password :</span>
-                        <span className="mt-3 font-weight-bold text-info">IP Address :</span>
+                </div>
+                <div className="col-12 server-card-content">
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-user.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10" onClick={this.props.copyToClipBoard} title={"Click to Copy"} >
+                            <p>
+                                {"admin"}
+                            </p>
+                        </div>
                     </div>
-                    <div className="col-sm-6 col-md-2 d-flex flex-column">
-                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{"admin"}</span>
-                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.server.password}</span>
-                        <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.server.ip_address}</span>
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-password.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10" onClick={this.props.copyToClipBoard} title={"Click to Copy"} >
+                            <p>
+                                {this.server.password}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-ip.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10" onClick={this.props.copyToClipBoard} title={"Click to Copy"} >
+                            <p>
+                                {this.server.ip_address}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-2">
+                            <img src={require("../../assets/images/icons/server-apps.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-10">
+                            <p>
+                            <Link to={'/applications?serverId='+this.server.id} style={{color:"inherit"}}>
+                                {(this.server.applications)?this.server.applications.length:0} Applications
+                            </Link>
+                            </p>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <div><p>Try ssh admin@{this.server.ip_address} <br/> or do it via ftp client</p></div>
                     </div>
                 </div>
             </div>
-            
         )
     }
 }

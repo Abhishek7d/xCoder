@@ -48,12 +48,11 @@ class ServerCard extends React.Component {
     showError(data) {
         // console.log(data)
     }
-    
 
     render() {
         return (
-            <div className="col-md-4 col-12 server-card">
-                <div className="server-card-header row" onClick={()=>this.props.serverClickHandler(this.props.server)}>
+            <div className="col-md-4 col-12 server-card" onClick={()=>this.props.serverClickHandler(this.props.server)}>
+                <div className="server-card-header row">
                     <div className="col-2 server-card-image">
                         <img alt="wordpress" style={{ width: "35px" }} src={require('../assets/images/wordpress.png')} />
                     </div>
@@ -68,25 +67,25 @@ class ServerCard extends React.Component {
                 <div className="col-12 server-card-content">
                     <div className="col-12 row">
                         <div className="col-3">
-                            <img src={require("../assets/images/server-ip.svg")} alt="" srcSet=""/>
+                            <img src={require("../assets/images/icons/server-ip.svg")} alt="" srcSet=""/>
                         </div>
                         <div className="col-9">{this.state.ip_address}</div>
                     </div>
                     <div className="col-12 row">
                         <div className="col-3">
-                            <img src={require("../assets/images/server-ram.svg")} alt="" srcSet=""/>
+                            <img src={require("../assets/images/icons/server-ram.svg")} alt="" srcSet=""/>
                         </div>
                         <div className="col-9">{this.state.size.split("-").pop().toUpperCase()}</div>
                     </div>
                     <div className="col-12 row">
                         <div className="col-3">
-                            <img src={require("../assets/images/server-location.svg")} alt="" srcSet=""/>
+                            <img src={require("../assets/images/icons/server-location.svg")} alt="" srcSet=""/>
                         </div>
                         <div className="col-9">{this.props.region}</div>
                     </div>
                     <div className="col-12 row">
                         <div className="col-3">
-                            <img src={require("../assets/images/server-apps.svg")} alt="" srcSet=""/>
+                            <img src={require("../assets/images/icons/server-apps.svg")} alt="" srcSet=""/>
                         </div>
                         <div className="col-9">
                             <Link to={'/applications?serverId='+this.server.id} style={{color:"inherit"}}>
