@@ -2,6 +2,7 @@ import React from "react";
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ApiHandler from '../model/ApiHandler';
 import { Link } from 'react-router-dom';
+import Status from '../components/Status';
 
 class ServerCard extends React.Component {
     constructor(props) {
@@ -51,26 +52,47 @@ class ServerCard extends React.Component {
 
     render() {
         return (
-            <div className="col-md-4 col-sm-12 server-card">
-                <div className="server-card-header row">
-                    <div className="col-sm-2 server-card-image">
-                        <img alt="wordpress" style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
+            <div className="col-md-4 col-12 server-card">
+                <div className="server-card-header row" onClick={()=>this.props.serverClickHandler(this.props.server)}>
+                    <div className="col-2 server-card-image">
+                        <img alt="wordpress" style={{ width: "35px" }} src={require('../assets/images/wordpress.png')} />
                     </div>
-                    <div className="col-sm-8 server-card-lebel">
-                        <h5>Main Server</h5>
-                        <p>Created on 12 Jan, 2020</p>
+                    <div className="col-8 server-card-lebel">
+                        <h6>{this.server.name}</h6>
+                        <p>{new Date(this.state.created_at).toDateString()}</p>
                     </div>
-                    <div className="col-sm-2 server-card-status">
-                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15 27.5C8.09625 27.5 2.5 21.9037 2.5 15C2.5 8.09625 8.09625 2.5 15 2.5C21.9037 2.5 27.5 8.09625 27.5 15C27.5 21.9037 21.9037 27.5 15 27.5ZM13.7537 20L22.5912 11.1613L20.8237 9.39375L13.7537 16.465L10.2175 12.9288L8.45 14.6962L13.7537 20Z" fill="#58D71D"/>
-                    </svg>
-
+                    <div className="col-2 server-card-status" title={this.server.status}>
+                        <Status status={this.server.status}/>
                     </div>
                 </div>
-                <div className="col-sm-12 server-card-content">
-                    <div className="col-sm-12">
-                        <div className="col-sm-4">Icon</div>
-                        <div className="col-sm-8">12.343.23.32</div>
+                <div className="col-12 server-card-content">
+                    <div className="col-12 row">
+                        <div className="col-3">
+                            <img src={require("../assets/images/server-ip.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-9">{this.state.ip_address}</div>
+                    </div>
+                    <div className="col-12 row">
+                        <div className="col-3">
+                            <img src={require("../assets/images/server-ram.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-9">{this.state.size.split("-").pop().toUpperCase()}</div>
+                    </div>
+                    <div className="col-12 row">
+                        <div className="col-3">
+                            <img src={require("../assets/images/server-location.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-9">{this.props.region}</div>
+                    </div>
+                    <div className="col-12 row">
+                        <div className="col-3">
+                            <img src={require("../assets/images/server-apps.svg")} alt="" srcSet=""/>
+                        </div>
+                        <div className="col-9">
+                            <Link to={'/applications?serverId='+this.server.id} style={{color:"inherit"}}>
+                                {(this.server.applications)?this.server.applications.length:0} Applications
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
