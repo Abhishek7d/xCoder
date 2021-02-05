@@ -6,8 +6,10 @@ import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button } from 'react-bootstrap';
 import ApplicationDetails from '../components/ApplicationDetails';
 import "../index.css";
-import {withRouter, Redirect} from 'react-router';
+import { withRouter, Redirect } from 'react-router';
 import { browserHistory } from 'react-router'
+import PageHeader from '../components/template/PageHeader';
+import Status from '../components/Status';
 
 class Applications extends React.Component {
     constructor(props) {
@@ -21,7 +23,7 @@ class Applications extends React.Component {
             servers: [],
             error: "",
             success: "",
-            rspmsg:"",
+            rspmsg: "",
             selectedServerId: serverId,
             selectedDomain: "",
             isWordpress: true,
@@ -29,7 +31,7 @@ class Applications extends React.Component {
             selectedApplication: null,
             selectedServerFilter: serverId,
             selectedApplicationFilter: appId,
-            appLoadding:true
+            appLoadding: true
         }
         this.apiHandler = new ApiHandler();
     }
@@ -45,30 +47,30 @@ class Applications extends React.Component {
             this.showError(err);
         })
     }
-    setMessage(message){
-        this.setState({rspmsg:message})
+    setMessage(message) {
+        this.setState({ rspmsg: message })
     }
-    loadApplications(){
-        this.setState({appLoadding:true});
+    loadApplications() {
+        this.setState({ appLoadding: true });
         this.apiHandler.getApplications((msg, data) => {
             data.forEach((app, index) => {
-                if(app.id===parseInt(this.state.selectedApplicationFilter)){
-                    this.setState({selectedApplication: app});
+                if (app.id === parseInt(this.state.selectedApplicationFilter)) {
+                    this.setState({ selectedApplication: app });
                 }
             })
-            this.setState({ applications: data, appLoadding: false})
+            this.setState({ applications: data, appLoadding: false })
         }, err => {
             this.showError(err);
         })
     }
-    refreshApplications = ()=>{
-        this.setState({selectedApplication:null, selectedServerFilter:""})
+    refreshApplications = () => {
+        this.setState({ selectedApplication: null, selectedServerFilter: "" })
         this.loadApplications();
     }
     renderServers() {
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            if(data.status==="READY"){
+            if (data.status === "READY") {
                 servers.push(<option key={index} value={data.id}>{data.name}</option>);
             }
         })
@@ -88,23 +90,23 @@ class Applications extends React.Component {
         }
     }
     renderApplications() {
-        if(this.state.appLoadding){
-            return <div style={{width: "100%",paddingLeft: "40%"}}>
-                    <img alt="loadding" src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
-                </div>        
+        if (this.state.appLoadding) {
+            return <div style={{ width: "100%", paddingLeft: "40%" }}>
+                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceLoadding" />
+            </div>
         }
         if (this.state.selectedApplication) {
-            window.history.replaceState(null, null, "/applications/"+this.state.selectedApplication.id)
-            return (<ApplicationDetails setMessage={this.setMessage} loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
+            window.history.replaceState(null, null, "/applications/" + this.state.selectedApplication.id)
+            return (<ApplicationDetails setMessage={this.setMessage} id={this.state.selectedApplication.id} key={this.state.selectedApplication.id} loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
         }
         let applications = [];
-        if(this.state.selectedServerFilter === "" || this.state.selectedServerFilter === null ){
+        if (this.state.selectedServerFilter === "" || this.state.selectedServerFilter === null) {
             this.state.applications.forEach((data, index) => {
                 applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
             })
-        }else{
+        } else {
             this.state.applications.forEach((data, index) => {
-                if(data.server.id===parseInt(this.state.selectedServerFilter)){
+                if (data.server.id === parseInt(this.state.selectedServerFilter)) {
                     applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
                 }
             })
@@ -152,28 +154,28 @@ class Applications extends React.Component {
             this.setState({ [event.target.name]: event.target.value })
         }
     }
-    updateSelectedAplication  = (event) => {
+    updateSelectedAplication = (event) => {
         this.setState({ [event.target.name]: event.target.value })
-        if(!event.target.value){
-            this.setState({selectedApplication:null})
-        }else{
+        if (!event.target.value) {
+            this.setState({ selectedApplication: null })
+        } else {
             let selectedApplication = event.target.value;
-            this.state.applications.forEach(data=>{
-                if(data.id === parseInt(selectedApplication)){
-                    this.setState({selectedApplication:data})
+            this.state.applications.forEach(data => {
+                if (data.id === parseInt(selectedApplication)) {
+                    this.setState({ selectedApplication: data })
                 }
-            }) 
+            })
         }
     }
-    updateSelectedServer = (event)=>{
-        this.setState({selectedApplication:null, selectedApplicationFilter:"", [event.target.name]: event.target.value })
+    updateSelectedServer = (event) => {
+        this.setState({ selectedApplication: null, selectedApplicationFilter: "", [event.target.name]: event.target.value })
     }
     applicationClickHandler = (application = null) => {
-        if(!application){
-            this.setState({selectedApplicationFilter:""})
+        if (!application) {
+            this.setState({ selectedApplicationFilter: "" })
             window.history.replaceState(null, null, "/applications")
         }
-        this.setState({ selectedApplication: application})
+        this.setState({ selectedApplication: application })
     }
 
     render() {
@@ -182,7 +184,70 @@ class Applications extends React.Component {
                 <Navigation />
                 <Sidebar />
                 <div className="content-wrapper">
-                    <section className="content-header">
+                    <div className="section-container">
+                        {
+                            (!this.state.selectedApplication) ?
+                                <PageHeader
+                                    heading="My Applications" subHeading={this.state.applications.length + " Applicatinos"}>
+                                    <div className="row">
+                                        <div className="col-md-4 align-self-center">
+                                            <select className="custom-select" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
+                                                <option value="">All</option>
+                                                {
+                                                    this.renderServers()
+                                                }
+                                            </select>
+                                        </div>
+                                        <div className="col-md-4 align-self-center">
+                                            <select className="custom-select" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.updateSelectedAplication} id="selectedApplicationFilter">
+                                                <option value="">All</option>
+                                                {
+                                                    this.renderApplicationsfilter()
+                                                }
+                                            </select>
+                                        </div>
+                                        <div className="col-md-4 align-self-center">
+                                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
+                                                New Application <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </PageHeader>
+                                :
+                                <PageHeader
+                                    heading={this.state.selectedApplication.domain} status={<Status status={this.state.selectedApplication.status} />}>
+                                    <div className="row">
+                                        <div className="col-md-4 align-self-center">
+                                            <select className="custom-select" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
+                                                <option value="">All</option>
+                                                {
+                                                    this.renderServers()
+                                                }
+                                            </select>
+                                        </div>
+                                        <div className="col-md-4 align-self-center">
+                                            <select className="custom-select" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.updateSelectedAplication} id="selectedApplicationFilter">
+                                                <option value="">All</option>
+                                                {
+                                                    this.renderApplicationsfilter()
+                                                }
+                                            </select>
+                                        </div>
+                                        <div className="col-md-4 align-self-center">
+                                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
+                                                New Application
+                                        <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </PageHeader>
+                        }
+
+                        <div className="row">
+                            {this.renderApplications()}
+                        </div>
+
+                        {/* <section className="content-header">
                         <div className="container-fluid">
                             <div className="row mb-2">
                             <p style={{color:"green", textAlign:"center", width:"100%"}} dangerouslySetInnerHTML={{__html: this.state.rspmsg}}></p>
@@ -231,50 +296,67 @@ class Applications extends React.Component {
                             </div>
 
                         </div>
-                    </section>
-                </div>
-                <Modal show={this.state.showModal} onHide={this.handleModalClose}>
-                    <form action="#" method="post">
-                        <Modal.Header closeButton>
-                            <Modal.Title>ADD APPLICATION</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <p style={{color:"red"}} dangerouslySetInnerHTML={{__html: this.state.error}}></p>
-                            <p style={{color:"green"}} dangerouslySetInnerHTML={{__html: this.state.success}}></p>
-                            
-                            <div className="form-group">
-                                <label htmlFor="selectedDomain">Enter Domain Name</label>
-                                <input required type="text" className="form-control" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="select_server">Select server in which you want to Add new application</label>
-                                <select required className="form-control" name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server" className="form-control" >
-                                    <option value="">Select</option>
-                                    {
-                                        this.renderServers()
-                                    }
-                                </select>
-                            </div>
-                            <div style={{display:"none !important"}} className="hide">
-                                <label htmlFor="isWordpress">Wordpress</label>
-                                <input className="form-control" type="checkbox" name="isWordpress" checked={this.state.isWordpress} onChange={this.dataChange} style={{ width: "20px", height: "20px" }} />
-                            </div>
+                    </section> */}
 
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="info" onClick={this.handleAddApplication}>
-                                {
-                                    this.state.loadding ?
-                                        <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                        : "ADD APPLICATION"
-                                }
-                            </Button>
-                            <Button variant="default" onClick={this.handleModalClose}>
-                                CLOSE
+                        <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
+                            <form action="#" method="post">
+                                <Modal.Header closeButton>
+                                    <Modal.Title>ADD APPLICATION</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <p style={{ color: "red" }} dangerouslySetInnerHTML={{ __html: this.state.error }}></p>
+                                    <p style={{ color: "green" }} dangerouslySetInnerHTML={{ __html: this.state.success }}></p>
+                                    <div class="modal-form">
+                                        <label htmlFor="selectedDomain">Enter Domain Name</label>
+                                        <div className="input-group">
+                                            <input required type="text" className="form-control form-input-field" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
+                                            <div class="input-group-append">
+                                                <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="45" height="45" rx="8" fill="#7973FE" />
+                                                    <path d="M23 33C17.477 33 13 28.523 13 23C13 18.522 15.943 14.732 20 13.458V15.582C18.2809 16.28 16.8578 17.5537 15.9741 19.1851C15.0903 20.8165 14.8009 22.7043 15.1553 24.5255C15.5096 26.3468 16.4858 27.9883 17.9168 29.1693C19.3477 30.3503 21.1446 30.9975 23 31C24.5938 31 26.1513 30.524 27.4728 29.6332C28.7944 28.7424 29.82 27.4773 30.418 26H32.542C31.268 30.057 27.478 33 23 33ZM32.95 24H22V13.05C22.329 13.017 22.663 13 23 13C28.523 13 33 17.477 33 23C33 23.337 32.983 23.671 32.95 24ZM24 15.062V22H30.938C30.7154 20.2376 29.9129 18.5993 28.6568 17.3432C27.4007 16.0871 25.7624 15.2846 24 15.062Z" fill="white" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-form">
+                                        <label htmlFor="select_server">Select server in which you want to Add new application</label>
+                                        <div className="input-group">
+                                            <select required className="custom-select" name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server">
+                                                <option value="">Select</option>
+                                                {
+                                                    this.renderServers()
+                                                }
+                                            </select>
+                                            <div class="input-group-append">
+                                                <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="45" height="45" rx="8" fill="#7973FE" />
+                                                    <path d="M23 33C17.477 33 13 28.523 13 23C13 18.522 15.943 14.732 20 13.458V15.582C18.2809 16.28 16.8578 17.5537 15.9741 19.1851C15.0903 20.8165 14.8009 22.7043 15.1553 24.5255C15.5096 26.3468 16.4858 27.9883 17.9168 29.1693C19.3477 30.3503 21.1446 30.9975 23 31C24.5938 31 26.1513 30.524 27.4728 29.6332C28.7944 28.7424 29.82 27.4773 30.418 26H32.542C31.268 30.057 27.478 33 23 33ZM32.95 24H22V13.05C22.329 13.017 22.663 13 23 13C28.523 13 33 17.477 33 23C33 23.337 32.983 23.671 32.95 24ZM24 15.062V22H30.938C30.7154 20.2376 29.9129 18.5993 28.6568 17.3432C27.4007 16.0871 25.7624 15.2846 24 15.062Z" fill="white" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: "none !important" }} className="hide">
+                                        <label htmlFor="isWordpress">Wordpress</label>
+                                        <input className="form-control" type="checkbox" name="isWordpress" checked={this.state.isWordpress} onChange={this.dataChange} style={{ width: "20px", height: "20px" }} />
+                                    </div>
+                                </Modal.Body>
+                                <Modal.Footer>
+
+                                    <Button variant="default" onClick={this.handleModalClose}>
+                                        CLOSE
                         </Button>
-                        </Modal.Footer>
-                    </form>
-                </Modal>
+                                    <Button className="btn btn-theme" onClick={this.handleAddApplication}>
+                                        {
+                                            this.state.loadding ?
+                                                <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                : "ADD APPLICATION"
+                                        }
+                                    </Button>
+                                </Modal.Footer>
+                            </form>
+                        </Modal>
+                    </div>
+                </div>
             </div>
         )
     }

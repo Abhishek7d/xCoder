@@ -4,10 +4,11 @@ import Sidebar from '../components/Sidebar';
 import ServerCard from '../components/ServerCard';
 import ApiHandler from '../model/ApiHandler';
 import { Link } from 'react-router-dom';
-import {withRouter, Redirect} from 'react-router';
+import { withRouter, Redirect } from 'react-router';
 import ServerDetails from '../components/ServerDetails';
 import "../assets/css/dashboard.css";
 import CreateServerScreen from "./CreateServerScreen";
+import PageHeader from '../components/template/PageHeader';
 
 class Servers extends React.Component {
     constructor(props) {
@@ -16,11 +17,11 @@ class Servers extends React.Component {
         this.state = {
             servers: [],
             regions: {},
-            selectedSever:null,
-            isServerClicked:false,
-            loadding:true,
-            showModal:false,
-            serverId:serverId
+            selectedSever: null,
+            isServerClicked: false,
+            loadding: true,
+            showModal: false,
+            serverId: serverId
         }
         this.apiHandler = new ApiHandler();
         this.createServer = React.createRef();
@@ -32,11 +33,11 @@ class Servers extends React.Component {
     componentDidMount() {
         document.title = "Your Servers";
         this.apiHandler.getServers((msg, data) => {
-            data.forEach((s)=>{
-                if(s.id==this.state.serverId){
+            data.forEach((s) => {
+                if (s.id == this.state.serverId) {
                     this.setState({
-                        selectedSever:s,
-                        isServerClicked:true
+                        selectedSever: s,
+                        isServerClicked: true
                     })
                 }
             })
@@ -58,10 +59,10 @@ class Servers extends React.Component {
         return this.state.regions[slug];
     }
     renderServers() {
-        if(this.state.loadding){
-            return <div style={{width: "100%",paddingLeft: "40%"}}>
-                    <img alt="loadding" src={require("../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
-                </div>        
+        if (this.state.loadding) {
+            return <div style={{ width: "100%", paddingLeft: "40%" }}>
+                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceLoadding" />
+            </div>
         }
         let servers = [];
         this.state.servers.forEach((data, index) => {
@@ -72,12 +73,12 @@ class Servers extends React.Component {
         }
         return servers;
     }
-    serverClickHandler = (server=null) => {
-        if(server){
-            if(server.status==="READY"){
-                this.setState({selectedSever:server});
-                if(!this.state.isServerClicked){
-                    window.history.replaceState(null, null, "/servers/"+server.id)
+    serverClickHandler = (server = null) => {
+        if (server) {
+            if (server.status === "READY") {
+                this.setState({ selectedSever: server });
+                if (!this.state.isServerClicked) {
+                    window.history.replaceState(null, null, "/servers/" + server.id)
                 }
                 this.setState({
                     isServerClicked: !this.state.isServerClicked,
@@ -85,8 +86,8 @@ class Servers extends React.Component {
             }
         }
     }
-    goBack = ()=>{
-        if(this.state.isServerClicked){
+    goBack = () => {
+        if (this.state.isServerClicked) {
             window.history.replaceState(null, null, "/servers")
         }
         this.setState({
@@ -106,30 +107,34 @@ class Servers extends React.Component {
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">
-                        {(this.state.isServerClicked)?
+                        {(this.state.isServerClicked) ?
                             <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedSever} />
                             :
                             <>
-                                <div className="row">
-                                    <div className="col-6 screen-title">
-                                        <h5 className="col-sm-12">My Servers</h5>
-                                        <p  className="col-sm-12">{this.state.servers.length} Servers</p>
-                                    </div>
-                                    <div className="col-6">
-                                        <button type="button" onClick={this.handleModalShow} className="theme-btn float-right">
-                                            Create Server
+                                <PageHeader heading="My Servers" subHeading={this.state.servers.length + " Servers"}>
+                                    <div className="row">
+                                        <div className="col-md-4">
+
+                                        </div>
+                                        <div className="col-md-4">
+
+                                        </div>
+                                        <div className="col-md-4">
+                                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
+                                                Create Server
                                             <i class="fa fa-plus"></i>
-                                        </button>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="row servers-container">
+                                </PageHeader>
+                                <div className="row">
                                     {this.renderServers()}
                                 </div>
                             </>
                         }
                     </div>
                 </div>
-                <CreateServerScreen ref={this.createServer} handleModalClose={this.handleModalClose} handleModalShow={this.handleModalShow} modalView={this.state.showModal}/>
+                <CreateServerScreen ref={this.createServer} handleModalClose={this.handleModalClose} handleModalShow={this.handleModalShow} modalView={this.state.showModal} />
             </div>
         );
     }

@@ -5,51 +5,168 @@ import CronJobs from "./server/CronJobs";
 import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
+import ServerHealth from "./server/ServerHealth"
 import BlockStorage from "./server/BlockStorage";
 import copy from 'copy-to-clipboard';
 import Status from '../components/Status';
 // import UpgradeServer from "./server/UpgradeServer";
+import PageHeader from '../components/template/PageHeader';
+import CronJobsCard from './server/CronJobsCard';
+import { Modal, Button, Alert } from 'react-bootstrap';
+import ApiHandler from '../model/ApiHandler';
 
 class ServerDetails extends Component {
     constructor(props) {
         super();
         this.props = props;
         this.server = props.server;
+        this.state = {
+            showModal: false,
+            error: "",
+            success: "",
+            options: [],
+            value: 1,
+            min: 1,
+            loadding: false
+        }
+        if (this.server.storage) {
+            this.state.min = this.server.storage.size
+            this.state.value = this.server.storage.size
+        }
+        this.apiHandler = new ApiHandler();
     }
-    copyToClipBoard = (event) =>{
+    copyToClipBoard = (event) => {
         let text = event.currentTarget.innerText;
         copy(text);
     }
-    handleModalShow = ()=>{
-
+    renderOptions() {
+        let tmp_data = [<option value="" >Available Sizes</option>];
+        let tmp_list = [];
+        this.state.options.forEach(data => {
+            let tmp = data.split("-");
+            if (tmp.length === 3) {
+                tmp_list.push(data);
+            }
+        })
+        tmp_list.sort();
+        tmp_list.forEach(data => {
+            let tmp = data.split("-");
+            tmp_data.push(<option value={data}>{tmp[1].toUpperCase() + " + " + tmp[2].toUpperCase()}</option>);
+        })
+        return tmp_data;
+    }
+    componentDidMount() {
+        this.apiHandler.getServerSizes((data) => {
+            let tmp_sizes = [];
+            data.forEach(size => {
+                tmp_sizes.push(size.slug)
+            })
+            this.setState({ sizes: data, options: tmp_sizes })
+        }, (err) => {
+            console.log(err)
+        })
+    }
+    handleChange = (value) => {
+        let newSize = value.target.value;
+        if (this.server.storage) {
+            if (this.server.storage.size > newSize) {
+                return;
+            }
+        }
+        this.setState({ value: newSize })
+    }
+    formAction = () => {
+        console.log(this.state.value)
+        if (!this.state.value) {
+            return;
+        }
+        if (this.state.loadding) {
+            return;
+        }
+        this.setState({ error: "", success: "", loadding: true })
+        let action = (this.server.storage) ? "resize" : "attach"
+        this.apiHandler.addStorage(this.server.id, this.state.value, action, (message, data) => {
+            this.setState({ error: "", success: message, loadding: false })
+            setTimeout(() => {
+                window.location.href = "/servers";
+            }, 1000)
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false })
+        });
+    }
+    deleteStorage = () => {
+        this.apiHandler.deleteStorage(this.server.id, (message, data) => {
+            this.setState({ error: "", success: message, loadding: false })
+            setTimeout(() => {
+                window.location.href = "/servers";
+            }, 1000)
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false })
+        });
+    }
+    handleModalShow = () => {
+        this.setState({
+            showModal: true,
+        })
+    }
+    handleModalClose = () => {
+        this.setState({
+            showModal: false,
+        })
     }
     render() {
         return (
             <>
-                <div className="row">
-                    <div className="col-6 screen-title row">
-                        <a className="col-1" onClick={this.props.serverClickHandler}><i className="fas fa-arrow-left"></i></a>
-                        <div className="col-11 row">
-                            <div className="col-1 server-card-status" title={this.server.status}>
-                                <Status status={this.server.status}/>
-                            </div>
-                            <h5 className="col-8">{this.server.name}</h5>
-                        </div>
-                    </div>
-                    <div className="col-7 col-md-6">
-                        <button type="button" onClick={this.handleModalShow} className="theme-btn float-right">
-                            Add Storage
+                <PageHeader status={<Status status={this.server.status} />}
+                    heading={this.server.name} subHeading="">
+                    <button type="button" onClick={this.handleModalShow} className="theme-btn float-right">
+                        Add Storage
                             <i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div className="row servers-container">
+                    </button>
+                </PageHeader>
+                <div className="row servers-details-container">
                     <Summery copyToClipBoard={this.copyToClipBoard} tabId={"summery"} active={true} server={this.server} />
                     <Credentials copyToClipBoard={this.copyToClipBoard} tabId={"credentials"} server={this.server} />
                     <Services copyToClipBoard={this.copyToClipBoard} tabId={"services"} server={this.server} />
                 </div>
+                <div className="row server-health-container">
+                    <ServerHealth copyToClipBoard={this.copyToClipBoard} tabId={"resources"} server={this.server} />
+                    <CronJobsCard copyToClipBoard={this.copyToClipBoard} tabId={"cornjobs"} server={this.server} />
+                </div>
+                <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
+                    <form action="#" method="post">
+                        <Modal.Header closeButton>
+                            <Modal.Title>ADD STORAGE</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+
+                            <Button variant="default" onClick={this.handleModalClose}>
+                                CLOSE
+                        </Button>
+                            <button type="button" onClick={this.formAction} className="btn btn-theme" >
+                                {this.state.loadding ?
+                                    <img src={require("../assets/images/loading.gif")} alt="loadding" style={{ width: "25px", filter: "brightness(20)" }} />
+                                    : ((this.server.storage) ? "Resize" : "Attach Now")
+                                }
+                            </button>
+                            {this.server.storage ?
+                                <button type="button" onClick={this.deleteStorage} className="btn btn-danger">
+                                    {this.state.loadding ?
+                                        <img src={require("../assets/images/loading.gif")} alt="loadding" style={{ width: "25px", filter: "brightness(20)" }} />
+                                        : "DELETE"
+                                    }
+                                </button>
+                                :
+                                <div></div>
+                            }
+                        </Modal.Footer>
+                    </form>
+                </Modal>
             </>
-            // <div className="card card-primary card-outline">
+            // <div className="card card-primary card-outline">h
             //     <div className="card-header">
             //         <div className="col-3 float-left" style={{display: "flex"}}>
             //             <div className="nav-link" href="#" onClick={this.props.serverClickHandler}><i className="fas fa-arrow-left"></i></div>

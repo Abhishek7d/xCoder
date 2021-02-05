@@ -146,7 +146,7 @@ class Projects extends React.Component {
                             <Button variant="info" onClick={this.handleAddProject}>
                                 {
                                     this.state.loadding ?
-                                        <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                        <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                         : "ADD PROJECT"
                                 }
                             </Button>
