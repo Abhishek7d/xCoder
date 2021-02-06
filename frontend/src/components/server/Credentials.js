@@ -9,7 +9,7 @@ class Credentials extends React.Component {
     }
     render() {
         return (
-            <div className="col-md-4 full-height">
+            <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 full-height">
                 <div className="card">
                     <div className="card-header">
                         <h6 className="heading">Credentials</h6>

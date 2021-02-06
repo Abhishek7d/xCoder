@@ -62,7 +62,7 @@ class Domain extends React.Component {
             //         </button>
             //     </div>
             // </div>
-            <div className="col-md-4 full-height">
+            <div className="col-md-12 col-lg-4 full-height">
                 <div className="card">
                     <div className="card-header">
                         <h6 className="heading">Domain Settings</h6>

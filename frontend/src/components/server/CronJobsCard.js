@@ -109,7 +109,7 @@ class CronJobsCard extends React.Component {
     }
     render() {
         return (
-            <div className="col-md-6 full-height">
+            <div className="col-sm-12 col-md-12 col-lg-12 col-xl-6 full-height">
                 <div className="card server-health">
                     <div className="card-header">
                         <div className="row">

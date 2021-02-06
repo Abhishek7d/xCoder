@@ -3,7 +3,7 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import ApplicationCard from '../screens/ApplicationCard';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Alert } from 'react-bootstrap';
 import ApplicationDetails from '../components/ApplicationDetails';
 import "../index.css";
 import { withRouter, Redirect } from 'react-router';
@@ -35,8 +35,12 @@ class Applications extends React.Component {
         }
         this.apiHandler = new ApiHandler();
     }
-    showError = (err) => {
+    showError(err) {
+        this.setState({ error: err })
 
+    }
+    setShow() {
+        this.setState({ error: "", success: "", })
     }
     componentDidMount() {
         document.title = "Your Applications";
@@ -190,7 +194,7 @@ class Applications extends React.Component {
                                 <PageHeader
                                     heading="My Applications" subHeading={this.state.applications.length + " Applicatinos"}>
                                     <div className="row">
-                                        <div className="col-md-4 align-self-center">
+                                        <div className="col-sm-4 col-md-4 mb-2 mb-sm-0  align-self-center">
                                             <select className="custom-select" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
                                                 <option value="">All</option>
                                                 {
@@ -198,7 +202,7 @@ class Applications extends React.Component {
                                                 }
                                             </select>
                                         </div>
-                                        <div className="col-md-4 align-self-center">
+                                        <div className="col-sm-4 col-md-4 mb-2 mb-sm-0  align-self-center">
                                             <select className="custom-select" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.updateSelectedAplication} id="selectedApplicationFilter">
                                                 <option value="">All</option>
                                                 {
@@ -208,7 +212,7 @@ class Applications extends React.Component {
                                         </div>
                                         <div className="col-md-4 align-self-center">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
-                                                New Application <i class="fa fa-plus"></i>
+                                                <span>New Application</span> <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -217,7 +221,7 @@ class Applications extends React.Component {
                                 <PageHeader
                                     heading={this.state.selectedApplication.domain} status={<Status status={this.state.selectedApplication.status} />}>
                                     <div className="row">
-                                        <div className="col-md-4 align-self-center">
+                                        <div className="col-sm-4 col-md-4 mb-2 mb-sm-0 align-self-center">
                                             <select className="custom-select" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
                                                 <option value="">All</option>
                                                 {
@@ -225,7 +229,7 @@ class Applications extends React.Component {
                                                 }
                                             </select>
                                         </div>
-                                        <div className="col-md-4 align-self-center">
+                                        <div className="col-sm-4 col-md-4 mb-2 mb-sm-0 align-self-center">
                                             <select className="custom-select" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.updateSelectedAplication} id="selectedApplicationFilter">
                                                 <option value="">All</option>
                                                 {
@@ -233,10 +237,10 @@ class Applications extends React.Component {
                                                 }
                                             </select>
                                         </div>
-                                        <div className="col-md-4 align-self-center">
+                                        <div className="col-sm-4 col-md-4 align-self-center">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
-                                                New Application
-                                        <i class="fa fa-plus"></i>
+                                                <span>New Application</span>
+                                                <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -304,9 +308,12 @@ class Applications extends React.Component {
                                     <Modal.Title>ADD APPLICATION</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                    <p style={{ color: "red" }} dangerouslySetInnerHTML={{ __html: this.state.error }}></p>
-                                    <p style={{ color: "green" }} dangerouslySetInnerHTML={{ __html: this.state.success }}></p>
-                                    <div class="modal-form">
+                                    <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                                        {this.state.error}
+                                    </Alert>
+                                    <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                                        {this.state.success}
+                                    </Alert> <div class="modal-form">
                                         <label htmlFor="selectedDomain">Enter Domain Name</label>
                                         <div className="input-group">
                                             <input required type="text" className="form-control form-input-field" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
@@ -344,7 +351,7 @@ class Applications extends React.Component {
 
                                     <Button variant="default" onClick={this.handleModalClose}>
                                         CLOSE
-                        </Button>
+                                      </Button>
                                     <Button className="btn btn-theme" onClick={this.handleAddApplication}>
                                         {
                                             this.state.loadding ?

@@ -83,9 +83,9 @@ class ApplicationCard extends React.Component {
             //         </div>
             //     </div>
             // </div>
-            <div className="col-md-4 mb-3" onClick={() => this.props.applicationClickHandler(this.props.application)}>
-                <div className="card cursor-pointer">
-                    <div className="card-header">
+            <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 mb-3">
+                <div className="card">
+                    <div className="card-header  cursor-pointer" onClick={() => this.props.applicationClickHandler(this.props.application)}>
                         <div className="row no-gutters">
                             <div className="col-2 p-1 align-self-center pl-0">
                                 <img alt="wordpress" style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />

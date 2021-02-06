@@ -10,6 +10,7 @@ import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
 import Profile from '../screens/Profile';
 import Projects from '../screens/Projects';
+import Notifications from '../screens/Notifications';
 
 import { read_cookie } from 'sfcookies';
 
@@ -18,10 +19,10 @@ let routes = [
         path: '/login',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
+            if (typeof cookie !== "object") {
                 return <Redirect to="/servers" />;
             }
-            else{
+            else {
                 return <Login />;
             }
         }
@@ -30,10 +31,10 @@ let routes = [
         path: '/register',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
+            if (typeof cookie !== "object") {
                 return <Redirect to="/servers" />;
             }
-            else{
+            else {
                 return <Register />;
             }
         }
@@ -42,11 +43,11 @@ let routes = [
         path: '/forgot-password',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
+            if (typeof cookie !== "object") {
                 return <Redirect to="/servers" />;
             }
-            else{
-                return <ForgotPassword/>;
+            else {
+                return <ForgotPassword />;
             }
         }
     },
@@ -55,11 +56,11 @@ let routes = [
         title: 'Logout',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
+            if (typeof cookie !== "object") {
                 return <Redirect to="/servers" />;
             }
-            else{
-                return <Logout/>;
+            else {
+                return <Logout />;
             }
         }
     },
@@ -68,10 +69,10 @@ let routes = [
         title: 'Project',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
+            if (typeof cookie !== "object") {
                 return <Projects />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }
@@ -81,10 +82,10 @@ let routes = [
         title: 'Server',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <Servers/>;
+            if (typeof cookie !== "object") {
+                return <Servers />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }
@@ -94,10 +95,10 @@ let routes = [
         title: 'Dashboard',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <Servers/>;
+            if (typeof cookie !== "object") {
+                return <Servers />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }
@@ -107,10 +108,10 @@ let routes = [
         title: 'Create Server',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <CreateServerScreen/>;
+            if (typeof cookie !== "object") {
+                return <CreateServerScreen />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }
@@ -120,10 +121,10 @@ let routes = [
         title: 'Applications',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <Applications/>;
+            if (typeof cookie !== "object") {
+                return <Applications />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }
@@ -133,10 +134,10 @@ let routes = [
         title: 'Applications',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <Applications/>;
+            if (typeof cookie !== "object") {
+                return <Applications />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }
@@ -146,24 +147,37 @@ let routes = [
         title: 'Profile',
         component: () => {
             let cookie = read_cookie("auth")
-            if(typeof cookie !== "object"){
-                return <Profile/>;
+            if (typeof cookie !== "object") {
+                return <Profile />;
             }
-            else{
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/notifications',
+        title: 'Notifications',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <Notifications />;
+            }
+            else {
                 return <Redirect to="/login" />;
             }
         }
     },
     {
         path: '/',
-        component: (obj) =>{
+        component: (obj) => {
             let cookie = read_cookie("auth")
-            if(obj.location.pathname==="/reset"){
+            if (obj.location.pathname === "/reset") {
                 return <ResetScreen />;
-            }else if(typeof cookie !== "object"){
+            } else if (typeof cookie !== "object") {
                 return <Redirect to="/servers" />;
             }
-            else{
+            else {
                 return <Redirect to="/login" />;
             }
         }

@@ -5,7 +5,7 @@ class ApiHandler {
     constructor() {
         this._url = conf.apiUrl;
     }
-    showError =(err)=>{
+    showError = (err) => {
         console.log(err)
     }
     getResult = (url, method = "GET", data = null, headers = null, success = () => { }, faild = () => { }) => {
@@ -100,6 +100,23 @@ class ApiHandler {
             }
         });
     }
+    changePassword = (email, newPassword, confirmPassword, success = () => { }, faild = () => { }) => {
+        if (!email) return;
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("password", newPassword);
+        formData.append("password_confirmation", confirmPassword);
+
+        this.getResult("/change/password", "POST", formData, null, (response) => {
+            if (response.status === 0) {
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                faild("something went wrong");
+            }
+        });
+    }
     getServers = (success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
@@ -130,7 +147,7 @@ class ApiHandler {
         formData.append("size", serverSize);
         formData.append("region", serverLocation);
         formData.append("appName", appName);
-        
+
         this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
             console.log(response)
             if (response.status === 0) {
@@ -286,11 +303,11 @@ class ApiHandler {
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/resouces/"+serverId, "GET", null, authHeaders, (response) => {
-            if(response.status === 0){
+        this.getResult("/resouces/" + serverId, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
+            else if (response.status === 1) {
                 success(response.message, response.data)
             }
             else {
@@ -304,11 +321,11 @@ class ApiHandler {
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/server/"+serverId, "GET", null, authHeaders, (response) => {
-            if(response.status === 0){
+        this.getResult("/server/" + serverId, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
+            else if (response.status === 1) {
                 success(response.data)
             }
             else {
@@ -345,12 +362,12 @@ class ApiHandler {
         let access_token = read_cookie("auth");
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
-        
-        this.getResult("/cron/"+serverId, "GET", null, authHeaders, (response) => {
-            if(response.status === 0){
+
+        this.getResult("/cron/" + serverId, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
+            else if (response.status === 1) {
                 success(response.data)
             }
             else {
@@ -366,11 +383,11 @@ class ApiHandler {
         const formData = new FormData();
         formData.append("action", action);
 
-        this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
-            if(response.status === 0){
+        this.getResult("/cron/" + serverId + "/" + cronId, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
+            else if (response.status === 1) {
                 success(response.data)
             }
             else {
@@ -408,11 +425,11 @@ class ApiHandler {
         formData.append("command", command);
         formData.append("action", "change");
 
-        this.getResult("/cron/"+serverId+"/"+cronId, "POST", formData, authHeaders, (response) => {
-            if(response.status === 0){
+        this.getResult("/cron/" + serverId + "/" + cronId, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
+            else if (response.status === 1) {
                 success(response.message, response.data)
             }
             else {
@@ -451,11 +468,11 @@ class ApiHandler {
         formData.append("command", command);
         formData.append("action", "change");
 
-        this.getResult("/cron/"+serverId, "POST", formData, authHeaders, (response) => {
-            if(response.status === 0){
+        this.getResult("/cron/" + serverId, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
+            else if (response.status === 1) {
                 success(response.message, response.data)
             }
             else {
@@ -473,11 +490,11 @@ class ApiHandler {
         formData.append("size", size);
         let url = (action === "resize") ? "/storage/resize" : "/storage"
         this.getResult(url, "POST", formData, authHeaders, (response) => {
-            if(response.status === 0){
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
-                success(response.message,response.data)
+            else if (response.status === 1) {
+                success(response.message, response.data)
             }
             else {
                 faild("something went wrong")
@@ -492,11 +509,11 @@ class ApiHandler {
         const formData = new FormData();
         formData.append("server", serverId);
         this.getResult("/storage/delete", "POST", formData, authHeaders, (response) => {
-            if(response.status === 0){
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
-                success(response.message,response.data)
+            else if (response.status === 1) {
+                success(response.message, response.data)
             }
             else {
                 faild("something went wrong")
@@ -511,12 +528,12 @@ class ApiHandler {
         const formData = new FormData();
         formData.append("size", size);
         formData.append("action", "resize");
-        this.getResult("/droplet/"+serverId, "POST", formData, authHeaders, (response) => {
-            if(response.status === 0){
+        this.getResult("/droplet/" + serverId, "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
                 faild(response.message)
             }
-            else if(response.status === 1){
-                success(response.message,response.data)
+            else if (response.status === 1) {
+                success(response.message, response.data)
             }
             else {
                 faild("something went wrong")
@@ -566,20 +583,20 @@ class ApiHandler {
             }
         }, faild);
     }
-    
-    updateDomainName = (domainName, applicationId, success=()=>{}, faild=()=>{}) => {
-        if(!domainName || !applicationId){
+
+    updateDomainName = (domainName, applicationId, success = () => { }, faild = () => { }) => {
+        if (!domainName || !applicationId) {
             faild("invalid name");
             return;
         }
-        
+
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
         formData.append("domain", domainName);
 
-        this.getResult("/application/"+applicationId+"/update-domain", "POST", formData, authHeaders, (response) => {
+        this.getResult("/application/" + applicationId + "/update-domain", "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -594,16 +611,16 @@ class ApiHandler {
             }
         }, faild);
     }
-    updateSSL = (applicationId, ssl, success=()=>{}, faild=()=>{}) => {
-        if(!applicationId){
+    updateSSL = (applicationId, ssl, success = () => { }, faild = () => { }) => {
+        if (!applicationId) {
             faild("invalid name");
             return;
         }
-        
+
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        let url = (ssl)?"/application/"+applicationId+"/add-ssl":"/application/"+applicationId+"/remove-ssl";
+        let url = (ssl) ? "/application/" + applicationId + "/add-ssl" : "/application/" + applicationId + "/remove-ssl";
         this.getResult(url, "POST", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
@@ -619,16 +636,16 @@ class ApiHandler {
             }
         }, faild);
     }
-    deleteFtpAccount  = (applicationId, username, success=()=>{}, faild=()=>{}) => {
-        if(!applicationId || !username){
+    deleteFtpAccount = (applicationId, username, success = () => { }, faild = () => { }) => {
+        if (!applicationId || !username) {
             faild("invalid name");
             return;
         }
-        
+
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        let url = "/application/"+applicationId+"/delete-ftp";
+        let url = "/application/" + applicationId + "/delete-ftp";
         const formData = new FormData();
         formData.append("username", username);
 
@@ -647,16 +664,16 @@ class ApiHandler {
             }
         }, faild);
     }
-    addFtpAccount  = (applicationId, username, password, success=()=>{}, faild=()=>{}) => {
-        if(!applicationId || !username || !password){
+    addFtpAccount = (applicationId, username, password, success = () => { }, faild = () => { }) => {
+        if (!applicationId || !username || !password) {
             faild("invalid name");
             return;
         }
-        
+
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        let url = "/application/"+applicationId+"/add-ftp";
+        let url = "/application/" + applicationId + "/add-ftp";
         const formData = new FormData();
         formData.append("username", username);
         formData.append("password", password);
@@ -676,7 +693,7 @@ class ApiHandler {
             }
         }, faild);
     }
-    
+
 }
 
 export default ApiHandler;

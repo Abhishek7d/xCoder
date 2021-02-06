@@ -51,7 +51,7 @@ class ServerCard extends React.Component {
 
     render() {
         return (
-            <div className="col-md-4 mb-3">
+            <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 mb-3">
                 <div className="card cursor-pointer">
                     <div className="card-header" onClick={() => this.props.serverClickHandler(this.props.server)}>
                         <div className="row no-gutters">

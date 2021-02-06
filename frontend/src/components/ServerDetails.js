@@ -16,6 +16,8 @@ import { Modal, Button, Alert } from 'react-bootstrap';
 import ApiHandler from '../model/ApiHandler';
 
 class ServerDetails extends Component {
+
+
     constructor(props) {
         super();
         this.props = props;
@@ -27,13 +29,16 @@ class ServerDetails extends Component {
             options: [],
             value: 1,
             min: 1,
-            loadding: false
+            loadding: false,
         }
         if (this.server.storage) {
             this.state.min = this.server.storage.size
             this.state.value = this.server.storage.size
         }
         this.apiHandler = new ApiHandler();
+    }
+    setShow() {
+        this.setState({ error: "", success: "", })
     }
     copyToClipBoard = (event) => {
         let text = event.currentTarget.innerText;
@@ -119,10 +124,14 @@ class ServerDetails extends Component {
             <>
                 <PageHeader status={<Status status={this.server.status} />}
                     heading={this.server.name} subHeading="">
-                    <button type="button" onClick={this.handleModalShow} className="theme-btn float-right">
-                        Add Storage
-                            <i class="fa fa-plus"></i>
-                    </button>
+                    <div className="row">
+                        <div className="col-12 text-center text-sm-right">
+                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
+                                <span>Add Storage</span>
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
                 </PageHeader>
                 <div className="row servers-details-container">
                     <Summery copyToClipBoard={this.copyToClipBoard} tabId={"summery"} active={true} server={this.server} />
@@ -139,13 +148,30 @@ class ServerDetails extends Component {
                             <Modal.Title>ADD STORAGE</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
+                            <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                                {this.state.error}
+                            </Alert>
+                            <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                                {this.state.success}
+                            </Alert>
+                            <div class="modal-form">
+                                <label htmlFor="storage">Add Storage To Server
+                            {(this.server.storage) ? " ( Currently Added " + this.server.storage.size + "GB )" : ""}
+                                </label>
+                                <div className="input-group with-range">
+                                    <input type="range" className="form-control form-input-field" min={this.state.min} value={this.state.value} onChange={this.handleChange} max="20" step="1" style={{ width: '60%' }} />
 
+                                    <input className="form-control form-input-field" value={this.state.value} min={this.state.min} onChange={this.handleChange} type="number" id="gb" />
+                                    <div class="input-group-prepend">
+                                        <label className="input-group-text">GB</label>
+                                    </div>
+                                </div>
+                            </div>
                         </Modal.Body>
                         <Modal.Footer>
-
                             <Button variant="default" onClick={this.handleModalClose}>
                                 CLOSE
-                        </Button>
+                            </Button>
                             <button type="button" onClick={this.formAction} className="btn btn-theme" >
                                 {this.state.loadding ?
                                     <img src={require("../assets/images/loading.gif")} alt="loadding" style={{ width: "25px", filter: "brightness(20)" }} />

@@ -121,8 +121,8 @@ class Servers extends React.Component {
                                         </div>
                                         <div className="col-md-4">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
-                                                Create Server
-                                            <i class="fa fa-plus"></i>
+                                                <span>Create Server</span>
+                                                <i class="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
