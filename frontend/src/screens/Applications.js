@@ -250,58 +250,6 @@ class Applications extends React.Component {
                         <div className="row">
                             {this.renderApplications()}
                         </div>
-
-                        {/* <section className="content-header">
-                        <div className="container-fluid">
-                            <div className="row mb-2">
-                            <p style={{color:"green", textAlign:"center", width:"100%"}} dangerouslySetInnerHTML={{__html: this.state.rspmsg}}></p>
-                           
-                            </div>
-                        </div>
-                    </section>
-                    <section className="content">
-                        <div className="container-fluid">
-
-
-                            <div className="row">
-                                <div className="col-12">
-                                    <div className="card card-primary card-outline">
-                                        <div className="card-header d-flex">
-                                            <div className="col-3 float-left">
-                                                <a href="#" className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Application</a>
-                                            </div>
-                                            
-                                            <div className="col-md-3">
-                                                <select className="form-control" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">
-                                                    <option value="">All</option>
-                                                    {
-                                                        this.renderServers()
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div className="col-md-3">
-                                                <select className="form-control" name="selectedApplicationFilter" value={this.state.selectedApplicationFilter} onChange={this.updateSelectedAplication} id="selectedApplicationFilter">
-                                                    <option value="">All</option>
-                                                    {
-                                                        this.renderApplicationsfilter()
-                                                    }
-                                                </select>
-                                            </div>
-                                            
-                                        </div>
-                                        <div className="card-body">
-                                            <div className="col-12 application_page_cards" id="huddles">
-                                                {this.renderApplications()}
-                                            </div>
-                                        </div>
-                                        <div className="card-footer"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </section> */}
-
                         <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
                             <form action="#" method="post">
                                 <Modal.Header closeButton>

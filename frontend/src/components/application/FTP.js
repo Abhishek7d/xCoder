@@ -82,47 +82,6 @@ class FTP extends React.Component {
     render() {
         return (
             <>
-                {/* <div className="tab-pane fade show" id={this.props.tabId} role="tabpanel" aria-labelledby={this.props.tabId}>
-                <p style={{textAlign:"center"}}>{this.state.message}</p>
-                <br/>
-                
-                <div className="row" style={{width:"100%"}}>
-                    <div className="col-md-12">FTP Settings
-                    <button className={"btn btn-info"} onClick={()=>this.setState({showModal:true})} style={{marginLeft:'10px'}}>
-                    {
-                        this.state.loadding ?
-                            <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                            : "Add FTP"
-                    }
-                    </button>
-                    </div>
-                    <br/>
-                    <br/>
-                    {(this.state.deleting)?
-                    <div style={{width: "100%",paddingLeft: "40%"}}>
-                        <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{width:"100px"}} className="serviceLoadding"/>
-                    </div>        
-                    :
-                    <div className="col-md-12">
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Sl</th>
-                                    <th scope="col">Host</th>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Password</th>
-                                    <th scope="col">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.renderFtpAccounts()}
-                            </tbody>
-                        </table>
-                    </div>
-                    }
-                    
-                </div>
-            </div> */}
                 <div className="col-md-12 full-height">
                     <div className="card">
                         <div className="card-header">

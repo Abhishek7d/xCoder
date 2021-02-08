@@ -45,44 +45,6 @@ class ApplicationCard extends React.Component {
 
     render() {
         return (
-            // <div className="col-12 application_page_cards" id="huddles">
-            //     <div className="card card-outline">
-            //         <div className="card-body">
-            //             <div className="row mb-2">
-            //                 <div className="col-10 application_page_card_info">
-            //                 {this.state.loadding?
-            //                     <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "45px" }} />
-            //                     :
-            //                     <div onClick={() => this.props.applicationClickHandler(this.props.application)} >
-            //                         <div className="row">
-            //                             <div className="col-1">
-            //                                 <img  alt="wordpress" style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />
-            //                             </div>
-            //                             <div className="col-11">
-            //                                 <span className="text-info d-flex font-weight-bold">App Name : &nbsp;<p className="m-0 text-primary">{this.state.name}</p></span>
-            //                                 <span className="text-info d-flex font-weight-bold">Domain Name : &nbsp;<p className="m-0 text-primary">{this.state.domain}</p></span>
-            //                                 <span className="text-info d-flex font-weight-bold">Server : &nbsp;<p className="m-0 text-primary">{this.state.server.name}</p></span>
-            //                                 <span className="text-info d-flex font-weight-bold">Status : &nbsp;<span className="text-primary">{this.state.status}</span></span>
-            //                                 <p className="mt-3"><small>Created : {new Date(this.state.created_at).toDateString()}</small></p>
-            //                             </div>
-            //                         </div>
-            //                     </div>
-            //                 }
-            //                 </div>
-            //                 <div className="col-2 text-right application_page_card_actions">
-            //                     <a rel="noopener noreferrer" href={((this.application.ssl_enabled=='1')?"https://":"http://")+this.state.domain} target="_blank" className="pl-3"><i className="fa fa-external-link-square-alt"></i></a>
-            //                     <div className="btn-group pl-4 px-1 dropleft" style={{ cursor: "pointer" }}>
-            //                         <i className="fas fa-ellipsis-v" data-toggle="dropdown"
-            //                             aria-haspopup="true" aria-expanded="false"></i>
-            //                         <div className="dropdown-menu">
-            //                             <div className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash danger"></i>&nbsp;Delete</div>
-            //                         </div>
-            //                     </div>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     </div>
-            // </div>
             <div className="col-sm-6 col-md-6 col-lg-6 col-xl-4 mb-3">
                 <div className="card">
                     <div className="card-header  cursor-pointer" onClick={() => this.props.applicationClickHandler(this.props.application)}>
