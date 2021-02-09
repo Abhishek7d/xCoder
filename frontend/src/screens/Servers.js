@@ -3,8 +3,8 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ServerCard from '../components/ServerCard';
 import ApiHandler from '../model/ApiHandler';
-import { Link } from 'react-router-dom';
-import { withRouter, Redirect } from 'react-router';
+// import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import ServerDetails from '../components/ServerDetails';
 import "../assets/css/dashboard.css";
 import CreateServerScreen from "./CreateServerScreen";
@@ -34,7 +34,7 @@ class Servers extends React.Component {
         document.title = "Your Servers";
         this.apiHandler.getServers((msg, data) => {
             data.forEach((s) => {
-                if (s.id == this.state.serverId) {
+                if (s.id === this.state.serverId) {
                     this.setState({
                         selectedSever: s,
                         isServerClicked: true
@@ -122,7 +122,7 @@ class Servers extends React.Component {
                                         <div className="col-md-4">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
                                                 <span>Create Server</span>
-                                                <i class="fa fa-plus"></i>
+                                                <i className="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>

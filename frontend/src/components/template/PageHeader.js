@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 function PageHeader(props) {
 
     return (
@@ -7,6 +7,7 @@ function PageHeader(props) {
                 <div className="row">
                     <div className="col-sm-6 col-md-4 align-self-center page_header">
                         <h5 className="heading">
+                            {props.back}
                             {props.status}
                             {props.heading}
                         </h5>

@@ -6,8 +6,8 @@ import ApplicationCard from '../screens/ApplicationCard';
 import { Modal, Button, Alert } from 'react-bootstrap';
 import ApplicationDetails from '../components/ApplicationDetails';
 import "../index.css";
-import { withRouter, Redirect } from 'react-router';
-import { browserHistory } from 'react-router'
+import { withRouter, } from 'react-router';
+// import { browserHistory } from 'react-router'
 import PageHeader from '../components/template/PageHeader';
 import Status from '../components/Status';
 
@@ -166,7 +166,7 @@ class Applications extends React.Component {
             let selectedApplication = event.target.value;
             this.state.applications.forEach(data => {
                 if (data.id === parseInt(selectedApplication)) {
-                    this.setState({ selectedApplication: data })
+                    this.setState({ selectedApplication: data, isApplicationClicked: true })
                 }
             })
         }
@@ -176,12 +176,33 @@ class Applications extends React.Component {
     }
     applicationClickHandler = (application = null) => {
         if (!application) {
-            this.setState({ selectedApplicationFilter: "" })
+            this.setState({
+                selectedApplicationFilter: ""
+            })
             window.history.replaceState(null, null, "/applications")
         }
-        this.setState({ selectedApplication: application })
-    }
 
+        this.setState({
+            selectedApplication: application,
+            isApplicationClicked: true,
+        })
+    }
+    goBack = () => {
+        if (this.state.isApplicationClicked) {
+            window.history.replaceState(null, null, "/applications")
+        }
+        this.setState({
+            isApplicationClicked: !this.state.isApplicationClicked,
+            //selectedApplicationFilter: undefined,
+            selectedServerFilter: null,
+            selectedApplication: null,
+        })
+        this.changeSelectServer(0)
+    }
+    changeSelectServer(index) {
+        let serverSelect = document.getElementById("selectedServerFilter");
+        serverSelect.selectedIndex = index
+    }
     render() {
         return (
             <div className="container-fluid p-0">
@@ -218,7 +239,7 @@ class Applications extends React.Component {
                                     </div>
                                 </PageHeader>
                                 :
-                                <PageHeader
+                                <PageHeader back={<i onClick={this.goBack} className="fas fa-arrow-left"></i>}
                                     heading={this.state.selectedApplication.domain} status={<Status status={this.state.selectedApplication.status} />}>
                                     <div className="row">
                                         <div className="col-sm-4 col-md-4 mb-2 mb-sm-0 align-self-center">
@@ -308,10 +329,10 @@ class Applications extends React.Component {
                                     <Modal.Title>ADD APPLICATION</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                    <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                                    <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                                         {this.state.error}
                                     </Alert>
-                                    <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                                    <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                         {this.state.success}
                                     </Alert> <div class="modal-form">
                                         <label htmlFor="selectedDomain">Enter Domain Name</label>
@@ -355,7 +376,7 @@ class Applications extends React.Component {
                                     <Button className="btn btn-theme" onClick={this.handleAddApplication}>
                                         {
                                             this.state.loadding ?
-                                                <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                                 : "ADD APPLICATION"
                                         }
                                     </Button>

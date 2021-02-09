@@ -58,11 +58,11 @@ class Credentials extends React.Component {
                                 </p>
                             </div>
                         </div>
-                        <div className="text-center mt-4">
+                        {/* <div className="text-center mt-4">
                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-sm">
                                 Lounch phpMyAdmin
                             </button>
-                        </div>
+                        </div> */}
                         {/* <div>
                             <div><p>Try ssh admin@{this.server.ip_address} <br /> or do it via ftp client</p></div>
                         </div> */}

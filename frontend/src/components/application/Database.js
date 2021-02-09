@@ -70,8 +70,8 @@ class Database extends React.Component {
                         </div>
 
                         <div className="text-center mt-4">
-                            <a href={'//' + this.application.domain + "/phpmyadmin"} target="_blank" className="btn btn-theme btn-sm">
-                                Lounch Database
+                            <a rel="noopener noreferrer" href={((this.application.ssl_enabled === "1") ? "https://" : 'http://') + this.application.domain + "/phpmyadmin"} target="_blank" className="btn btn-theme btn-sm">
+                                Launch Database
                             </a>
                         </div>
                     </div>

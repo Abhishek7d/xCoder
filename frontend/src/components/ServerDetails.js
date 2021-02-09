@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import "../index.css"
 import Services from "./server/Services";
-import CronJobs from "./server/CronJobs";
-import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
 import ServerHealth from "./server/ServerHealth"
-import BlockStorage from "./server/BlockStorage";
 import copy from 'copy-to-clipboard';
 import Status from '../components/Status';
 // import UpgradeServer from "./server/UpgradeServer";
@@ -121,8 +118,9 @@ class ServerDetails extends Component {
     }
     render() {
         return (
+
             <>
-                <PageHeader status={<Status status={this.server.status} />}
+                <PageHeader back={<i onClick={this.props.serverClickHandler} className="fas fa-arrow-left"></i>} status={<Status status={this.server.status} />}
                     heading={this.server.name} subHeading="">
                     <div className="row">
                         <div className="col-12 text-center text-sm-right">
@@ -148,10 +146,10 @@ class ServerDetails extends Component {
                             <Modal.Title>ADD STORAGE</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                            <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                                 {this.state.error}
                             </Alert>
-                            <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                            <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                 {this.state.success}
                             </Alert>
                             <div class="modal-form">

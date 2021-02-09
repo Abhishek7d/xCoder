@@ -3,7 +3,7 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import PageHeader from '../components/template/PageHeader';
-import { Button, Alert } from 'react-bootstrap';
+// import { Button, Alert } from 'react-bootstrap';
 
 class Notifications extends React.Component {
     constructor(props) {

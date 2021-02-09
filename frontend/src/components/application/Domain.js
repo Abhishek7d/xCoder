@@ -39,8 +39,8 @@ class Domain extends React.Component {
             return;
         }
         this.setState({ loadding: true });
-        this.apiHandler.updateSSL(this.application.id, (!(this.state.ssl_enabled == 1)), (message) => {
-            this.setState({ loadding: false, message: message, ssl_enabled: (this.state.ssl_enabled == 1) ? 0 : 1 });
+        this.apiHandler.updateSSL(this.application.id, (!(this.state.ssl_enabled === "1")), (message) => {
+            this.setState({ loadding: false, message: message, ssl_enabled: (this.state.ssl_enabled === "1") ? "0" : "1" });
         }, (message) => {
             this.setState({ lodding: false, message: message });
         })
@@ -75,7 +75,7 @@ class Domain extends React.Component {
                             </div>
                             <div className="col-4">
                                 <label class="switch" onClick={this.updateDomainSSL}>
-                                    {(this.state.ssl_enabled == 1) ?
+                                    {(this.state.ssl_enabled === "1") ?
                                         <input type="checkbox" checked />
                                         : <input type="checkbox" />
                                     }
@@ -103,7 +103,7 @@ class Domain extends React.Component {
                                     <button className="btn btn-theme btn-sm" onClick={this.updateDomainName}>
                                         {
                                             this.state.loadding ?
-                                                <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                                 : "Update"
                                         }
                                     </button>

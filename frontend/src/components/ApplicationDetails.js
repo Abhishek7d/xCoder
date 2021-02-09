@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import Summary from "./application/Summary";
 import Database from "./application/Database";
 import Domain from "./application/Domain";
-import SSL from "./application/SSL";
 import FTP from "./application/FTP";
 import copy from 'copy-to-clipboard';
 

@@ -3,7 +3,7 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import PageHeader from '../components/template/PageHeader';
-import { Button, Alert } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 
 class Profile extends React.Component {
     constructor(props) {
@@ -54,10 +54,10 @@ class Profile extends React.Component {
                                     <div className="col-5">
                                         <div className="card">
                                             <div className="card-body p-5">
-                                                <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                                                <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                                                     {this.state.error}
                                                 </Alert>
-                                                <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                                                <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                                     {this.state.success}
                                                 </Alert>
                                                 <div class="modal-form">
