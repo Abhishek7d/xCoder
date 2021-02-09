@@ -26,6 +26,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);
+    Route::post('/change/password', [UserController::class, 'changePassword']);
     Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
     Route::post('/logout', [UserController::class, 'logout']);
 

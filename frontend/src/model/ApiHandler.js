@@ -100,12 +100,12 @@ class ApiHandler {
             }
         });
     }
-    changePassword = (email, newPassword, confirmPassword, success = () => { }, faild = () => { }) => {
+    changePassword = (email, oldPassword, newPassword, success = () => { }, faild = () => { }) => {
         if (!email) return;
         const formData = new FormData();
         formData.append("email", email);
         formData.append("password", newPassword);
-        formData.append("password_confirmation", confirmPassword);
+        formData.append("old_password", oldPassword);
 
         this.getResult("/change/password", "POST", formData, null, (response) => {
             if (response.status === 0) {

@@ -4,25 +4,29 @@ import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import PageHeader from '../components/template/PageHeader';
 import { Alert } from 'react-bootstrap';
+import { read_cookie } from 'sfcookies';
 
 class Profile extends React.Component {
     constructor(props) {
         super()
         this.state = {
-            email: 'test',
+            email: read_cookie("email"),
             newPassword: "",
             oldPassword: "",
             error: "",
             success: "",
+            loading: false
         }
         this.apiHandler = new ApiHandler();
     }
     handleChangePassword = () => {
+        this.setState({ loading: true })
+
         this.apiHandler.changePassword(this.state.email, this.state.oldPassword, this.state.newPassword, (msg) => {
-            this.setState({ error: "", success: msg })
+            this.setState({ error: "", success: msg, loading: false })
             console.log(msg);
         }, (err) => {
-            this.setState({ error: err, success: "" })
+            this.setState({ error: err, success: "", loading: false })
             console.log(err);
         })
     }
@@ -33,7 +37,7 @@ class Profile extends React.Component {
         })
     }
     setShow() {
-        this.setState({ error: "", success: "", })
+        this.setState({ error: "", success: "", loading: false })
     }
     render() {
         return (
@@ -62,7 +66,7 @@ class Profile extends React.Component {
                                                 </Alert>
                                                 <div class="modal-form">
                                                     <div className="input-group">
-                                                        <input type="text" className="form-control form-input-field" value={this.state.oldPassword} name="oldPassword" onChange={this.dataChange} placeholder="old password" />
+                                                        <input type="password" className="form-control form-input-field" value={this.state.oldPassword} name="oldPassword" onChange={this.dataChange} placeholder="old password" />
                                                         <div class="input-group-append">
                                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -73,7 +77,7 @@ class Profile extends React.Component {
                                                 </div>
                                                 <div class="modal-form mt-4">
                                                     <div className="input-group">
-                                                        <input type="text" className="form-control form-input-field" value={this.state.newPassword} name="newPassword" onChange={this.dataChange} placeholder="new password" />
+                                                        <input type="password" className="form-control form-input-field" value={this.state.newPassword} name="newPassword" onChange={this.dataChange} placeholder="new password" />
                                                         <div class="input-group-append">
                                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -82,7 +86,12 @@ class Profile extends React.Component {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <button className="btn btn-theme btn-block mt-4" onClick={this.handleChangePassword}>Change Password</button>
+                                                <button className="btn btn-theme btn-block mt-4" onClick={this.handleChangePassword}>
+                                                    {this.state.loading ?
+                                                        <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                        : "Update Password"
+                                                    }
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
