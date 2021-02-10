@@ -72,6 +72,9 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/storage', [BlockStorageController::class, 'createBlockStorage']);
         Route::post('/storage/resize', [BlockStorageController::class, 'resizeBlockStorage']);
         Route::post('/storage/delete', [BlockStorageController::class, 'deleteBlockStorage']);
+
+        // Notifications
+        Route::get('notifications', [DashboardController::class, 'notification']);
     });
 });
 Route::view("/{path?}", "app");

@@ -26,6 +26,8 @@ class ServerDetails extends Component {
             options: [],
             value: 1,
             min: 1,
+            regionsLoaded: false,
+            unavailableRegions: {},
             loadding: false,
         }
         if (this.server.storage) {
@@ -66,6 +68,16 @@ class ServerDetails extends Component {
             this.setState({ sizes: data, options: tmp_sizes })
         }, (err) => {
             console.log(err)
+        })
+        let unavailableRegions = {}
+        this.apiHandler.getRegions((regions) => {
+            regions.forEach(region => {
+                if (!region.available && !region.features.includes('storage')) {
+                    unavailableRegions[region.slug] = "Additional Storage Unavailable"
+                }
+            })
+            this.setState({ regionsLoaded: true, unavailableRegions: unavailableRegions })
+
         })
     }
     handleChange = (value) => {
@@ -122,14 +134,16 @@ class ServerDetails extends Component {
             <>
                 <PageHeader back={<i onClick={this.props.serverClickHandler} className="fas fa-arrow-left"></i>} status={<Status status={this.server.status} />}
                     heading={this.server.name} subHeading="">
-                    <div className="row">
-                        <div className="col-12 text-center text-sm-right">
-                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
-                                <span>Add Storage</span>
-                                <i class="fa fa-plus"></i>
-                            </button>
+                    {(this.state.regionsLoaded && !this.state.unavailableRegions[this.server.region]) ?
+                        <div className="row">
+                            <div className="col-12 text-center text-sm-right">
+                                <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
+                                    <span>Add Storage</span>
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                        : ''}
                 </PageHeader>
                 <div className="row servers-details-container">
                     <Summery copyToClipBoard={this.copyToClipBoard} tabId={"summery"} active={true} server={this.server} />

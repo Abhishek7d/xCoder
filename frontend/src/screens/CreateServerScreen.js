@@ -21,6 +21,7 @@ class CreateServerScreen extends React.Component {
             options: [],
             sizes: [],
             regions: {},
+            unavailableRegions: {},
             selectd_size: 0,
             showModal: false
         }
@@ -41,10 +42,18 @@ class CreateServerScreen extends React.Component {
         })
         this.apiHandler.getRegions((regions) => {
             let tmp_regions = this.state.regions;
+            let unavailableRegions = {}
             regions.forEach(region => {
                 tmp_regions[region.slug] = region.name
             })
+            regions.forEach(region => {
+                if (!region.available && !region.features.includes('storage')) {
+                    unavailableRegions[region.slug] = "Additional Storage Unavailable"
+                }
+            })
             this.setState({ regions: tmp_regions })
+            this.setState({ unavailableRegions: unavailableRegions })
+
         }, (err) => {
             console.log(err)
         })
@@ -189,6 +198,7 @@ class CreateServerScreen extends React.Component {
                                 </div>
                             </div>
                         </div>
+                        {(this.state.unavailableRegions[this.state.location]) ? <p className="text-danger text-small text-center"> {this.state.unavailableRegions[this.state.location]} </p> : ''}
                         <div class="modal-form">
                             <label htmlFor="">Application Name</label>
                             <div className="input-group">
