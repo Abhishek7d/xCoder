@@ -22,6 +22,12 @@ class ForgotPassword extends React.Component {
     componentDidMount() {
         document.title = "Forgot Password";
     }
+    onEnterPress = (e) => {
+        if (e.keyCode == 13 && e.shiftKey == false) {
+            e.preventDefault();
+            this.formAction();
+        }
+    }
     formAction = () => {
         let form = document.getElementsByTagName("form")[0]
         if (!form.checkValidity()) {
@@ -65,7 +71,7 @@ class ForgotPassword extends React.Component {
                             <form action="#" method="post">
                                 <div className="col-sm-12 modal-form">
                                     <div className="input-group">
-                                        <input required type="email" name="email" defaultValue={this.state.email} className="form-control form-input-field" id="email" placeholder="Email"
+                                        <input onKeyDown={this.onEnterPress} required type="email" name="email" defaultValue={this.state.email} className="form-control form-input-field" id="email" placeholder="Email"
                                             onChange={this.dataChange} />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
