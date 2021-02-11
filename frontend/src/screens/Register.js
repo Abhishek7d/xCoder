@@ -65,7 +65,7 @@ class Register extends React.Component {
                             <div className="col-sm-12">
                                 <h3>Signup</h3>
                             </div>
-                            <div className="col-sm-12">
+                            <div className="col-sm-12 text-left">
                                 <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                                     {this.state.error}
                                 </Alert>
