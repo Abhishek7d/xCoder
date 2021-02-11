@@ -24,12 +24,12 @@ class Applications extends React.Component {
             error: "",
             success: "",
             rspmsg: "",
-            selectedServerId: serverId,
+            selectedServerId: (serverId) ? serverId : '',
             selectedDomain: "",
             isWordpress: true,
             isApplicationClicked: false,
             selectedApplication: null,
-            selectedServerFilter: serverId,
+            selectedServerFilter: (serverId) ? serverId : '',
             selectedApplicationFilter: appId,
             appLoadding: true
         }
@@ -233,7 +233,7 @@ class Applications extends React.Component {
                                         </div>
                                         <div className="col-md-4 align-self-center">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
-                                                <span>New Application</span> <i class="fa fa-plus"></i>
+                                                <span>New Application</span> <i className="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -261,7 +261,7 @@ class Applications extends React.Component {
                                         <div className="col-sm-4 col-md-4 align-self-center">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
                                                 <span>New Application</span>
-                                                <i class="fa fa-plus"></i>
+                                                <i className="fa fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -334,11 +334,11 @@ class Applications extends React.Component {
                                     </Alert>
                                     <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                         {this.state.success}
-                                    </Alert> <div class="modal-form">
+                                    </Alert> <div className="modal-form">
                                         <label htmlFor="selectedDomain">Enter Domain Name</label>
                                         <div className="input-group">
                                             <input required type="text" className="form-control form-input-field" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
-                                            <div class="input-group-append">
+                                            <div className="input-group-append">
                                                 <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect width="45" height="45" rx="8" fill="#7973FE" />
                                                     <path d="M23 33C17.477 33 13 28.523 13 23C13 18.522 15.943 14.732 20 13.458V15.582C18.2809 16.28 16.8578 17.5537 15.9741 19.1851C15.0903 20.8165 14.8009 22.7043 15.1553 24.5255C15.5096 26.3468 16.4858 27.9883 17.9168 29.1693C19.3477 30.3503 21.1446 30.9975 23 31C24.5938 31 26.1513 30.524 27.4728 29.6332C28.7944 28.7424 29.82 27.4773 30.418 26H32.542C31.268 30.057 27.478 33 23 33ZM32.95 24H22V13.05C22.329 13.017 22.663 13 23 13C28.523 13 33 17.477 33 23C33 23.337 32.983 23.671 32.95 24ZM24 15.062V22H30.938C30.7154 20.2376 29.9129 18.5993 28.6568 17.3432C27.4007 16.0871 25.7624 15.2846 24 15.062Z" fill="white" />
@@ -346,7 +346,7 @@ class Applications extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="modal-form">
+                                    <div className="modal-form">
                                         <label htmlFor="select_server">Select server in which you want to Add new application</label>
                                         <div className="input-group">
                                             <select required className="custom-select" name="selectedServerId" value={this.state.selectedServerId} onChange={this.dataChange} id="select_server">
@@ -355,7 +355,7 @@ class Applications extends React.Component {
                                                     this.renderServers()
                                                 }
                                             </select>
-                                            <div class="input-group-append">
+                                            <div className="input-group-append">
                                                 <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect width="45" height="45" rx="8" fill="#7973FE" />
                                                     <path d="M23 33C17.477 33 13 28.523 13 23C13 18.522 15.943 14.732 20 13.458V15.582C18.2809 16.28 16.8578 17.5537 15.9741 19.1851C15.0903 20.8165 14.8009 22.7043 15.1553 24.5255C15.5096 26.3468 16.4858 27.9883 17.9168 29.1693C19.3477 30.3503 21.1446 30.9975 23 31C24.5938 31 26.1513 30.524 27.4728 29.6332C28.7944 28.7424 29.82 27.4773 30.418 26H32.542C31.268 30.057 27.478 33 23 33ZM32.95 24H22V13.05C22.329 13.017 22.663 13 23 13C28.523 13 33 17.477 33 23C33 23.337 32.983 23.671 32.95 24ZM24 15.062V22H30.938C30.7154 20.2376 29.9129 18.5993 28.6568 17.3432C27.4007 16.0871 25.7624 15.2846 24 15.062Z" fill="white" />
@@ -369,7 +369,6 @@ class Applications extends React.Component {
                                     </div>
                                 </Modal.Body>
                                 <Modal.Footer>
-
                                     <Button variant="default" onClick={this.handleModalClose}>
                                         CLOSE
                                       </Button>
