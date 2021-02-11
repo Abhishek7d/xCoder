@@ -94,38 +94,38 @@ class AddCronModal extends React.Component {
                             </div>
                             :
                             <div>
-                                <div class="modal-form form-group">
+                                <div className="modal-form form-group">
                                     <label htmlFor="">Command</label>
                                     <input type="text" required name="command" defaultValue={this.state.command} onChange={this.dataChange} className="form-input-field" id="Namemanageserver"
                                         placeholder="Enter Command" />
                                 </div>
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <div class="modal-form form-group">
+                                        <div className="modal-form form-group">
                                             <label htmlFor="">Minut</label>
                                             <input type="text" required name="minute" defaultValue={this.state.minute} onChange={this.dataChange} min="0" max="59" className="form-input-field" id="Namemanageserver"
                                                 placeholder="1 for every" />
                                         </div>
-                                        <div class="modal-form form-group">
+                                        <div className="modal-form form-group">
                                             <label htmlFor="">Day</label>
                                             <input type="text" required name="day" defaultValue={this.state.day} onChange={this.dataChange} min="1" max="31" className="form-input-field" id="Namemanageserver"
                                                 placeholder="1 for every" />
                                         </div>
                                     </div>
                                     <div className="col-md-6">
-                                        <div class="modal-form form-group">
+                                        <div className="modal-form form-group">
                                             <label htmlFor="">Hour</label>
                                             <input type="text" required name="hour" defaultValue={this.state.hour} onChange={this.dataChange} min="0" max="59" className="form-input-field" id="Namemanageserver"
                                                 placeholder="1 for every" />
                                         </div>
-                                        <div class="modal-form form-group">
+                                        <div className="modal-form form-group">
                                             <label htmlFor="">Week Day</label>
                                             <input type="text" required name="wday" defaultValue={this.state.wday} onChange={this.dataChange} min="1" max="7" className="form-input-field" id="Namemanageserver"
                                                 placeholder="1 for every" />
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-form form-group mb-0">
+                                <div className="modal-form form-group mb-0">
                                     <label htmlFor="">Month</label>
                                     <input type="text" required name="month" defaultValue={this.state.month} onChange={this.dataChange} min="1" max="12" className="form-input-field" id="Namemanageserver"
                                         placeholder="1 for every" />

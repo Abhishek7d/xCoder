@@ -77,7 +77,7 @@ class ServerHealth extends React.Component {
                         <div className="row">
                             <div className="col-sm-4">
                                 <div className="progress-container">
-                                    <SemiCircleProgressBar className="mt-0" stroke="#FFD302" percentage={this.state.memory.percentage} diameter={130} />
+                                    <SemiCircleProgressBar className="mt-0" stroke="#FFD302" percentage={parseInt(this.state.memory.percentage)} diameter={130} />
                                     <div className="server-status ram">
                                         {this.state.memory.used}
                                     </div>
@@ -91,7 +91,7 @@ class ServerHealth extends React.Component {
                             </div>
                             <div className="col-sm-4">
                                 <div className="progress-container">
-                                    <SemiCircleProgressBar stroke="#FFD302" percentage={this.state.cpu} diameter={130} />
+                                    <SemiCircleProgressBar stroke="#FFD302" percentage={parseInt(this.state.cpu)} diameter={130} />
                                     <div className="server-status cpu">
                                         {this.state.cpu} %
                                     </div>
@@ -102,7 +102,7 @@ class ServerHealth extends React.Component {
                             </div>
                             <div className="col-sm-4">
                                 <div className="progress-container">
-                                    <SemiCircleProgressBar stroke="#FFD302" percentage={this.state.disk.percentage} diameter={130} />
+                                    <SemiCircleProgressBar stroke="#FFD302" percentage={parseInt(this.state.disk.percentage)} diameter={130} />
                                     <div className="server-status disk">
                                         {this.state.disk.used}
                                     </div>

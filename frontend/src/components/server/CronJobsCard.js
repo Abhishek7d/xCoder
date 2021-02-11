@@ -73,11 +73,11 @@ class CronJobsCard extends React.Component {
                     }
                 </th>
                 <th className="text-center">
-                    <div class="btn-group dropleft">
-                        <button type="button" class="btn btn-light p-0 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div className="btn-group dropleft">
+                        <button type="button" className="btn btn-light p-0 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i className="fa fa-ellipsis-v"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div className="dropdown-menu">
                             <button type="button" className="dropdown-item" jobid={key} onClick={this.cronEdit}>Edit</button>
                             {(tmpout.SUSPENDED === "no") ?
                                 <button type="button" className="dropdown-item" jobid={tmpout.JOB} onClick={this.cronSuspend}>Suspend</button>

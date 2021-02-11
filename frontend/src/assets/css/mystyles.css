@@ -498,3 +498,62 @@ a.dropdown-item:hover {
 .dropdown-item:active:hover {
   color: white;
 }
+
+.btn-theme-outline {
+  background-color: white;
+  border: 1px solid #AC2FF1;
+  border-radius: 24px;
+  color: #AC2FF1;
+}
+
+.btn-theme-outline i {
+  margin-left: 10px;
+}
+
+.btn-theme-outline:hover {
+  background: linear-gradient(90.12deg, #AC2FF1 0.08%, #7973FE 99.9%);
+  box-shadow: 0px 8px 8px rgba(158, 65, 245, 0.3);
+  border-radius: 24px;
+  padding: 8px 20px;
+  color: white;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.box-shadow-left {
+  box-shadow: 12px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+.height-100-vh {
+  height: 100vh;
+}
+
+.login-sidebar {
+  text-align: center;
+  width: 75%;
+  margin: auto;
+}
+
+.login-sidebar .logo {
+  width: 80px;
+  padding-bottom: 0px;
+  margin-bottom: 25px;
+}
+
+.login-sidebar h3 {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 23px;
+  line-height: 37px;
+  color: #3E3E3E;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.login-right {
+  margin: auto;
+}
