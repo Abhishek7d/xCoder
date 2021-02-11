@@ -142,14 +142,7 @@ class ServerDetails extends Component {
                                 </button>
                             </div>
                         </div>
-                        : <div className="row">
-                            <div className="col-12 text-center text-sm-right">
-                                <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
-                                    <span>Add Storage</span>
-                                    <i className="fa fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
+                        : ''
                     }
                 </PageHeader>
                 <div className="row servers-details-container">
@@ -187,7 +180,6 @@ class ServerDetails extends Component {
                             </div>
                         </Modal.Body>
                         <Modal.Footer>
-
                             <Button variant="default" onClick={this.handleModalClose}>
                                 CLOSE
                             </Button>
