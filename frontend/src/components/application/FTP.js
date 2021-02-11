@@ -69,7 +69,7 @@ class FTP extends React.Component {
                         <button className={"btn btn-danger"} onClick={() => this.deleteFtp(data.username)} style={{ marginLeft: '10px' }}>
                             {
                                 this.state.deleting ?
-                                    <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                    <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                     : <i className="fa fa-trash"></i>
                             }
                         </button>
@@ -94,7 +94,7 @@ class FTP extends React.Component {
                                     <button className={"btn btn-theme btn-square btn-35"} onClick={() => this.setState({ showModal: true })} style={{ marginLeft: '10px' }}>
                                         {
                                             this.state.loadding ?
-                                                <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                                 : <i className="fa fa-plus"></i>
                                         }
                                     </button>
@@ -174,7 +174,7 @@ class FTP extends React.Component {
                             <Button className="btn btn-theme" onClick={this.addFtpAccount}>
                                 {
                                     this.state.loadding ?
-                                        <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                        <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                         : "ADD FTP"
                                 }
                             </Button>

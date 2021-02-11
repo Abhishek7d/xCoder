@@ -12,7 +12,7 @@ class ProjectDetails extends Component {
                 <div className="card card-primary card-outline">
                     <div className="card-header">
                         <div className="col-3 float-left" style={{ display: "flex" }}>
-                            <a className="nav-link" href="#" onClick={this.props.projectClickHandler}><i className="fas fa-arrow-left"></i></a>
+                            <button className="nav-link" onClick={this.props.projectClickHandler}><i className="fas fa-arrow-left"></i></button>
                             <h5 className="nav-link font-weight-bold text-secondary" style={{ minWidth: "max-content" }}>Project 1</h5>
                         </div>
                     </div>

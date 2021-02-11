@@ -109,7 +109,7 @@ class Projects extends React.Component {
                                             <div className="card card-primary card-outline">
                                                 <div className="card-header">
                                                     <div className="col-3 float-left">
-                                                        <a href="#" className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Project</a>
+                                                        <button className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Project</button>
                                                     </div>
 
                                                 </div>

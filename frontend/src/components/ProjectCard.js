@@ -45,7 +45,7 @@ class ProjectCard extends Component {
                             <a href="#" onClick={() => this.props.projectClickHandler()} >
                                 <div className="row">
                                     <div className="col-1">
-                                        <img style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
+                                        <img alt="" style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
                                     </div>
                                     <div className="col-5">
                                         <div className="d-flex">
@@ -65,6 +65,7 @@ class ProjectCard extends Component {
                                     <DropdownItem key="3"><a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash"></i>&nbsp;Delete</a></DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
+
                         </div>
                     </div>
                 </div>

@@ -26,6 +26,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);
+    Route::post('/change/password', [UserController::class, 'changePassword']);
     Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
     Route::post('/logout', [UserController::class, 'logout']);
 
@@ -71,6 +72,9 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/storage', [BlockStorageController::class, 'createBlockStorage']);
         Route::post('/storage/resize', [BlockStorageController::class, 'resizeBlockStorage']);
         Route::post('/storage/delete', [BlockStorageController::class, 'deleteBlockStorage']);
+
+        // Notifications
+        Route::get('notifications', [DashboardController::class, 'notification']);
     });
 });
 Route::view("/{path?}", "app");

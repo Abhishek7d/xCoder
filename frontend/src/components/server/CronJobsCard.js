@@ -1,6 +1,4 @@
 import React from 'react';
-import EditCorn from './EditCorn';
-import AddCorn from './AddCorn';
 import ApiHandler from '../../model/ApiHandler';
 import AddCronJobModal from "./AddCronJobModal";
 import EditCronJobModal from './EditCronJobModal';

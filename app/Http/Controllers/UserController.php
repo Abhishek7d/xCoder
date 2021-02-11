@@ -74,6 +74,31 @@ class UserController extends Controller
         }
         return CommonFunctions::sendResponse(0, "All Data required");
     }
+    public function changePassword(Request $request)
+    {
+        $password = $request->get('password');
+        $old_password = $request->get('old_password');
+        $email = $request->get('email');
+
+        // $credentials = ['password'=>$password, 'password_confirmation'=>$password_confirmation, 'token'=>$token];
+
+        if (!empty($password) && !empty($old_password) && !empty($email)) {
+            $users = User::where("email", $email)->get();
+            if (count($users) > 0) {
+                $user = $users[0];
+                if (Hash::check($old_password, $user->password)) {
+                    $user->password = Hash::make($password);
+                    $user->save();
+                    return CommonFunctions::sendResponse(1, "Password Changed successfully");
+                } else {
+                    return CommonFunctions::sendResponse(0, "Invalid old password");
+                }
+            } else {
+                return CommonFunctions::sendResponse(0, "Email not found");
+            }
+        }
+        return CommonFunctions::sendResponse(0, "All Data required");
+    }
     public function verify(Request $request, $id)
     {
 

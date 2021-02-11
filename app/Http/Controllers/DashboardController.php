@@ -10,6 +10,7 @@ use App\Models\Application;
 use App\Jobs\ServerInstaller​;
 use App\Models\Project;
 use App\Models\User;
+use App\Models\Notifications;
 use Artisan;
 use Illuminate\Support\Facades\Redis;
 
@@ -65,7 +66,7 @@ class DashboardController extends Controller
         if ($server->hashed == $hashed) {
             $server->status = CommonFunctions::$server_statuses[3];
             $server->save();
-            if($domain){
+            if ($domain) {
                 $controller = new WebSiteController();
                 $user = User::find($server->user_id);
                 return $controller->createApplicationToServer($server, $domain, $user);
@@ -101,14 +102,14 @@ class DashboardController extends Controller
                         "disk" => true,
                         "size" => $size
                     ];
-                    $response = CommonFunctions::makeRequest($url, "POST",json_encode($body));
+                    $response = CommonFunctions::makeRequest($url, "POST", json_encode($body));
                     $response = json_decode($response['data']);
-                    if(isset($response->id) && $response->id=="unprocessable_entity"){
-                        return CommonFunctions::sendResponse(0, $response->message);   
-                    }else{
+                    if (isset($response->id) && $response->id == "unprocessable_entity") {
+                        return CommonFunctions::sendResponse(0, $response->message);
+                    } else {
                         $server->size = $size;
-                        $tmp = explode("-",$size);
-                        $server->memory = (int)$tmp[2]*1024;
+                        $tmp = explode("-", $size);
+                        $server->memory = (int)$tmp[2] * 1024;
                         $server->vcpus = (int)$tmp[1];
                         $server->save();
                         return CommonFunctions::sendResponse(1, "Droplet Upgraded", $response);
@@ -128,7 +129,7 @@ class DashboardController extends Controller
         $region = $request->get('region');
         $appName = $request->get('appName');
 
-        if (!empty($name) && !empty($size) && !empty($region) && !empty($appName) ) {
+        if (!empty($name) && !empty($size) && !empty($region) && !empty($appName)) {
 
             $sizes = CommonFunctions::makeRequest("/sizes", "GET");
             if (!$sizes['status']) {
@@ -214,5 +215,12 @@ class DashboardController extends Controller
         $user = auth()->user();
         $servers = Server::where("user_id", $user->id)->with('applications')->with("storage")->get();
         return CommonFunctions::sendResponse(1, "Your droplets", $servers);
+    }
+
+    public function notification()
+    {
+        $user = auth()->user();
+        $notifications = Notifications::select('msg', 'created_at', 'status')->where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+        return CommonFunctions::sendResponse(1, 'Your Notifications', $notifications);
     }
 }

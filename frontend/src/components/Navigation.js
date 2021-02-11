@@ -35,20 +35,20 @@ class Navigation extends React.Component {
         let tmp = new Date();
         tmp = tmp.getTime();
         return tmp;
-        if (string) {
-            var rst = crypto.createHash('sha1').update(string).digest('hex');
-        } else {
-            var current_date = (new Date()).valueOf().toString();
-            var random = Math.random().toString();
-            var rst = crypto.createHash('sha1').update(current_date + random).digest('hex');
-        }
-        return rst;
+        // if (string) {
+        //     var rst = crypto.createHash('sha1').update(string).digest('hex');
+        // } else {
+        //     var current_date = (new Date()).valueOf().toString();
+        //     var random = Math.random().toString();
+        //     var rst = crypto.createHash('sha1').update(current_date + random).digest('hex');
+        // }
+        // return rst;
     }
     renderProjects = () => {
         let projects = [];
         this.state.projects.forEach((data, index) => {
-            let hash = this.makeHashString(index);
-            let hash1 = this.makeHashString(index) + 1;
+            // let hash = this.makeHashString(index);
+            //  let hash1 = this.makeHashString(index) + 1;
             projects.push(
                 <div key={index}>
                     <p style={{ textAlign: "center" }}>{data.name}</p>
@@ -120,8 +120,8 @@ class Navigation extends React.Component {
                                     </g>
                                     <path d="M22.1667 25H33.8333V19.1925C33.8333 15.9567 31.2217 13.3333 28 13.3333C24.7783 13.3333 22.1667 15.9567 22.1667 19.1925V25ZM28 11.6667C32.1417 11.6667 35.5 15.0358 35.5 19.1925V26.6667H20.5V19.1925C20.5 15.0358 23.8583 11.6667 28 11.6667ZM25.9167 27.5H30.0833C30.0833 28.0525 29.8638 28.5824 29.4731 28.9731C29.0824 29.3638 28.5525 29.5833 28 29.5833C27.4475 29.5833 26.9176 29.3638 26.5269 28.9731C26.1362 28.5824 25.9167 28.0525 25.9167 27.5Z" fill="white" />
                                     <defs>
-                                        <filter id="filter0_d" x="0" y="0" width="56" height="56" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                        <filter id="filter0_d" x="0" y="0" width="56" height="56" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                                            <feFlood floodOpacity="0" result="BackgroundImageFix" />
                                             <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
                                             <feOffset dy="8" />
                                             <feGaussianBlur stdDeviation="4" />
@@ -135,13 +135,13 @@ class Navigation extends React.Component {
                             </Link>
                         </li>
                         <li className="nav-item dropdown" style={{ display: 'none', background: "linear-gradient(0deg, #05a1f7b0, #91b8e8b5)", borderRadius: '10px', color: "#fff" }}>
-                            <a className="nav-link" data-toggle="dropdown" href="#" style={{ color: "#fff" }}>
+                            <button className="nav-link" data-toggle="dropdown" style={{ color: "#fff" }}>
                                 No Project
-                        </a>
+                            </button>
                             <div className="dropdown-menu">
-                                <a href="#" className="dropdown-item" onClick={this.handleModalShow}>
+                                <button className="dropdown-item" onClick={this.handleModalShow}>
                                     Add Project
-                            </a>
+                                 </button>
                                 <div className="dropdown-divider"></div>
                                 {this.renderProjects()}
                                 <Link to="/projects" className={"dropdown-item"}>
@@ -151,15 +151,15 @@ class Navigation extends React.Component {
                             </div>
                         </li>
                         <li className="nav-item">
-                            <div class="dropdown show prifile-dropdown">
+                            <div className="dropdown show prifile-dropdown">
                                 <div className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Hello, <b>{this.state.name}</b>
                                 </div>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                     <Link to="/profile" className="dropdown-item" role="button">
                                         Profile
                                 </Link>
-                                    <a class="dropdown-item" onClick={this.handleLogout} href="#">Logout</a>
+                                    <button className="dropdown-item" onClick={this.handleLogout}>Logout</button>
                                 </div>
                             </div>
                         </li>
@@ -184,7 +184,7 @@ class Navigation extends React.Component {
                             <Button variant="info" onClick={this.handleAddProject}>
                                 {
                                     this.state.loadding ?
-                                        <img src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                        <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                         : "ADD PROJECT"
                                 }
                             </Button>

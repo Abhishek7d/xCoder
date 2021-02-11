@@ -1,5 +1,4 @@
 import React from "react";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ApiHandler from '../model/ApiHandler';
 import { Link } from 'react-router-dom';
 import Status from '../components/Status';

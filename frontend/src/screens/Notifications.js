@@ -3,21 +3,80 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import PageHeader from '../components/template/PageHeader';
-import { Button, Alert } from 'react-bootstrap';
+// import { Button, Alert } from 'react-bootstrap';
 
 class Notifications extends React.Component {
     constructor(props) {
         super()
         this.state = {
-            notifications: []
+            notifications: [],
+            oldN: [],
+            newN: []
         }
         this.apiHandler = new ApiHandler();
     }
+    componentDidMount = () => {
+        this.getNotifications();
+        this.interval = setInterval(() => {
+            this.getNotifications();
+        }, 5000);
+    }
     getNotifications() {
-
+        this.apiHandler.getNotifications((msg, data) => {
+            this.setState({
+                notifications: data
+            })
+            this.filterNotifications()
+        })
     }
     isOld() {
         return true;
+    }
+    filterNotifications() {
+        let n = [];
+        let o = [];
+        this.state.notifications.forEach(data => {
+            if (new Date(data.created_at) >= new Date()) {
+                n.push(data)
+            } else {
+                o.push(data)
+            }
+        })
+        this.setState({
+            newN: n,
+            oldN: o
+        })
+    }
+    renderOldNotification() {
+        let tmp = [];
+        this.state.oldN.forEach(data => {
+            tmp.push(<li>{data.msg}</li>)
+        })
+        if (this.state.oldN.length > 0) {
+            return <div className="card-body border-bottom">
+                <ul className="bullet-theme old">
+                    {tmp}
+                </ul>
+            </div>;
+        } else {
+            return false
+        }
+    }
+    renderNewNotification() {
+        let tmp = []
+        this.state.newN.forEach(data => {
+            tmp.push(<li>{data.msg}</li>)
+        })
+        if (this.state.newN.length > 0) {
+            return <div className="card-body border-bottom">
+                <ul className="bullet-theme pt-3">
+                    {tmp}
+                </ul>
+            </div>;
+        } else {
+            return false
+        }
+
     }
     render() {
         return (
@@ -36,19 +95,17 @@ class Notifications extends React.Component {
                             <div className="container-fluid">
                                 <div className="row">
                                     <div className="col-12">
-                                        <div className="card">
-                                            <div className="card-body pt-5 border-bottom">
-                                                <ul className="bullet-theme">
-                                                    <li >Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing, Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing, Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing</li>
-                                                    <li >Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing</li>
-                                                </ul>
-                                            </div>
-                                            <div className="card-body pt-5 border-bottom">
-                                                <ul className="bullet-theme old">
-                                                    <li >Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing, Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing, Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing</li>
-                                                    <li >Amet, eget at nullam sapien egestas sed adipiscing sed ullamcorper in justo porttitor volutpat in quam eu sodales eget adipiscing</li>
-                                                </ul>
-                                            </div>
+                                        <div className="card p-0">
+                                            {(this.state.notifications.length <= 0) ?
+                                                <div className="card-body">
+                                                    <p className="p-0 m-0">No Notifications</p>
+                                                </div>
+                                                :
+                                                <>
+                                                    {this.renderNewNotification()}
+                                                    {this.renderOldNotification()}
+                                                </>
+                                            }
                                         </div>
                                     </div>
                                 </div>

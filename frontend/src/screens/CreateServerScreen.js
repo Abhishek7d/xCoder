@@ -1,11 +1,8 @@
 import React from 'react';
-import Navigation from '../components/Navigation';
-import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import 'jquery/dist/jquery.min.js';
 import 'popper.js/dist/popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import { Link } from 'react-router-dom';
 import { Modal, Button, Alert } from 'react-bootstrap';
 
 
@@ -24,6 +21,7 @@ class CreateServerScreen extends React.Component {
             options: [],
             sizes: [],
             regions: {},
+            unavailableRegions: {},
             selectd_size: 0,
             showModal: false
         }
@@ -44,10 +42,18 @@ class CreateServerScreen extends React.Component {
         })
         this.apiHandler.getRegions((regions) => {
             let tmp_regions = this.state.regions;
+            let unavailableRegions = {}
             regions.forEach(region => {
                 tmp_regions[region.slug] = region.name
             })
+            regions.forEach(region => {
+                if (!region.available && !region.features.includes('storage')) {
+                    unavailableRegions[region.slug] = "Additional Storage Unavailable"
+                }
+            })
             this.setState({ regions: tmp_regions })
+            this.setState({ unavailableRegions: unavailableRegions })
+
         }, (err) => {
             console.log(err)
         })
@@ -88,7 +94,7 @@ class CreateServerScreen extends React.Component {
         this.setState({ [event.target.name]: event.target.value })
     }
     renderOptions() {
-        let tmp_data = [<option value="" >Select Size</option>];
+        let tmp_data = [<option key="-1" value="" >Select Size</option>];
         let tmp_list = [];
         this.state.options.forEach(data => {
             let tmp = data.split("-");
@@ -99,7 +105,7 @@ class CreateServerScreen extends React.Component {
         tmp_list.sort();
         tmp_list.forEach(data => {
             let tmp = data.split("-");
-            tmp_data.push(<option value={data}>{tmp[1].toUpperCase() + " + " + tmp[2].toUpperCase()}</option>);
+            tmp_data.push(<option key={data} value={data}>{tmp[1].toUpperCase() + " + " + tmp[2].toUpperCase()}</option>);
         })
         return tmp_data;
     }
@@ -145,10 +151,10 @@ class CreateServerScreen extends React.Component {
                         <Modal.Title>Create Server</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                        <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                             {this.state.error}
                         </Alert>
-                        <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                        <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                             {this.state.success}
                         </Alert>
                         <div class="modal-form">
@@ -192,6 +198,7 @@ class CreateServerScreen extends React.Component {
                                 </div>
                             </div>
                         </div>
+                        {(this.state.unavailableRegions[this.state.location]) ? <p className="text-danger text-small text-center"> {this.state.unavailableRegions[this.state.location]} </p> : ''}
                         <div class="modal-form">
                             <label htmlFor="">Application Name</label>
                             <div className="input-group">

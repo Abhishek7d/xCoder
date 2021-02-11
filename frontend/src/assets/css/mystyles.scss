@@ -13,7 +13,13 @@
 
         svg {
             margin-right: 10px;
-            margin-top: -3px;
+            margin-top: -5px;
+        }
+
+        .fa,
+        .fas {
+            cursor: pointer;
+            margin-right: 10px;
         }
     }
 
@@ -27,6 +33,10 @@
         line-height: 16px;
         color: #B5B5C3;
     }
+}
+
+.text-small {
+    font-size: 12px;
 }
 
 .full-height {

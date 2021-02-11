@@ -100,12 +100,12 @@ class ApiHandler {
             }
         });
     }
-    changePassword = (email, newPassword, confirmPassword, success = () => { }, faild = () => { }) => {
+    changePassword = (email, oldPassword, newPassword, success = () => { }, faild = () => { }) => {
         if (!email) return;
         const formData = new FormData();
         formData.append("email", email);
         formData.append("password", newPassword);
-        formData.append("password_confirmation", confirmPassword);
+        formData.append("old_password", oldPassword);
 
         this.getResult("/change/password", "POST", formData, null, (response) => {
             if (response.status === 0) {
@@ -692,6 +692,25 @@ class ApiHandler {
                 faild("something went wrong");
             }
         }, faild);
+    }
+    getNotifications = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/notifications", "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
     }
 
 }

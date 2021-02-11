@@ -90,8 +90,8 @@ class ApplicationCard extends React.Component {
                             <div className="col-10"><p>{this.state.server.name}</p></div>
                         </div>
                         <div className="text-center mt-4">
-                            <a href={"http://" + this.state.domain} target="_blank" type="button" className="btn btn-theme btn-sm">
-                                Lounch Application
+                            <a href={((this.state.ssl_enabled === "1") ? "https://" : "http://") + this.state.domain} target="_blank" type="button" rel="noopener noreferrer" className="btn btn-theme btn-sm">
+                                Visit Application
                             </a>
                         </div>
                     </div>

@@ -114,7 +114,7 @@ class Login extends React.Component {
                     </div>
                     <div class="col-md-8 form-side-image-container d-none d-lg-block">
                         <div class="image-container">
-                            <img class="login-right" src={require("../assets/images/login-right-image.png")} alt="login-image" srcset="" />
+                            <img class="login-right" src={require("../assets/images/login-right-image.png")} alt="login" />
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,8 @@
 import React from 'react';
-import Navigation from '../Navigation';
-import Sidebar from '../Sidebar';
 import ApiHandler from '../../model/ApiHandler';
 import 'jquery/dist/jquery.min.js';
 import 'popper.js/dist/popper.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
-import { Link } from 'react-router-dom';
 import { Modal, Button, Alert } from 'react-bootstrap';
 
 
@@ -83,10 +80,10 @@ class EditCronJobModal extends React.Component {
                         <Modal.Title>Edit Cron Job</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Alert show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                        <Alert show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                             {this.state.error}
                         </Alert>
-                        <Alert show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                        <Alert show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                             {this.state.success}
                         </Alert>
                         {this.state.loadding ?

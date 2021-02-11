@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import "../index.css"
 import Services from "./server/Services";
-import CronJobs from "./server/CronJobs";
-import Resources from "./server/Resouces";
 import Credentials from "./server/Credentials";
 import Summery from "./server/Summery";
 import ServerHealth from "./server/ServerHealth"
-import BlockStorage from "./server/BlockStorage";
 import copy from 'copy-to-clipboard';
 import Status from '../components/Status';
 // import UpgradeServer from "./server/UpgradeServer";
@@ -29,6 +26,8 @@ class ServerDetails extends Component {
             options: [],
             value: 1,
             min: 1,
+            regionsLoaded: false,
+            unavailableRegions: {},
             loadding: false,
         }
         if (this.server.storage) {
@@ -69,6 +68,16 @@ class ServerDetails extends Component {
             this.setState({ sizes: data, options: tmp_sizes })
         }, (err) => {
             console.log(err)
+        })
+        let unavailableRegions = {}
+        this.apiHandler.getRegions((regions) => {
+            regions.forEach(region => {
+                if (!region.available && !region.features.includes('storage')) {
+                    unavailableRegions[region.slug] = "Additional Storage Unavailable"
+                }
+            })
+            this.setState({ regionsLoaded: true, unavailableRegions: unavailableRegions })
+
         })
     }
     handleChange = (value) => {
@@ -121,17 +130,20 @@ class ServerDetails extends Component {
     }
     render() {
         return (
+
             <>
-                <PageHeader status={<Status status={this.server.status} />}
+                <PageHeader back={<i onClick={this.props.serverClickHandler} className="fas fa-arrow-left"></i>} status={<Status status={this.server.status} />}
                     heading={this.server.name} subHeading="">
-                    <div className="row">
-                        <div className="col-12 text-center text-sm-right">
-                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
-                                <span>Add Storage</span>
-                                <i class="fa fa-plus"></i>
-                            </button>
+                    {(this.state.regionsLoaded && !this.state.unavailableRegions[this.server.region]) ?
+                        <div className="row">
+                            <div className="col-12 text-center text-sm-right">
+                                <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
+                                    <span>Add Storage</span>
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                        : ''}
                 </PageHeader>
                 <div className="row servers-details-container">
                     <Summery copyToClipBoard={this.copyToClipBoard} tabId={"summery"} active={true} server={this.server} />
@@ -148,10 +160,10 @@ class ServerDetails extends Component {
                             <Modal.Title>ADD STORAGE</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <Alert onClose={() => this.setShow()} show={(this.state.error != "") ? true : false} variant="danger" dismissible>
+                            <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                                 {this.state.error}
                             </Alert>
-                            <Alert onClose={() => this.setShow()} show={(this.state.success != "") ? true : false} variant="success" dismissible>
+                            <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                 {this.state.success}
                             </Alert>
                             <div class="modal-form">
