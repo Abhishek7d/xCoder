@@ -22,6 +22,12 @@ class ForgotPassword extends React.Component {
     componentDidMount() {
         document.title = "Forgot Password";
     }
+    onEnterPress = (e) => {
+        if (e.keyCode == 13 && e.shiftKey == false) {
+            e.preventDefault();
+            this.formAction();
+        }
+    }
     formAction = () => {
         let form = document.getElementsByTagName("form")[0]
         if (!form.checkValidity()) {
@@ -49,7 +55,7 @@ class ForgotPassword extends React.Component {
                     <div className="col-md-4 d-flex bg-white height-100-vh box-shadow-left">
                         <div className="align-self-center login-sidebar">
                             <div className="col-sm-12 center">
-                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" srcset="" />
+                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" />
                             </div>
                             <div className="col-sm-12">
                                 <h3>Forgot Password</h3>
@@ -65,7 +71,7 @@ class ForgotPassword extends React.Component {
                             <form action="#" method="post">
                                 <div className="col-sm-12 modal-form">
                                     <div className="input-group">
-                                        <input required type="email" name="email" defaultValue={this.state.email} className="form-control form-input-field" id="email" placeholder="Email"
+                                        <input onKeyDown={this.onEnterPress} required type="email" name="email" defaultValue={this.state.email} className="form-control form-input-field" id="email" placeholder="Email"
                                             onChange={this.dataChange} />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,7 +107,7 @@ class ForgotPassword extends React.Component {
                     </div>
                     <div className="col-md-8 d-flex">
                         <div className="text-center flex-1 align-self-center">
-                            <img className="login-right d-none d-lg-block" src={require("../assets/images/forgot-password-right.png")} alt="login" srcset="" />
+                            <img className="login-right d-none d-lg-block" src={require("../assets/images/forgot-password-right.png")} alt="login" />
                         </div>
                     </div>
                 </div>

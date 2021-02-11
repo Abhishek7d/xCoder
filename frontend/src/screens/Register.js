@@ -21,6 +21,12 @@ class Register extends React.Component {
     setShow() {
         this.setState({ error: "", success: "", })
     }
+    onEnterPress = (e) => {
+        if (e.keyCode == 13 && e.shiftKey == false) {
+            e.preventDefault();
+            this.formAction();
+        }
+    }
     formAction = () => {
         let form = document.getElementsByTagName("form")[0]
         if (!form.checkValidity()) {
@@ -54,12 +60,12 @@ class Register extends React.Component {
                     <div className="col-md-4 d-flex bg-white height-100-vh box-shadow-left" >
                         <div className="align-self-center login-sidebar">
                             <div className="col-sm-12 center">
-                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" srcset="" />
+                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" />
                             </div>
                             <div className="col-sm-12">
                                 <h3>Signup</h3>
                             </div>
-                            <div className="col-sm-12">
+                            <div className="col-sm-12 text-left">
                                 <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                                     {this.state.error}
                                 </Alert>
@@ -70,7 +76,7 @@ class Register extends React.Component {
                             <form action="#" method="post">
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input type="text" onChange={this.dataChange} defaultValue={this.state.name} className="form-control form-input-field" placeholder="Full Name" required name="name" id="name" />
+                                        <input onKeyDown={this.onEnterPress} type="text" onChange={this.dataChange} required defaultValue={this.state.name} className="form-control form-input-field" placeholder="Full Name" required name="name" id="name" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -81,7 +87,7 @@ class Register extends React.Component {
                                 </div>
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input type="email" name="email" onChange={this.dataChange} defaultValue={this.state.email} className="form-control form-input-field" placeholder="Email" />
+                                        <input onKeyDown={this.onEnterPress} type="email" name="email" required onChange={this.dataChange} defaultValue={this.state.email} className="form-control form-input-field" placeholder="Email" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -92,7 +98,7 @@ class Register extends React.Component {
                                 </div>
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input type="password" name="password" onChange={this.dataChange} defaultValue={this.state.password} className="form-control form-input-field" id="password" placeholder="Password" />
+                                        <input onKeyDown={this.onEnterPress} type="password" name="password" required onChange={this.dataChange} defaultValue={this.state.password} className="form-control form-input-field" id="password" placeholder="Password" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -103,7 +109,7 @@ class Register extends React.Component {
                                 </div>
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input type="password" onChange={this.dataChange} required className="form-control form-input-field" name="confirmPassword" id="confirm-password" placeholder="Confirm Password" />
+                                        <input onKeyDown={this.onEnterPress} type="password" onChange={this.dataChange} required className="form-control form-input-field" name="confirmPassword" id="confirm-password" placeholder="Confirm Password" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -138,7 +144,7 @@ class Register extends React.Component {
                     </div>
                     <div className="col-md-8 d-flex">
                         <div className="text-center flex-1 align-self-center">
-                            <img className="login-right d-none d-lg-block" src={require("../assets/images/signup-right-image.png")} alt="" srcset="" />
+                            <img className="login-right d-none d-lg-block" src={require("../assets/images/signup-right-image.png")} alt="" />
                         </div>
                     </div>
                 </div>

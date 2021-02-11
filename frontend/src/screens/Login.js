@@ -23,6 +23,13 @@ class Login extends React.Component {
     componentDidMount() {
         document.title = "Login";
     }
+    onEnterPress = (e) => {
+        if (e.keyCode == 13 && e.shiftKey == false) {
+            e.preventDefault();
+            this.formAction();
+        }
+    }
+
     formAction = () => {
         let form = document.getElementsByTagName("form")[0]
         if (!form.checkValidity()) {
@@ -59,7 +66,7 @@ class Login extends React.Component {
                     <div className="col-md-4 d-flex bg-white height-100-vh box-shadow-left">
                         <div className="align-self-center login-sidebar">
                             <div className="col-sm-12 center">
-                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" srcset="" />
+                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" />
                             </div>
                             <div className="col-sm-12">
                                 <h3>Login</h3>
@@ -72,7 +79,7 @@ class Login extends React.Component {
                             <form action="#" method="post">
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input required type="email" name="email" onChange={this.dataChange} defaultValue={this.state.email} className="form-control form-input-field" placeholder="Email" />
+                                        <input required type="email" name="email" onChange={this.dataChange} defaultValue={this.state.email} onKeyDown={this.onEnterPress} className="form-control form-input-field" placeholder="Email" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
@@ -83,7 +90,7 @@ class Login extends React.Component {
                                 </div>
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input required type="password" name="password" onChange={this.dataChange} defaultValue={this.state.password} className="form-control form-input-field" id="password" placeholder="Password" />
+                                        <input required type="password" name="password" onChange={this.dataChange} defaultValue={this.state.password} onKeyDown={this.onEnterPress} className="form-control form-input-field" id="password" placeholder="Password" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />
