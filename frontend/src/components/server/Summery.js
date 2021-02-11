@@ -10,7 +10,7 @@ class Summery extends React.Component {
             regions: {},
             loadding: false
         }
-        console.log(this.server)
+
         this.apiHandler = new ApiHandler();
     }
     componentDidMount() {

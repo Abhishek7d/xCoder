@@ -67,10 +67,10 @@ class ApplicationDetails extends Component {
             //     <div className="card-footer"></div>
             // </div>
             <>
-                <Summary key={this.state.id} copyToClipBoard={this.copyToClipBoard} tabId={"summary-tab"} active={true} server={this.server} application={this.application} />
-                <Database key={this.state.id} copyToClipBoard={this.copyToClipBoard} tabId={"database-tab"} active={true} server={this.server} application={this.application} />
-                <Domain key={this.state.id} copyToClipBoard={this.copyToClipBoard} setMessage={this.props.setMessage} loadApplications={this.props.loadApplications} tabId={"domain-name-tab"} active={true} server={this.server} application={this.application} />
-                <FTP key={this.state.id} copyToClipBoard={this.copyToClipBoard} loadApplications={this.props.loadApplications} tabId={"ftp-tab"} active={true} server={this.server} application={this.application} />
+                <Summary key={this.state.id + "-summary"} copyToClipBoard={this.copyToClipBoard} tabId={"summary-tab"} active={true} server={this.server} application={this.application} />
+                <Database key={this.state.id + "-database"} copyToClipBoard={this.copyToClipBoard} tabId={"database-tab"} active={true} server={this.server} application={this.application} />
+                <Domain key={this.state.id + '-domain'} copyToClipBoard={this.copyToClipBoard} setMessage={this.props.setMessage} loadApplications={this.props.loadApplications} tabId={"domain-name-tab"} active={true} server={this.server} application={this.application} />
+                <FTP key={this.state.id + "-ftp"} copyToClipBoard={this.copyToClipBoard} loadApplications={this.props.loadApplications} tabId={"ftp-tab"} active={true} server={this.server} application={this.application} />
             </>
         )
     }
