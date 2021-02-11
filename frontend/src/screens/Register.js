@@ -60,7 +60,7 @@ class Register extends React.Component {
                     <div className="col-md-4 d-flex bg-white height-100-vh box-shadow-left" >
                         <div className="align-self-center login-sidebar">
                             <div className="col-sm-12 center">
-                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" srcset="" />
+                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" />
                             </div>
                             <div className="col-sm-12">
                                 <h3>Signup</h3>
@@ -144,7 +144,7 @@ class Register extends React.Component {
                     </div>
                     <div className="col-md-8 d-flex">
                         <div className="text-center flex-1 align-self-center">
-                            <img className="login-right d-none d-lg-block" src={require("../assets/images/signup-right-image.png")} alt="" srcset="" />
+                            <img className="login-right d-none d-lg-block" src={require("../assets/images/signup-right-image.png")} alt="" />
                         </div>
                     </div>
                 </div>

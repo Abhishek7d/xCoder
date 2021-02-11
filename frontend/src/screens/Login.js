@@ -66,7 +66,7 @@ class Login extends React.Component {
                     <div className="col-md-4 d-flex bg-white height-100-vh box-shadow-left">
                         <div className="align-self-center login-sidebar">
                             <div className="col-sm-12 center">
-                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" srcset="" />
+                                <img className="logo img-fluid" src={require("../assets/images/parvaty-logo.png")} alt="" />
                             </div>
                             <div className="col-sm-12">
                                 <h3>Login</h3>
