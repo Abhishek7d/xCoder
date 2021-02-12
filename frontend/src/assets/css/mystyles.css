@@ -486,7 +486,7 @@ ul.bullet-theme.old li::before {
 }
 
 a.dropdown-item:hover {
-  color: #fff !important;
+  color: #000 !important;
 }
 
 .brand-link:hover {
