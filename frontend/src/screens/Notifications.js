@@ -3,13 +3,17 @@ import Navigation from '../components/Navigation';
 import Sidebar from '../components/Sidebar';
 import ApiHandler from '../model/ApiHandler';
 import PageHeader from '../components/template/PageHeader';
+import Pagination from '../components/template/Pagination';
+
 // import { Button, Alert } from 'react-bootstrap';
 
 class Notifications extends React.Component {
     constructor(props) {
         super()
         this.state = {
+            loading: true,
             notifications: [],
+            notificationData: {},
             oldN: [],
             newN: []
         }
@@ -17,16 +21,17 @@ class Notifications extends React.Component {
     }
     componentDidMount = () => {
         this.getNotifications();
-        this.interval = setInterval(() => {
-            this.getNotifications();
-        }, 5000);
     }
-    getNotifications() {
-        this.apiHandler.getNotifications((msg, data) => {
+    getNotifications(page = 1) {
+        this.apiHandler.getNotifications(page, (msg, data) => {
             this.setState({
-                notifications: data
+                notifications: data.data,
+                notificationData: data,
+                loading: false
             })
             this.filterNotifications()
+        }, err => {
+            console.log(err)
         })
     }
     isOld() {
@@ -78,11 +83,14 @@ class Notifications extends React.Component {
         }
 
     }
+    handlePageChange = (data) => {
+        this.getNotifications(data)
+    }
     render() {
         return (
             <>
                 <div className="container-fluid p-0">
-                    <Navigation />
+                    <Navigation name="Notifications" />
                     <Sidebar />
                     <div className="content-wrapper">
                         <div className="section-container">
@@ -98,7 +106,12 @@ class Notifications extends React.Component {
                                         <div className="card p-0">
                                             {(this.state.notifications.length <= 0) ?
                                                 <div className="card-body">
-                                                    <p className="p-0 m-0">No Notifications</p>
+                                                    <p className="p-0 m-0">
+                                                        {(this.state.loading) ?
+                                                            <div style={{ width: "100%", paddingLeft: "40%" }}>
+                                                                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceLoadding" />
+                                                            </div> : 'No Notifications'}
+                                                    </p>
                                                 </div>
                                                 :
                                                 <>
@@ -109,6 +122,7 @@ class Notifications extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                <Pagination onPageChange={this.handlePageChange} key={this.state.notificationData.current_page} data={this.state.notificationData}></Pagination>
                             </div>
                         </section>
                     </div>

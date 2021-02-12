@@ -22,7 +22,7 @@ class Register extends React.Component {
         this.setState({ error: "", success: "", })
     }
     onEnterPress = (e) => {
-        if (e.keyCode == 13 && e.shiftKey == false) {
+        if (e.keyCode === 13 && e.shiftKey === false) {
             e.preventDefault();
             this.formAction();
         }

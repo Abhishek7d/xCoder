@@ -533,8 +533,27 @@ ul {
 
 a.dropdown-item {
     &:hover {
-        color: #AC2FF1 !important;
+        color: #fff !important;
     }
+}
+
+.brand-link {
+    &:hover {
+        color: white !important;
+    }
+
+    span {
+        &:hover {
+            color: white;
+        }
+    }
+}
+
+.nav-name {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    color: #3E3E3E;
 }
 
 .dropdown-item.active,
@@ -606,4 +625,34 @@ a.dropdown-item {
 
 .login-right {
     margin: auto;
+}
+
+.pagination {
+    .page-item {
+        border: none;
+        background-color: transparent;
+
+        .page-link {
+            border: none;
+            background-color: transparent;
+            color: #3E3E3E;
+            cursor: pointer;
+            font-weight: bold;
+
+            &.active {
+                color: #7973FE;
+                cursor: default;
+                font-size: 20px;
+                margin-top: -3px;
+            }
+
+            &.prev,
+            &.next {
+                background: #7973FE;
+                box-shadow: 0px 4px 4px rgba(121, 115, 254, 0.3);
+                border-radius: 4px;
+                color: #fff;
+            }
+        }
+    }
 }

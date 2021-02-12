@@ -9,19 +9,22 @@ import ServerDetails from '../components/ServerDetails';
 import "../assets/css/dashboard.css";
 import CreateServerScreen from "./CreateServerScreen";
 import PageHeader from '../components/template/PageHeader';
+import Pagination from '../components/template/Pagination';
 
 class Servers extends React.Component {
     constructor(props) {
         super();
         let serverId = props.match.params.serverId;
         this.state = {
+            serverData: {},
             servers: [],
             regions: {},
             selectedSever: null,
             isServerClicked: false,
             loadding: true,
             showModal: false,
-            serverId: serverId
+            serverId: serverId,
+            screenName: "Servers"
         }
         this.apiHandler = new ApiHandler();
         this.createServer = React.createRef();
@@ -32,19 +35,7 @@ class Servers extends React.Component {
 
     componentDidMount() {
         document.title = "Your Servers";
-        this.apiHandler.getServers((msg, data) => {
-            data.forEach((s) => {
-                if (s.id === this.state.serverId) {
-                    this.setState({
-                        selectedSever: s,
-                        isServerClicked: true
-                    })
-                }
-            })
-            this.setState({ servers: data, loadding: false })
-        }, err => {
-            this.showError(err);
-        })
+        this.getServers();
         this.apiHandler.getRegions((regions) => {
             let tmp_regions = this.state.regions;
             regions.forEach(region => {
@@ -53,6 +44,21 @@ class Servers extends React.Component {
             this.setState({ regions: tmp_regions })
         }, (err) => {
             console.log(err)
+        })
+    }
+    getServers(page = 1) {
+        this.apiHandler.getServers(page, (msg, data) => {
+            data.data.forEach((s) => {
+                if (s.id === this.state.serverId) {
+                    this.setState({
+                        selectedSever: s,
+                        isServerClicked: true
+                    })
+                }
+            })
+            this.setState({ servers: data.data, loadding: false, serverData: data })
+        }, err => {
+            this.showError(err);
         })
     }
     getRegionName = (slug) => {
@@ -66,7 +72,7 @@ class Servers extends React.Component {
         }
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            servers.push(<ServerCard serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={index} server={data} />);
+            servers.push(<ServerCard serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
         })
         if (servers.length < 1) {
             servers = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Servers Created</p>
@@ -82,6 +88,7 @@ class Servers extends React.Component {
                 }
                 this.setState({
                     isServerClicked: !this.state.isServerClicked,
+                    screenName: server.name
                 })
             }
         }
@@ -100,10 +107,13 @@ class Servers extends React.Component {
     handleModalShow = () => {
         this.createServer.current.handleModalShow();
     }
+    handlePageChange = (data) => {
+        this.getServers(data)
+    }
     render() {
         return (
             <div className="container-fluid p-0">
-                <Navigation />
+                <Navigation name={this.state.screenName} />
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">
@@ -130,6 +140,7 @@ class Servers extends React.Component {
                                 <div className="row">
                                     {this.renderServers()}
                                 </div>
+                                <Pagination onPageChange={this.handlePageChange} key={this.state.serverData.current_page} data={this.state.serverData}></Pagination>
                             </>
                         }
                     </div>

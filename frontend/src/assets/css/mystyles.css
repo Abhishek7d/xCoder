@@ -486,7 +486,22 @@ ul.bullet-theme.old li::before {
 }
 
 a.dropdown-item:hover {
-  color: #AC2FF1 !important;
+  color: #fff !important;
+}
+
+.brand-link:hover {
+  color: white !important;
+}
+
+.brand-link span:hover {
+  color: white;
+}
+
+.nav-name {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  color: #3E3E3E;
 }
 
 .dropdown-item.active,
@@ -556,4 +571,31 @@ a.dropdown-item:hover {
 
 .login-right {
   margin: auto;
+}
+
+.pagination .page-item {
+  border: none;
+  background-color: transparent;
+}
+
+.pagination .page-item .page-link {
+  border: none;
+  background-color: transparent;
+  color: #3E3E3E;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.pagination .page-item .page-link.active {
+  color: #7973FE;
+  cursor: default;
+  font-size: 20px;
+  margin-top: -3px;
+}
+
+.pagination .page-item .page-link.prev, .pagination .page-item .page-link.next {
+  background: #7973FE;
+  box-shadow: 0px 4px 4px rgba(121, 115, 254, 0.3);
+  border-radius: 4px;
+  color: #fff;
 }

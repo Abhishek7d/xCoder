@@ -71,16 +71,17 @@ class ServerCard extends React.Component {
                     <div className="card-body server-details-list">
                         <div className="row" onClick={() => this.props.serverClickHandler(this.props.server)}>
                             <div className="col-2">
-                                <img src={require("../assets/images/icons/server-ip.svg")} alt="" srcSet="" />
-                            </div>
-                            <div className="col-10"><p>{this.state.ip_address}</p></div>
-                        </div>
-                        <div className="row" onClick={() => this.props.serverClickHandler(this.props.server)}>
-                            <div className="col-2">
                                 <img src={require("../assets/images/icons/server-ram.svg")} alt="" srcSet="" />
                             </div>
                             <div className="col-10"><p>{this.state.size.split("-").pop().toUpperCase()}</p></div>
                         </div>
+                        <div className="row" onClick={() => this.props.serverClickHandler(this.props.server)}>
+                            <div className="col-2">
+                                <img src={require("../assets/images/icons/server-ip.svg")} alt="" srcSet="" />
+                            </div>
+                            <div className="col-10"><p>{this.state.ip_address}</p></div>
+                        </div>
+
                         <div className="row" onClick={() => this.props.serverClickHandler(this.props.server)}>
                             <div className="col-2">
                                 <img src={require("../assets/images/icons/server-location.svg")} alt="" srcSet="" />

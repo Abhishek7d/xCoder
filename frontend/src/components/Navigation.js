@@ -109,6 +109,10 @@ class Navigation extends React.Component {
                     <ul className="navbar-nav">
                         <li className="nav-item">
                             <div className="nav-link" data-widget="pushmenu" type="button"><i className="fas fa-bars"></i></div>
+
+                        </li>
+                        <li className="nav-item">
+                            <div className="nav-link nav-name">{this.props.name}</div>
                         </li>
                     </ul>
                     <ul className="navbar-nav ml-auto">

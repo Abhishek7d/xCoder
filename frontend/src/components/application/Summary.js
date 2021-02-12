@@ -47,7 +47,7 @@ class Summary extends React.Component {
                         </div>
                         <div className="row">
                             <div className="col-2">
-                                <img src={require("../../assets/images/icons/server-ip.svg")} alt="" srcSet="" />
+                                <img src={require("../../assets/images/icons/domain.svg")} alt="" srcSet="" />
                             </div>
                             <div onClick={this.props.copyToClipBoard} title={"Click to Copy"} className="col-10"><p>{this.application.domain}</p></div>
                         </div>

@@ -14,22 +14,24 @@ class WebSiteController extends Controller
 {
     private $step_one = "cd /usr/local/vesta/bin/\n";
     private $wp_download_link = "https://wordpress.org/latest.zip";
-    private $sample_wp_config = __DIR__."/helpers/wp-config.sample.txt";
+    private $sample_wp_config = __DIR__ . "/helpers/wp-config.sample.txt";
     private $domainNameChangeSql = "update wp_options set option_value = 'NEW_VALUE' where option_value like '%OLD_VALUE%'";
     private $domainNameChangeSqlPrefix = 'mysql -u USER_NAME -D DATABASE_NAME -pPASSWORD -e "SQL"';
 
-    private function is_valid_domain_name($domain_name){
-        return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name) 
-                && preg_match("/^.{1,253}$/", $domain_name) 
-                && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name)   );
+    private function is_valid_domain_name($domain_name)
+    {
+        return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name)
+            && preg_match("/^.{1,253}$/", $domain_name)
+            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name));
     }
 
-    public function removeDomain(Request $request, $application){
+    public function removeDomain(Request $request, $application)
+    {
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -42,29 +44,32 @@ class WebSiteController extends Controller
         $application->delete();
         return CommonFunctions::sendResponse(1, "Application Deleted Successfully", $output);
     }
-    public function showDomains(){
-        $apps = Application::where("user_id", auth()->user()->id)->with('server')->get();
-        return CommonFunctions::sendResponse(1, "List of applications",$apps);
+    public function showDomains()
+    {
+        $apps = Application::where("user_id", auth()->user()->id)->with('server')->paginate();
+        return CommonFunctions::sendResponse(1, "List of applications", $apps);
     }
-    public function addDomain(Request $request){
-        
+    public function addDomain(Request $request)
+    {
+
         $domain = $request->get('domain');
         $server = $request->get('server');
-        if(empty($server) || empty($domain) ){
+        if (empty($server) || empty($domain)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
         $server = Server::find($server);
-        if(!$server || $server->user_id != auth()->user()->id){
+        if (!$server || $server->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        
+
         $application = $this->createApplicationToServer($server, $domain, auth()->user());
-        return CommonFunctions::sendResponse(1,"Domain added to the server", $application);
+        return CommonFunctions::sendResponse(1, "Domain added to the server", $application);
     }
-    public function createApplicationToServer($server, $name, $user){  
+    public function createApplicationToServer($server, $name, $user)
+    {
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         $connection =  @socket_connect($socket, $server->ip_address, 22);
-        if(!$connection || !$server->ip_address){
+        if (!$connection || !$server->ip_address) {
             return CommonFunctions::sendResponse(0, "Server unreachable");
         }
 
@@ -76,9 +81,9 @@ class WebSiteController extends Controller
         //move to command path
         $ssh->write($this->step_one);
         //add webiste
-        $domain = CommonFunctions::generateRandomString(5).strval($user->ID);
+        $domain = CommonFunctions::generateRandomString(5) . strval($user->ID);
         $doamin = strtolower($domain);
-        $domain_name = $domain.".".env('DEFAULT_MASTER_DOMAIN');
+        $domain_name = $domain . "." . env('DEFAULT_MASTER_DOMAIN');
         $domain_name = strtolower($domain_name);
         $ssh->write("./v-add-domain admin $domain_name $server->ip_address\n");
         //create Application
@@ -95,16 +100,16 @@ class WebSiteController extends Controller
         CommonFunctions::releaseResponse(1, "Application Created Successfully", $application);
         set_time_limit(0);
         $install_wp = true;
-        if($install_wp){
+        if ($install_wp) {
             //create database
             $db_password = CommonFunctions::generateRandomString(8);
             $db_name = $domain;
             // $ssh->write("./v-delete-database admin admin_$db_name\n");
             $ssh->write("./v-add-database admin $db_name $db_name $db_password mysql\n");
-            
+
             $ssh->write("cd /home/admin/web/$domain_name/public_html\n");
             $ssh->write("su admin\n");
-            $ssh->write("wget ".$this->wp_download_link."\n");
+            $ssh->write("wget " . $this->wp_download_link . "\n");
             $ssh->write("unzip latest.zip\n");
             $ssh->write("mv ./wordpress/* ./ && mv ./wordpress/.* ./ \n");
             $ssh->write("rm -rf latest.zip wordpress index.html robots.txt\n");
@@ -132,12 +137,13 @@ class WebSiteController extends Controller
         }
         return [$application, $output];
     }
-    public function updateDomainName(Request $request, $application){
+    public function updateDomainName(Request $request, $application)
+    {
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -145,14 +151,14 @@ class WebSiteController extends Controller
             return CommonFunctions::sendResponse(0, "Server Auth Faild");
         }
         $new_domain = $request->get('domain');
-        if(!$this->is_valid_domain_name($new_domain)){
+        if (!$this->is_valid_domain_name($new_domain)) {
             return CommonFunctions::sendResponse(0, "Invalid Domain name");
         }
         $ssh->write($this->step_one);
         $ssh->write("./v-change-web-domain-name admin $application->domain $new_domain\n");
         $ssh->write("./v-add-web-domain-alias admin $new_domain www.$new_domain\n");
-        
-        $domainName = "http://".$new_domain;
+
+        $domainName = "http://" . $new_domain;
         $sql_data = $this->updateDBScript($application, $domainName);
         $ssh->write("$sql_data\n");
 
@@ -163,7 +169,8 @@ class WebSiteController extends Controller
         return CommonFunctions::sendResponse(1, "Domain name changed Successfully");
     }
 
-    public function updateDBScript($application, $domainName){
+    public function updateDBScript($application, $domainName)
+    {
         $sql_data = $this->domainNameChangeSql;
         $sql_data = str_replace("OLD_VALUE", $application->domain, $sql_data);
         $sql_data = str_replace("NEW_VALUE", $domainName, $sql_data);
@@ -174,12 +181,13 @@ class WebSiteController extends Controller
         return $sql_data;
     }
 
-    public function addSSLToDomain(Request $request, $application){
+    public function addSSLToDomain(Request $request, $application)
+    {
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -188,16 +196,16 @@ class WebSiteController extends Controller
         }
 
         $ip_addr = gethostbyname($application->domain);
-        $alise_ip_addr = gethostbyname("www.".$application->domain);
+        $alise_ip_addr = gethostbyname("www." . $application->domain);
 
-        if($ip_addr != $application->ip_address || $alise_ip_addr != $application->ip_address ){
+        if ($ip_addr != $application->ip_address || $alise_ip_addr != $application->ip_address) {
             return CommonFunctions::sendResponse(0, "please add two A record with $application->domain and www.$application->domain to $application->ip_address");
         }
 
         $ssh->write($this->step_one);
         $ssh->write("./v-add-letsencrypt-domain admin $application->domain\n");
 
-        $domainName = "https://".$application->domain;
+        $domainName = "https://" . $application->domain;
         $sql_data = $this->updateDBScript($application, $domainName);
         $ssh->write("$sql_data\n");
 
@@ -206,12 +214,13 @@ class WebSiteController extends Controller
         $output = $ssh->read();
         return CommonFunctions::sendResponse(1, "SSL added to Domain Successfully", $output);
     }
-    public function removeSSLToDomain(Request $request, $application){
+    public function removeSSLToDomain(Request $request, $application)
+    {
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -222,7 +231,7 @@ class WebSiteController extends Controller
         $ssh->write($this->step_one);
         $ssh->write("./v-delete-letsencrypt-domain admin $application->domain\n");
 
-        $domainName = "http://".$application->domain;
+        $domainName = "http://" . $application->domain;
         $sql_data = $this->updateDBScript($application, $domainName);
         $ssh->write("$sql_data\n");
 
@@ -231,20 +240,21 @@ class WebSiteController extends Controller
         $output = $ssh->read();
         return CommonFunctions::sendResponse(1, "SSL removed from Domain Successfully");
     }
-    public function addFTPToApplication(Request $request, $application){
+    public function addFTPToApplication(Request $request, $application)
+    {
         $username = $request->get("username");
         $password = $request->get("password");
         if (empty($username) || empty($password)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
-        if (strlen($username) < 6 || strlen($password) < 6 ) {
+        if (strlen($username) < 6 || strlen($password) < 6) {
             return CommonFunctions::sendResponse(0, "minimum lengh 6");
         }
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -254,10 +264,10 @@ class WebSiteController extends Controller
 
         $ssh->write($this->step_one);
         $ssh->write("./v-add-web-domain-ftp admin $application->domain $username $password '/public_html'\n");
-        
+
         $ftp_credentials = json_decode($application->ftp_credentials);
-        $ftp = ['host'=>$application->ip_address, 'username'=>"admin_".$username, "password"=>$password];
-        if(!$ftp_credentials){
+        $ftp = ['host' => $application->ip_address, 'username' => "admin_" . $username, "password" => $password];
+        if (!$ftp_credentials) {
             $ftp_credentials = [];
         }
         array_push($ftp_credentials, $ftp);
@@ -267,16 +277,17 @@ class WebSiteController extends Controller
         $output = $ssh->read();
         return CommonFunctions::sendResponse(1, "FTP user added to Domain Successfully");
     }
-    public function removeFTPToApplication(Request $request, $application){
+    public function removeFTPToApplication(Request $request, $application)
+    {
         $username = $request->get("username");
         if (empty($username)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -286,13 +297,13 @@ class WebSiteController extends Controller
 
         $ssh->write($this->step_one);
         $ssh->write("./v-delete-web-domain-ftp admin $application->domain $username\n");
-    
+
         $ftp_credentials = json_decode($application->ftp_credentials);
-        if(!$ftp_credentials){
+        if (!$ftp_credentials) {
             $ftp_credentials = [];
         }
-        foreach($ftp_credentials as $key => $ftp){
-            if($ftp->username==$username){
+        foreach ($ftp_credentials as $key => $ftp) {
+            if ($ftp->username == $username) {
                 unset($ftp_credentials[$key]);
             }
         }
@@ -302,21 +313,22 @@ class WebSiteController extends Controller
         $output = $ssh->read();
         return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully");
     }
-    public function changeFTPPassword(Request $request, $application){
+    public function changeFTPPassword(Request $request, $application)
+    {
         $username = $request->get("username");
         $password = $request->get("password");
         if (empty($username) || empty($password)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
-        if (strlen($username) < 6 || strlen($password) < 6 ) {
+        if (strlen($username) < 6 || strlen($password) < 6) {
             return CommonFunctions::sendResponse(0, "minimum lengh 6");
         }
-        
+
         $application = Application::find($application);
-        if(!$application){
+        if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if($application->user_id != auth()->user()->id){
+        if ($application->user_id != auth()->user()->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -326,13 +338,13 @@ class WebSiteController extends Controller
 
         $ssh->write($this->step_one);
         $ssh->write("./v-change-web-domain-ftp-password admin $application->domain $username $password\n");
-    
+
         $ftp_credentials = json_decode($application->ftp_credentials);
-        if(!$ftp_credentials){
+        if (!$ftp_credentials) {
             $ftp_credentials = [];
         }
-        foreach($ftp_credentials as $key => $ftp){
-            if($ftp->username==$username){
+        foreach ($ftp_credentials as $key => $ftp) {
+            if ($ftp->username == $username) {
                 $ftp_credentials[$key]->password = $password;
             }
         }

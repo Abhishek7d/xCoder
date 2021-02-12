@@ -43,7 +43,7 @@ class Profile extends React.Component {
         return (
             <>
                 <div className="container-fluid p-0">
-                    <Navigation />
+                    <Navigation name="Profile" />
                     <Sidebar />
                     <div className="content-wrapper">
                         <div className="section-container">

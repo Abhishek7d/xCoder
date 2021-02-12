@@ -104,7 +104,7 @@ class ApplicationCard extends React.Component {
                     <div className="card-body server-details-list">
                         <div className="row">
                             <div className="col-2">
-                                <img src={require("../assets/images/icons/server-ram.svg")} alt="" srcSet="" />
+                                <img src={require("../assets/images/icons/server-ip.svg")} alt="" srcSet="" />
                             </div>
                             <div className="col-8"><p>{this.state.domain}</p></div>
                             <div className="col-2 p-0">

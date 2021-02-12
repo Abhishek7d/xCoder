@@ -213,14 +213,14 @@ class DashboardController extends Controller
     public function droplets(Request $request)
     {
         $user = auth()->user();
-        $servers = Server::where("user_id", $user->id)->with('applications')->with("storage")->get();
+        $servers = Server::where("user_id", $user->id)->with('applications')->with("storage")->paginate();
         return CommonFunctions::sendResponse(1, "Your droplets", $servers);
     }
 
     public function notification()
     {
         $user = auth()->user();
-        $notifications = Notifications::select('msg', 'created_at', 'status')->where('user_id', $user->id)->orderBy('id', 'DESC')->get();
+        $notifications = Notifications::select('msg', 'created_at', 'status')->where('user_id', $user->id)->orderBy('id', 'DESC')->paginate();
         return CommonFunctions::sendResponse(1, 'Your Notifications', $notifications);
     }
 }

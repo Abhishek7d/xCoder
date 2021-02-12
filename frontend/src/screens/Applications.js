@@ -10,6 +10,7 @@ import { withRouter, } from 'react-router';
 // import { browserHistory } from 'react-router'
 import PageHeader from '../components/template/PageHeader';
 import Status from '../components/Status';
+import Pagination from '../components/template/Pagination';
 
 class Applications extends React.Component {
     constructor(props) {
@@ -18,6 +19,7 @@ class Applications extends React.Component {
         let appId = props.match.params.appId;
         this.state = {
             applications: [],
+            applicationData: {},
             showModal: false,
             loadding: false,
             servers: [],
@@ -31,7 +33,10 @@ class Applications extends React.Component {
             selectedApplication: null,
             selectedServerFilter: (serverId) ? serverId : '',
             selectedApplicationFilter: appId,
-            appLoadding: true
+            appLoadding: true,
+            screenName: "Applications",
+            serverPage: 1,
+            applicationPage: 1,
         }
         this.apiHandler = new ApiHandler();
     }
@@ -45,8 +50,8 @@ class Applications extends React.Component {
     componentDidMount() {
         document.title = "Your Applications";
         this.loadApplications();
-        this.apiHandler.getServers((msg, data) => {
-            this.setState({ servers: data })
+        this.apiHandler.getServers(this.state.serverPage, (msg, data) => {
+            this.setState({ servers: data.data })
         }, err => {
             this.showError(err);
         })
@@ -54,15 +59,15 @@ class Applications extends React.Component {
     setMessage(message) {
         this.setState({ rspmsg: message })
     }
-    loadApplications() {
-        this.setState({ appLoadding: true });
-        this.apiHandler.getApplications((msg, data) => {
-            data.forEach((app, index) => {
+    loadApplications(page = 1) {
+
+        this.apiHandler.getApplications(page, (msg, data) => {
+            data.data.forEach((app, index) => {
                 if (app.id === parseInt(this.state.selectedApplicationFilter)) {
                     this.setState({ selectedApplication: app });
                 }
             })
-            this.setState({ applications: data, appLoadding: false })
+            this.setState({ applications: data.data, appLoadding: false, applicationData: data })
         }, err => {
             this.showError(err);
         })
@@ -106,12 +111,12 @@ class Applications extends React.Component {
         let applications = [];
         if (this.state.selectedServerFilter === "" || this.state.selectedServerFilter === null) {
             this.state.applications.forEach((data, index) => {
-                applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
+                applications.push(<ApplicationCard appsReload={this.loadApplications} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
             })
         } else {
             this.state.applications.forEach((data, index) => {
                 if (data.server.id === parseInt(this.state.selectedServerFilter)) {
-                    applications.push(<ApplicationCard appsReload={this.loadApplications} key={index} application={data} applicationClickHandler={this.applicationClickHandler} />);
+                    applications.push(<ApplicationCard appsReload={this.loadApplications} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
                 }
             })
         }
@@ -185,6 +190,7 @@ class Applications extends React.Component {
         this.setState({
             selectedApplication: application,
             isApplicationClicked: true,
+            screenName: application.name
         })
     }
     goBack = () => {
@@ -203,10 +209,13 @@ class Applications extends React.Component {
         let serverSelect = document.getElementById("selectedServerFilter");
         serverSelect.selectedIndex = index
     }
+    handlePageChange = (data) => {
+        this.loadApplications(data)
+    }
     render() {
         return (
             <div className="container-fluid p-0">
-                <Navigation />
+                <Navigation name={this.state.screenName} />
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">
@@ -271,6 +280,7 @@ class Applications extends React.Component {
                         <div className="row">
                             {this.renderApplications()}
                         </div>
+                        <Pagination onPageChange={this.handlePageChange} key={this.state.applicationData.current_page} data={this.state.applicationData}></Pagination>
 
                         {/* <section className="content-header">
                         <div className="container-fluid">
@@ -341,7 +351,7 @@ class Applications extends React.Component {
                                             <div className="input-group-append">
                                                 <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect width="45" height="45" rx="8" fill="#7973FE" />
-                                                    <path d="M23 33C17.477 33 13 28.523 13 23C13 18.522 15.943 14.732 20 13.458V15.582C18.2809 16.28 16.8578 17.5537 15.9741 19.1851C15.0903 20.8165 14.8009 22.7043 15.1553 24.5255C15.5096 26.3468 16.4858 27.9883 17.9168 29.1693C19.3477 30.3503 21.1446 30.9975 23 31C24.5938 31 26.1513 30.524 27.4728 29.6332C28.7944 28.7424 29.82 27.4773 30.418 26H32.542C31.268 30.057 27.478 33 23 33ZM32.95 24H22V13.05C22.329 13.017 22.663 13 23 13C28.523 13 33 17.477 33 23C33 23.337 32.983 23.671 32.95 24ZM24 15.062V22H30.938C30.7154 20.2376 29.9129 18.5993 28.6568 17.3432C27.4007 16.0871 25.7624 15.2846 24 15.062Z" fill="white" />
+                                                    <path d="M23 33C17.477 33 13 28.523 13 23C13 17.477 17.477 13 23 13C28.523 13 33 17.477 33 23C33 28.523 28.523 33 23 33ZM20.71 30.667C19.7234 28.5743 19.1519 26.3102 19.027 24H15.062C15.2566 25.5389 15.8939 26.9882 16.8966 28.1717C17.8992 29.3552 19.224 30.2221 20.71 30.667ZM21.03 24C21.181 26.439 21.878 28.73 23 30.752C24.1523 28.6766 24.8254 26.3695 24.97 24H21.03ZM30.938 24H26.973C26.8481 26.3102 26.2766 28.5743 25.29 30.667C26.776 30.2221 28.1008 29.3552 29.1034 28.1717C30.1061 26.9882 30.7434 25.5389 30.938 24ZM15.062 22H19.027C19.1519 19.6898 19.7234 17.4257 20.71 15.333C19.224 15.7779 17.8992 16.6448 16.8966 17.8283C15.8939 19.0118 15.2566 20.4611 15.062 22ZM21.031 22H24.969C24.8248 19.6306 24.152 17.3235 23 15.248C21.8477 17.3234 21.1746 19.6305 21.03 22H21.031ZM25.29 15.333C26.2766 17.4257 26.8481 19.6898 26.973 22H30.938C30.7434 20.4611 30.1061 19.0118 29.1034 17.8283C28.1008 16.6448 26.776 15.7779 25.29 15.333Z" fill="white" />
                                                 </svg>
                                             </div>
                                         </div>
@@ -358,8 +368,9 @@ class Applications extends React.Component {
                                             <div className="input-group-append">
                                                 <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect width="45" height="45" rx="8" fill="#7973FE" />
-                                                    <path d="M23 33C17.477 33 13 28.523 13 23C13 18.522 15.943 14.732 20 13.458V15.582C18.2809 16.28 16.8578 17.5537 15.9741 19.1851C15.0903 20.8165 14.8009 22.7043 15.1553 24.5255C15.5096 26.3468 16.4858 27.9883 17.9168 29.1693C19.3477 30.3503 21.1446 30.9975 23 31C24.5938 31 26.1513 30.524 27.4728 29.6332C28.7944 28.7424 29.82 27.4773 30.418 26H32.542C31.268 30.057 27.478 33 23 33ZM32.95 24H22V13.05C22.329 13.017 22.663 13 23 13C28.523 13 33 17.477 33 23C33 23.337 32.983 23.671 32.95 24ZM24 15.062V22H30.938C30.7154 20.2376 29.9129 18.5993 28.6568 17.3432C27.4007 16.0871 25.7624 15.2846 24 15.062Z" fill="white" />
+                                                    <path d="M15 22H29V16H15V22ZM31 15V31C31 31.2652 30.8946 31.5196 30.7071 31.7071C30.5196 31.8946 30.2652 32 30 32H14C13.7348 32 13.4804 31.8946 13.2929 31.7071C13.1054 31.5196 13 31.2652 13 31V15C13 14.7348 13.1054 14.4804 13.2929 14.2929C13.4804 14.1054 13.7348 14 14 14H30C30.2652 14 30.5196 14.1054 30.7071 14.2929C30.8946 14.4804 31 14.7348 31 15ZM29 24H15V30H29V24ZM17 26H20V28H17V26ZM17 18H20V20H17V18Z" fill="white" />
                                                 </svg>
+
                                             </div>
                                         </div>
                                     </div>

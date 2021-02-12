@@ -117,11 +117,11 @@ class ApiHandler {
             }
         });
     }
-    getServers = (success = () => { }, failure = () => { }) => {
+    getServers = (page = 1, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/droplets", "GET", null, authHeaders, (response) => {
+        this.getResult("/droplets?page=" + page, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -187,11 +187,11 @@ class ApiHandler {
             }
         }, faild);
     }
-    getApplications = (success = () => { }, failure = () => { }) => {
+    getApplications = (page = 1, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/application", "GET", null, authHeaders, (response) => {
+        this.getResult("/application?page=" + page, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -693,11 +693,11 @@ class ApiHandler {
             }
         }, faild);
     }
-    getNotifications = (success = () => { }, failure = () => { }) => {
+    getNotifications = (page = 1, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/notifications", "GET", null, authHeaders, (response) => {
+        this.getResult("/notifications?page=" + page, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
