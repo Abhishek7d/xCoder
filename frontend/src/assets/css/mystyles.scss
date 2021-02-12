@@ -499,11 +499,15 @@ ul {
             font-family: Roboto;
             font-style: normal;
             font-weight: normal;
-            font-size: 16px;
-            line-height: 19px;
+            font-size: 14px;
+            line-height: 20px;
             color: #3E3E3E;
             margin-bottom: 15px;
             position: relative;
+
+            &:hover {
+                color: #3E3E3E;
+            }
         }
 
         li::before {
@@ -522,6 +526,12 @@ ul {
             li,
             li::before {
                 color: #B5B5C3;
+            }
+
+            li {
+                &:hover {
+                    color: #3E3E3E;
+                }
             }
         }
     }

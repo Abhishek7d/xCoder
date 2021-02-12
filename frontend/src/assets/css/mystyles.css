@@ -458,11 +458,15 @@ ul.bullet-theme li {
   font-family: Roboto;
   font-style: normal;
   font-weight: normal;
-  font-size: 16px;
-  line-height: 19px;
+  font-size: 14px;
+  line-height: 20px;
   color: #3E3E3E;
   margin-bottom: 15px;
   position: relative;
+}
+
+ul.bullet-theme li:hover {
+  color: #3E3E3E;
 }
 
 ul.bullet-theme li::before {
@@ -479,6 +483,10 @@ ul.bullet-theme li::before {
 ul.bullet-theme.old li,
 ul.bullet-theme.old li::before {
   color: #B5B5C3;
+}
+
+ul.bullet-theme.old li:hover {
+  color: #3E3E3E;
 }
 
 .border-bottom {
