@@ -24,7 +24,7 @@ class Sidebar extends React.Component {
         return (
             <>
                 <aside className="main-sidebar sidebar-dark-primary elevation-4" id="sidebar">
-                    <a data-widget="pushmenu" type="button" className="brand-link">
+                    <div data-widget="pushmenu" type="button" className="brand-link">
                         <img src={require("../assets/images/logo.webp")} alt="admin Logo" className="brand-image img-circle elevation-3"
                         />
                         <span className="brand-text font-weight-light">Parvaty Cloud</span>
@@ -32,7 +32,7 @@ class Sidebar extends React.Component {
                             <path d="M10.828 12L15.778 16.95L14.364 18.364L8 12L14.364 5.636L15.778 7.05L10.828 12Z" fill="#7973FE" />
                             <path opacity="0.3" d="M4.828 12L9.778 16.95L8.364 18.364L2 12L8.364 5.636L9.778 7.05L4.828 12Z" fill="#7973FE" />
                         </svg>
-                    </a>
+                    </div>
                     <div className="sidebar">
                         <nav className="mt-2">
                             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">

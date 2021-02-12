@@ -42,7 +42,7 @@ class ProjectCard extends Component {
                             <div className="float-left">
                                 <span className="p-2 channel_green_dot btn-success"></span>
                             </div>
-                            <a href="#" onClick={() => this.props.projectClickHandler()} >
+                            <div onClick={() => this.props.projectClickHandler()} >
                                 <div className="row">
                                     <div className="col-1">
                                         <img alt="" style={{ width: "100%" }} src={require('../assets/images/wordpress.png')} />
@@ -53,16 +53,16 @@ class ProjectCard extends Component {
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         </div>
                         <div className="col-sm-3 col-md-3 text-right application_page_card_actions d-flex">
-                            <a href="" className="px-3">Team Members <span className="number_of_users"></span></a>
+                            <div className="px-3">Team Members <span className="number_of_users"></span></div>
                             <Dropdown direction="left" isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                                 <DropdownToggle className="btn btn-default ml-3">
                                     <i className="fas fa-ellipsis-v"></i>
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem key="3"><a className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash"></i>&nbsp;Delete</a></DropdownItem>
+                                    <DropdownItem key="3"><div className="dropdown-item" href="#" onClick={this.deleteHandle}><i className="fa fa-trash"></i>&nbsp;Delete</div></DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
 

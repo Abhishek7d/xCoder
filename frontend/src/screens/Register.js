@@ -76,7 +76,7 @@ class Register extends React.Component {
                             <form action="#" method="post">
                                 <div className="col-sm-12 modal-form mt-4">
                                     <div className="input-group">
-                                        <input onKeyDown={this.onEnterPress} type="text" onChange={this.dataChange} required defaultValue={this.state.name} className="form-control form-input-field" placeholder="Full Name" required name="name" id="name" />
+                                        <input onKeyDown={this.onEnterPress} type="text" onChange={this.dataChange} required defaultValue={this.state.name} className="form-control form-input-field" placeholder="Full Name" name="name" id="name" />
                                         <div className="input-group-append">
                                             <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <rect width="45" height="45" rx="8" fill="#7973FE" />

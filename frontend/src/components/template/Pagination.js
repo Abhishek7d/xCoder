@@ -21,7 +21,7 @@ class Pagination extends React.Component {
         }
     }
     getParameterByName(name, url) {
-        name = name.replace(/[\[\]]/g, '\\$&');
+        name = name.replace(/[[\]]/g, '\\$&');
         var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
             results = regex.exec(url);
         if (!results) return null;
@@ -29,34 +29,30 @@ class Pagination extends React.Component {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
     renderLinks() {
-        let re = [];
+        let Return = [];
         let links = this.state.links;
         if (links && this.state.data.last_page > 1) {
             links.forEach((link, index) => {
                 if (link.label === "&laquo; Previous") {
-                    re.push(<li key={index} className={(link.active) ? "page-item active" : "page-item"}><button className={(link.active) ? "prev page-link active" : "prev page-link"} onClick={() => { this.handleClick(link) }}><i className="fa fa-arrow-left"></i></button></li>)
+                    Return.push(<li key={index} className={(link.active) ? "page-item active" : "page-item"}><button className={(link.active) ? "prev page-link active" : "prev page-link"} onClick={() => { this.handleClick(link) }}><i className="fa fa-arrow-left"></i></button></li>)
                 } else if (link.label === "Next &raquo;") {
-                    re.push(<li key={index} className={(link.active) ? "page-item active" : "page-item"}><button className={(link.active) ? "next page-link active" : "next page-link"} onClick={() => { this.handleClick(link) }}><i className="fa fa-arrow-right"></i></button></li>)
-                }
-                else {
-                    re.push(<li key={index} className={(link.active) ? "page-item active" : "page-item"}><button className={(link.active) ? "page-link active" : "page-link"} onClick={() => { this.handleClick(link) }}>{link.label}</button></li>)
+                    Return.push(<li key={index} className={(link.active) ? "page-item active" : "page-item"}><button className={(link.active) ? "next page-link active" : "next page-link"} onClick={() => { this.handleClick(link) }}><i className="fa fa-arrow-right"></i></button></li>)
+                } else {
+                    Return.push(<li key={index} className={(link.active) ? "page-item active" : "page-item"}><button className={(link.active) ? "page-link active" : "page-link"} onClick={() => { this.handleClick(link) }}>{link.label}</button></li>)
                 }
             });
-            return re;
+            return Return;
         }
     }
     render() {
         return (
-            <>
-                <div className="float-right">
-                    <nav aria-label="Page navigation">
-                        <ul className="pagination">
-                            {this.renderLinks()}
-                        </ul>
-                    </nav>
-                </div>
-
-            </>
+            <div className="float-right">
+                <nav aria-label="Page navigation">
+                    <ul className="pagination">
+                        {this.renderLinks()}
+                    </ul>
+                </nav>
+            </div>
         );
     }
 }
