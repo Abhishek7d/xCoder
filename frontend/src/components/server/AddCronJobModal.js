@@ -25,9 +25,6 @@ class AddCronModal extends React.Component {
         }
         this.apiHandler = new ApiHandler();
     }
-    componentDidMount = () => {
-
-    }
     dataChange = (event) => {
         this.setState({ [event.target.name]: event.target.value })
     }
@@ -74,6 +71,9 @@ class AddCronModal extends React.Component {
             showModal: true,
         })
     }
+    setShow() {
+        this.setState({ error: "", success: "", })
+    }
     render() {
         return (
             <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
@@ -82,10 +82,10 @@ class AddCronModal extends React.Component {
                         <Modal.Title>Create Cron Job</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Alert show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
+                        <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
                             {this.state.error}
                         </Alert>
-                        <Alert show={(this.state.success !== "") ? true : false} variant="success" dismissible>
+                        <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                             {this.state.success}
                         </Alert>
                         {this.state.loadding ?

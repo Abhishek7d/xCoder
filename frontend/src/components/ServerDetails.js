@@ -11,6 +11,7 @@ import PageHeader from '../components/template/PageHeader';
 import CronJobsCard from './server/CronJobsCard';
 import { Modal, Button, Alert } from 'react-bootstrap';
 import ApiHandler from '../model/ApiHandler';
+import Backups from './server/Backups';
 
 class ServerDetails extends Component {
     constructor(props) {
@@ -153,6 +154,8 @@ class ServerDetails extends Component {
                 <div className="row server-health-container">
                     <ServerHealth copyToClipBoard={this.copyToClipBoard} tabId={"resources"} server={this.server} />
                     <CronJobsCard copyToClipBoard={this.copyToClipBoard} tabId={"cornjobs"} server={this.server} />
+                    <Backups copyToClipBoard={this.copyToClipBoard} server={this.server} />
+
                 </div>
                 <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
                     <form action="#" method="post">

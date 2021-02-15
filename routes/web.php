@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\WebSiteController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\BlockStorageController;
+use App\Http\Controllers\BackupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,12 @@ Route::group(['prefix' => 'api'], function () {
 
         // Notifications
         Route::get('notifications', [DashboardController::class, 'notification']);
+
+        // Backups
+        Route::post('/backup/create/{server}', [BackupController::class, 'createBackup']);
+        Route::get('/backups/{server}/{application}', [BackupController::class, 'getBackups']);
+        Route::get('/backups/{server}', [BackupController::class, 'getAllBackups']);
+        Route::post('/backup/restore/{server}', [BackupController::class, 'restoreBackup']);
     });
 });
 Route::view("/{path?}", "app");

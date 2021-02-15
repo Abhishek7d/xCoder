@@ -142,6 +142,7 @@ let routes = [
             }
         }
     },
+
     {
         path: '/profile',
         title: 'Profile',

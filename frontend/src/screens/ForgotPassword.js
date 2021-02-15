@@ -13,7 +13,6 @@ class ForgotPassword extends React.Component {
             error: '',
             success: ''
         }
-
         this.apiHandler = new ApiHandler();
     }
     setShow() {

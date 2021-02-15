@@ -37,7 +37,6 @@ class DashboardController extends Controller
 
     public function test()
     {
-
         $server = Server::get();
         $a = ServerInstaller​::dispatch($server[0]);
     }
@@ -128,9 +127,7 @@ class DashboardController extends Controller
         $size = $request->get('size');
         $region = $request->get('region');
         $appName = $request->get('appName');
-
         if (!empty($name) && !empty($size) && !empty($region) && !empty($appName)) {
-
             $sizes = CommonFunctions::makeRequest("/sizes", "GET");
             if (!$sizes['status']) {
                 return CommonFunctions::sendResponse(0, "Something Went wrong");
@@ -145,7 +142,6 @@ class DashboardController extends Controller
             if (!$valid) {
                 return CommonFunctions::sendResponse(0, "Invalid Selection");
             }
-
             $user = auth()->user();
             $body = [
                 "name" => "Customer-" . $user->id,
@@ -165,11 +161,8 @@ class DashboardController extends Controller
                     "CUSTOMER:$user->id",
                 ]
             ];
-
             $status = CommonFunctions::$server_statuses[0];
-
             $response = CommonFunctions::makeRequest("/droplets", "POST", json_encode($body));
-
             if (!$response['status']) {
                 return CommonFunctions::sendResponse(0, "Request Faild", $response['data']);
             }
@@ -200,7 +193,6 @@ class DashboardController extends Controller
                     ]
                 ];
                 CommonFunctions::makeRequest("/tags/" . $server_id . "/resources", "POST", json_encode($body));
-
                 CommonFunctions::releaseResponse(1, "Server Created Successfully", $server);
                 set_time_limit(0);
                 ServerInstaller​::dispatch($server, $appName);
@@ -220,7 +212,7 @@ class DashboardController extends Controller
     public function notification()
     {
         $user = auth()->user();
-        $notifications = Notifications::select('msg', 'created_at', 'status')->where('user_id', $user->id)->orderBy('id', 'DESC')->paginate();
+        $notifications = Notifications::select('id', 'msg', 'created_at', 'status')->where('user_id', $user->id)->orderBy('id', 'DESC')->paginate();
         return CommonFunctions::sendResponse(1, 'Your Notifications', $notifications);
     }
 }

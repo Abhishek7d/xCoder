@@ -186,7 +186,6 @@ class Applications extends React.Component {
             })
             window.history.replaceState(null, null, "/applications")
         }
-
         this.setState({
             selectedApplication: application,
             isApplicationClicked: true,
