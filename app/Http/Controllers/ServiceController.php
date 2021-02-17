@@ -163,8 +163,7 @@ class ServiceController extends Controller
             $i++;
         }
         $i++;
-    }
-	return CommonFunctions::sendResponse(1, "List of Cron jobs", $newList);
+        return CommonFunctions::sendResponse(1, "List of Cron jobs", $newList);
     }
     public function addCronjob(Request $request, $server){
         $server = Server::find($server);
