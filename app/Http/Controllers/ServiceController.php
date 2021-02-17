@@ -151,14 +151,16 @@ class ServiceController extends Controller
         $ssh->write("v-list-cron-jobs admin json\n");
         $data = $ssh->read();
         $data = $this->filterDisplayData($data);
-	$data = explode("v-list-cron-jobs admin json",$data);
-	$data = array_pop($data);
-	$data = json_decode($data);
-    $newList = [];
-    $i=1;
-    foreach($data as $key => $d){
-        if($i>9){
-            array_push($newList,$d);
+        $data = explode("v-list-cron-jobs admin json", $data);
+        $data = array_pop($data);
+        $data = json_decode($data);
+        $newList = [];
+        $i = 1;
+        foreach ($data as $key => $d) {
+            if ($i > 9 && $d->CMD != "sudo /usr/local/vesta/bin/v-update-letsencrypt-ssl") {
+                array_push($newList, $d);
+            }
+            $i++;
         }
         $i++;
     }
