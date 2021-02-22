@@ -130,7 +130,6 @@ class ServerDetails extends Component {
     }
     render() {
         return (
-
             <>
                 <PageHeader back={<i onClick={this.props.serverClickHandler} className="fas fa-arrow-left"></i>} status={<Status status={this.server.status} />}
                     heading={this.server.name} subHeading="">
@@ -155,7 +154,6 @@ class ServerDetails extends Component {
                     <ServerHealth copyToClipBoard={this.copyToClipBoard} tabId={"resources"} server={this.server} />
                     <CronJobsCard copyToClipBoard={this.copyToClipBoard} tabId={"cornjobs"} server={this.server} />
                     <Backups copyToClipBoard={this.copyToClipBoard} server={this.server} />
-
                 </div>
                 <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
                     <form action="#" method="post">

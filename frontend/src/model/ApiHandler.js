@@ -32,6 +32,7 @@ class ApiHandler {
         }
 
     }
+
     register = (name, email, password, confPassword, success = () => { }, faild = () => { }) => {
         if (!name || !email || !password || !confPassword) return;
         const formData = new FormData();
@@ -117,11 +118,118 @@ class ApiHandler {
             }
         });
     }
-    getServers = (page = 1, success = () => { }, failure = () => { }) => {
+    delegateAccess = (email, project, success = () => { }, failure = () => { }) => {
+        if (!email || !project) return;
+        let access_token = read_cookie("auth");
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("project", project);
+
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        this.getResult("/projects/delegate-access", "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    getDelegateAccess = (project, success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        // let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/projects/delegate-access/" + project, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    getDelegateAccount = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        // let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/access/delegate-accounts", "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    deleteDelegateAccess = (id, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/droplets?page=" + page, "GET", null, authHeaders, (response) => {
+        this.getResult("/projects/delegate-access/delete/" + id, "POST", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    changeDuStatus = (id, status, success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        const formData = new FormData();
+        formData.append("id", id);
+        formData.append("status", status);
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/projects/delegate-access/status", "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    getServers = (page = 1, success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/droplets?project_id=" + project + "&page=" + page, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -140,6 +248,7 @@ class ApiHandler {
     createServer = (serverName, serverSize, serverLocation, appName, success = () => { }, faild = () => { }) => {
         if (!serverName || !serverSize || !serverLocation || !appName) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
@@ -148,7 +257,7 @@ class ApiHandler {
         formData.append("region", serverLocation);
         formData.append("appName", appName);
 
-        this.getResult("/droplet", "POST", formData, authHeaders, (response) => {
+        this.getResult("/droplet?project_id=" + project, "POST", formData, authHeaders, (response) => {
             console.log(response)
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
@@ -167,12 +276,13 @@ class ApiHandler {
     deleteServer = (serverId, action, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
         formData.append("action", action);
 
-        this.getResult("/droplet/" + serverId, "POST", formData, authHeaders, (response) => {
+        this.getResult("/droplet/" + serverId + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -189,9 +299,10 @@ class ApiHandler {
     }
     getApplications = (page = 1, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/application?page=" + page, "GET", null, authHeaders, (response) => {
+        this.getResult("/application?project_id=" + project + "&page=" + page, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -209,6 +320,7 @@ class ApiHandler {
     createApplication = (selectedServerId, selectedDomain, isWordpress, success = () => { }, faild = () => { }) => {
         if (!selectedServerId || !selectedDomain) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
@@ -216,7 +328,7 @@ class ApiHandler {
         formData.append("server", selectedServerId);
         formData.append("wordpress", isWordpress);
 
-        this.getResult("/application/new", "POST", formData, authHeaders, (response) => {
+        this.getResult("/application/new?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -234,10 +346,11 @@ class ApiHandler {
     deleteApplication = (applicationId, success = () => { }, faild = () => { }) => {
         if (!applicationId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
 
-        this.getResult("/application/" + applicationId, "POST", null, authHeaders, (response) => {
+        this.getResult("/application/" + applicationId + "?project_id=" + project, "POST", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -269,10 +382,11 @@ class ApiHandler {
     }
     getServerSizes = (success = () => { }, faild = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/sizes", "GET", null, authHeaders, (response) => {
+        this.getResult("/sizes?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             } else if (response.status === 1) {
@@ -284,10 +398,11 @@ class ApiHandler {
     }
     getRegions = (success = () => { }, faild = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/regions", "GET", null, authHeaders, (response) => {
+        this.getResult("/regions?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             } else if (response.status === 1) {
@@ -300,10 +415,11 @@ class ApiHandler {
     getResources = (serverId, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/resouces/" + serverId, "GET", null, authHeaders, (response) => {
+        this.getResult("/resouces/" + serverId + "?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -318,10 +434,11 @@ class ApiHandler {
     getServicesStatus = (serverId, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/server/" + serverId, "GET", null, authHeaders, (response) => {
+        this.getResult("/server/" + serverId + "?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -336,13 +453,14 @@ class ApiHandler {
     updateService = (serverId, service, action, success = () => { }, faild = () => { }) => {
         action = action ? "start" : "stop";
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
         formData.append("service", service);
         formData.append("action", action);
 
-        this.getResult("/server/" + serverId, "POST", formData, authHeaders, (response) => {
+        this.getResult("/server/" + serverId + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -360,10 +478,11 @@ class ApiHandler {
     getCronJobs = (serverId, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
 
-        this.getResult("/cron/" + serverId, "GET", null, authHeaders, (response) => {
+        this.getResult("/cron/" + serverId + "?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -378,12 +497,13 @@ class ApiHandler {
     cronAction = (serverId, cronId, action, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
         formData.append("action", action);
 
-        this.getResult("/cron/" + serverId + "/" + cronId, "POST", formData, authHeaders, (response) => {
+        this.getResult("/cron/" + serverId + "/" + cronId + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -398,6 +518,7 @@ class ApiHandler {
     cronUpdate = (serverId, cronId, minute, hour, day, month, wday, command, success = () => { }, faild = () => { }) => {
         if (!serverId || !cronId || !command) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
@@ -425,7 +546,7 @@ class ApiHandler {
         formData.append("command", command);
         formData.append("action", "change");
 
-        this.getResult("/cron/" + serverId + "/" + cronId, "POST", formData, authHeaders, (response) => {
+        this.getResult("/cron/" + serverId + "/" + cronId + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -441,6 +562,7 @@ class ApiHandler {
     addCron = (serverId, minute, hour, day, month, wday, command, success = () => { }, faild = () => { }) => {
         if (!serverId || !command) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
@@ -468,7 +590,7 @@ class ApiHandler {
         formData.append("command", command);
         formData.append("action", "change");
 
-        this.getResult("/cron/" + serverId, "POST", formData, authHeaders, (response) => {
+        this.getResult("/cron/" + serverId + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -483,12 +605,13 @@ class ApiHandler {
     addStorage = (serverId, size, action, success = () => { }, faild = () => { }) => {
         if (!serverId || !size || !action) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
         formData.append("server", serverId);
         formData.append("size", size);
-        let url = (action === "resize") ? "/storage/resize" : "/storage"
+        let url = (action === "resize") ? "/storage/resize?project_id=" + project : "/storage?project_id=" + project
         this.getResult(url, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
@@ -504,11 +627,12 @@ class ApiHandler {
     deleteStorage = (serverId, success = () => { }, faild = () => { }) => {
         if (!serverId) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
         formData.append("server", serverId);
-        this.getResult("/storage/delete", "POST", formData, authHeaders, (response) => {
+        this.getResult("/storage/delete?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -523,12 +647,13 @@ class ApiHandler {
     serverUpgrade = (serverId, size, success = () => { }, faild = () => { }) => {
         if (!serverId || !size) return;
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         let authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token);
         const formData = new FormData();
         formData.append("size", size);
         formData.append("action", "resize");
-        this.getResult("/droplet/" + serverId, "POST", formData, authHeaders, (response) => {
+        this.getResult("/droplet/" + serverId + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             }
@@ -540,11 +665,12 @@ class ApiHandler {
             }
         }, faild);
     }
-    getProjects = (success = () => { }, failure = () => { }) => {
+    getProjects = (all = 0, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
+        //let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/projects", "GET", null, authHeaders, (response) => {
+        this.getResult("/projects/" + all, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -563,6 +689,7 @@ class ApiHandler {
     createProject = (projectName, success = () => { }, faild = () => { }) => {
         if (!projectName) return;
         let access_token = read_cookie("auth");
+        //  let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
@@ -583,20 +710,42 @@ class ApiHandler {
             }
         }, faild);
     }
-
+    deleteProject = (projectId, success = () => { }, faild = () => { }) => {
+        if (!projectId) return;
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("id", projectId);
+        this.getResult("/project/delete", "POST", formData, authHeaders, (response) => {
+            console.log(response)
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                faild("something went wrong");
+            }
+        }, faild);
+    }
     updateDomainName = (domainName, applicationId, success = () => { }, faild = () => { }) => {
         if (!domainName || !applicationId) {
             faild("invalid name");
             return;
         }
-
+        let project = read_cookie('projectId');
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
         formData.append("domain", domainName);
 
-        this.getResult("/application/" + applicationId + "/update-domain", "POST", formData, authHeaders, (response) => {
+        this.getResult("/application/" + applicationId + "/update-domain?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -616,11 +765,11 @@ class ApiHandler {
             faild("invalid name");
             return;
         }
-
+        let project = read_cookie('projectId');
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        let url = (ssl) ? "/application/" + applicationId + "/add-ssl" : "/application/" + applicationId + "/remove-ssl";
+        let url = (ssl) ? "/application/" + applicationId + "/add-ssl?project_id=" + project : "/application/" + applicationId + "/remove-ssl?project_id=" + project;
         this.getResult(url, "POST", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
@@ -641,11 +790,11 @@ class ApiHandler {
             faild("invalid name");
             return;
         }
-
+        let project = read_cookie('projectId');
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        let url = "/application/" + applicationId + "/delete-ftp";
+        let url = "/application/" + applicationId + "/delete-ftp?project_id=" + project;
         const formData = new FormData();
         formData.append("username", username);
 
@@ -669,11 +818,11 @@ class ApiHandler {
             faild("invalid name");
             return;
         }
-
+        let project = read_cookie('projectId');
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        let url = "/application/" + applicationId + "/add-ftp";
+        let url = "/application/" + applicationId + "/add-ftp?project_id=" + project;
         const formData = new FormData();
         formData.append("username", username);
         formData.append("password", password);
@@ -695,9 +844,50 @@ class ApiHandler {
     }
     getNotifications = (page = 1, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/notifications?page=" + page, "GET", null, authHeaders, (response) => {
+        this.getResult("/notifications?page=" + page + "&project_id=" + project, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    checkNotifications = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/notifications/check?project_id=" + project, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    setNotificationStatus = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/notifications/set-status?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -714,9 +904,10 @@ class ApiHandler {
     }
     getBackups = (server, app, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/backups/" + server + "/" + app, "GET", null, authHeaders, (response) => {
+        this.getResult("/backups/" + server + "/" + app + "?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -733,9 +924,10 @@ class ApiHandler {
     }
     getAllBackups = (server, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/backups/" + server, "GET", null, authHeaders, (response) => {
+        this.getResult("/backups/" + server + "?project_id=" + project, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -752,9 +944,10 @@ class ApiHandler {
     }
     createBackups = (server, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/backup/create/" + server, "POST", null, authHeaders, (response) => {
+        this.getResult("/backup/create/" + server + "?project_id=" + project, "POST", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -778,11 +971,11 @@ class ApiHandler {
         formData.append("mail", mail);
         formData.append("dns", dns);
         formData.append("cron", cron);
-
+        let project = read_cookie('projectId');
         let access_token = read_cookie("auth");
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/backup/restore/" + server, "POST", formData, authHeaders, (response) => {
+        this.getResult("/backup/restore/" + server + "?project_id=" + project, "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");

@@ -467,6 +467,13 @@ input[type="range"]::-ms-fill-upper {
     .input-group-text {
         background-color: #eaedf2;
         border: 1px solid #e6e9f0;
+
+        &.theme {
+            background: #7973FE;
+            border: 1px solid #7973FE;
+            color: #fff;
+            border-radius: 8px;
+        }
     }
 }
 
@@ -475,6 +482,11 @@ input[type="range"]::-ms-fill-upper {
     td,
     th {
         vertical-align: middle;
+        font-family: Roboto;
+        font-style: normal;
+        font-size: 15px;
+        line-height: 16px;
+        color: #000000;
     }
 
     th {
@@ -663,4 +675,61 @@ a.dropdown-item {
             }
         }
     }
+}
+
+.nav {
+    &.nav-sidebar {
+        .nav-item {
+            .nav-link {
+                .nav-icon {
+                    &.fa {
+                        font-size: 16px;
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.btn-primary {
+    background-color: #7973fe !important;
+    border-color: #7973fe !important;
+}
+
+.btn-link {
+    color: #7973fe !important;
+
+    &:focus {
+        border: 0;
+        box-shadow: none;
+    }
+}
+
+.modal .modal-content .modal-form label {
+    line-height: 27px;
+}
+
+.Toastify__toast {
+    border-radius: 5px !important;
+    min-height: auto !important;
+
+    &.Toastify__toast--default {
+        background: linear-gradient(90.12deg, #AC2FF1 0.08%, #7973FE 99.9%) !important;
+        border-radius: 5px !important;
+        color: #fff !important;
+        align-items: center !important;
+
+
+    }
+
+    .Toastify__close-button {
+        color: #fff !important;
+        align-self: center;
+    }
+}
+
+.modal-footer {
+    margin-top: 0 !important;
+
 }

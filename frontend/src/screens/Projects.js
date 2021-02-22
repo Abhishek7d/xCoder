@@ -4,18 +4,25 @@ import Sidebar from '../components/Sidebar';
 import ProjectCard from '../components/ProjectCard';
 import ApiHandler from '../model/ApiHandler';
 import ProjectDetails from '../components/ProjectDetails';
-import { Modal, Button } from 'react-bootstrap';
+import { Alert, Modal, Button } from 'react-bootstrap';
+import PageHeader from '../components/template/PageHeader';
+import { withRouter } from 'react-router';
 
 class Projects extends React.Component {
     constructor(props) {
         super();
+        let projectId = props.match.params.projectId;
         this.state = {
             projects: [],
             selectedProject: null,
             isProjectClicked: false,
             showModal: false,
-            loadding: false,
+            loadding: true,
             projectName: "",
+            screenName: 'Projects',
+            error: "",
+            success: "",
+            projectId: projectId
 
         }
         this.apiHandler = new ApiHandler();
@@ -26,8 +33,16 @@ class Projects extends React.Component {
 
     componentDidMount() {
         document.title = "Your Projects";
-        this.apiHandler.getProjects((msg, data) => {
-            this.setState({ projects: data })
+        this.apiHandler.getProjects(0, (msg, data) => {
+            data.data.forEach((s) => {
+                if (s.uuid === this.state.projectId) {
+                    this.setState({
+                        selectedProject: s,
+                        isProjectClicked: true
+                    })
+                }
+            })
+            this.setState({ projects: data.data, loadding: false })
         }, err => {
             this.showError(err);
         })
@@ -39,13 +54,25 @@ class Projects extends React.Component {
             projects.push(<ProjectCard key={index} data={data} projectClickHandler={this.projectClickHandler} />);
         })
         if (projects.length < 1) {
-            projects = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No projects Created</p>
+            projects = <div className="col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No projects Created</p></div>
         }
         return projects;
     }
     projectClickHandler = (project = null) => {
         if (project) {
             this.setState({ selectedProject: project });
+            if (!this.state.isProjectClicked) {
+                window.history.replaceState(null, null, "/projects/" + project.uuid)
+            }
+            this.setState({
+                isProjectClicked: !this.state.isProjectClicked,
+                screenName: project.name
+            })
+        }
+    }
+    goBack = () => {
+        if (this.state.isProjectClicked) {
+            window.history.replaceState(null, null, "/projects")
         }
         this.setState({
             isProjectClicked: !this.state.isProjectClicked,
@@ -73,22 +100,24 @@ class Projects extends React.Component {
         if (this.state.loadding) {
             return;
         }
-        // this.setState({ error: "", success: "", loadding: true })
-        // this.apiHandler.createProject(this.state.projectName, (message, data) => {
-        //     this.setState({ error: "", success: message, loadding: false })
-        //     window.location.href = "/projects"
-        //     console.log(data, message);
-        // }, (message) => {
-        //     this.setState({ error: message, success: "", loadding: false })
-        //     console.log(message);
-        // });
+        this.setState({ error: "", success: "", loadding: true })
+        this.apiHandler.createProject(this.state.projectName, (message, data) => {
+            this.setState({ error: "", success: message, loadding: false })
+            window.location.href = "/projects"
+            console.log(data, message);
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false })
+            console.log(message);
+        });
     }
+    handleDeleteProject = () => {
 
+    }
     render() {
         return (
             <>
-                <div className="container-fluid p-0">
-                    <Navigation />
+                {/* <div className="container-fluid p-0">
+                    <Navigation name="Projects" />
                     <Sidebar />
                     <div className="content-wrapper">
                         <section className="content-header">
@@ -126,39 +155,118 @@ class Projects extends React.Component {
                             </div>
                         </section>
                     </div>
-                </div>
-                <Modal show={this.state.showModal} onHide={this.handleModalClose}>
+                </div>*/}
+                <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
                     <form action="#" method="post">
                         <Modal.Header closeButton>
                             <Modal.Title>ADD PROJECT</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <p style={{ color: "red" }} dangerouslySetInnerHTML={{ __html: this.state.error }}></p>
-                            <p style={{ color: "green" }} dangerouslySetInnerHTML={{ __html: this.state.success }}></p>
-
+                            <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
+                                {this.state.error}
+                            </Alert>
+                            <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
+                                {this.state.success}
+                            </Alert>
                             <div className="form-group">
-                                <label htmlFor="projectName">Project Name</label>
-                                <input required type="text" className="form-control" name="projectName" value={this.state.projectName} onChange={this.dataChange} id="projectName" />
                             </div>
-
+                            <div className="modal-form">
+                                <label htmlFor="projectName">Project Name</label>
+                                <div className="input-group">
+                                    <input required type="text" className="form-control form-input-field" name="projectName" value={this.state.projectName} onChange={this.dataChange} id="projectName" />
+                                    <div className="input-group-append">
+                                        <div className="input-group-text theme">
+                                            <i className="fa fa-desktop"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="info" onClick={this.handleAddProject}>
+                            <Button variant="default" onClick={this.handleModalClose}>
+                                CLOSE
+                            </Button>
+                            <Button className="btn btn-theme" onClick={this.handleAddProject}>
                                 {
                                     this.state.loadding ?
                                         <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                         : "ADD PROJECT"
                                 }
                             </Button>
-                            <Button variant="default" onClick={this.handleModalClose}>
-                                CLOSE
-                        </Button>
+
                         </Modal.Footer>
                     </form>
                 </Modal>
+                <div className="container-fluid p-0">
+                    <Navigation name="Project" />
+                    <Sidebar />
+                    {(this.state.isProjectClicked) ?
+                        <div className="content-wrapper">
+                            <div className="section-container">
+                                <PageHeader
+                                    back={<i onClick={this.goBack} className="fas fa-arrow-left"></i>}
+                                    heading={this.state.selectedProject.name} subHeading="">
+                                    <div className="row">
+                                        <div className="col-md-4">
+
+                                        </div>
+                                        <div className="col-md-4">
+
+                                        </div>
+                                        <div className="col-md-4">
+                                            <button type="button" onClick={this.handleDeleteProject} className="btn btn-link-danger btn-block">
+                                                <span>Delete Project</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </PageHeader>
+                                <div className="row">
+                                    {(!this.state.loadding) ?
+                                        <ProjectDetails project={this.state.selectedProject} projectClickHandler={this.goBack} />
+                                        :
+                                        <div className='col-12 text-center'>
+                                            <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
+                                        </div>}
+                                </div>
+                            </div>
+                        </div>
+
+                        :
+                        <div className="content-wrapper">
+                            <div className="section-container">
+                                <PageHeader
+                                    heading="My Projects"
+                                    subHeading={this.state.projects.length + " Projects"}>
+                                    <div className="row">
+                                        <div className="col-md-4">
+
+                                        </div>
+                                        <div className="col-md-4">
+
+                                        </div>
+                                        <div className="col-md-4">
+                                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
+                                                <span>Create Project</span>
+                                                <i className="fa fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </PageHeader>
+                                <div className="row">
+                                    {(!this.state.loadding) ? this.renderProjects() :
+                                        <div className='col-12 text-center'>
+                                            <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
+                                        </div>}
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </>
 
         )
     }
 }
-export default Projects;
+export default withRouter(Projects);

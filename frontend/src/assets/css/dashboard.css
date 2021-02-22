@@ -1,7 +1,7 @@
 a.nav-link.menu-opened,
 a.nav-link.menu-opened:hover {
     background: #FFD302;
-    color: #3E3E3E;
+    color: #000;
     border-radius: 0px 50px 50px 0px;
     margin-right: 10px;
 }

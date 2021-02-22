@@ -13,6 +13,7 @@ import Projects from '../screens/Projects';
 import Notifications from '../screens/Notifications';
 
 import { read_cookie } from 'sfcookies';
+import DelegateAccess from '../screens/DelegateAccess';
 
 let routes = [
     {
@@ -65,12 +66,38 @@ let routes = [
         }
     },
     {
+        path: '/projects/:projectId',
+        title: 'Project',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <Projects />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
         path: '/projects',
         title: 'Project',
         component: () => {
             let cookie = read_cookie("auth")
             if (typeof cookie !== "object") {
                 return <Projects />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/delegate-access',
+        title: 'Delegate Aceess',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <DelegateAccess />;
             }
             else {
                 return <Redirect to="/login" />;

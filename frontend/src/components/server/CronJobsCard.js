@@ -62,19 +62,19 @@ class CronJobsCard extends React.Component {
         Object.keys(this.state.crons).forEach(key => {
             tmpout = this.state.crons[key];
             tmpbuffer = <tr key={tmpout.JOB}>
-                <th>#{tmpout.JOB}</th>
-                <th>{tmpout.MIN} {tmpout.HOUR} {tmpout.DAY} {tmpout.MONTH} {tmpout.WDAY}</th>
-                <th>{tmpout.CMD}</th>
-                <th className="text-center">
+                <td>#{tmpout.JOB}</td>
+                <td>{tmpout.MIN} {tmpout.HOUR} {tmpout.DAY} {tmpout.MONTH} {tmpout.WDAY}</td>
+                <td>{tmpout.CMD}</td>
+                <td className="text-center">
                     {(tmpout.SUSPENDED === "no") ?
                         <><i className="fa fa-check text-success" title="Running"></i></>
                         :
                         <><i className="fa fa-times text-danger" title="Suspended"></i></>
                     }
-                </th>
-                <th className="text-center">
-                    <div className="btn-group dropleft">
-                        <button type="button" className="btn btn-light p-0 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                </td>
+                <td className="text-center">
+                    <div className="">
+                        <button type="button" className="btn btn-link pt-0 pb-0 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i className="fa fa-ellipsis-v"></i>
                         </button>
                         <div className="dropdown-menu">
@@ -87,7 +87,7 @@ class CronJobsCard extends React.Component {
                             <button type="button" className="dropdown-item" jobid={tmpout.JOB} onClick={this.cronDelete}>Delete</button>
                         </div>
                     </div>
-                </th>
+                </td>
             </tr>
             output.push(tmpbuffer)
         })

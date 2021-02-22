@@ -1,6 +1,7 @@
 import React from 'react';
 import ApiHandler from "../../model/ApiHandler";
 import { Alert } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 
 class Backups extends React.Component {
     constructor(props) {
@@ -15,9 +16,13 @@ class Backups extends React.Component {
             makingBackup: false,
             restoring: false,
             restoringIndex: null,
+            xIndex: null,
             error: "",
             success: "",
-
+            web: null,
+            db: null,
+            email: null,
+            dns: null
         }
         this.apiHandler = new ApiHandler();
     }
@@ -27,8 +32,15 @@ class Backups extends React.Component {
     handleModalClose = () => {
         this.setState({
             showModal: false,
+            restoringIndex: null,
+            xIndex: null,
+            web: null,
+            db: null,
+            email: null,
+            dns: null
         })
     }
+
     loadBackups = () => {
 
         this.apiHandler.getAllBackups(this.server.id, (msg, data) => {
@@ -36,18 +48,6 @@ class Backups extends React.Component {
                 backups: data,
                 loading: false
             });
-        });
-    }
-    restoreBackup = (xindex, index) => {
-        if (this.state.restoring) return;
-        this.setState({
-            restoring: true,
-            restoringIndex: index,
-        })
-        this.apiHandler.restoreBackup(this.server.id, this.getBackup(xindex, index).name, this.getBackup(xindex, index).domain, this.getBackup(xindex, index).db_name, this.getBackup(xindex, index).domain, this.getBackup(xindex, index).domain, "no", (msg, data) => {
-            this.setState({ restoring: false, success: msg })
-        }, (error) => {
-            this.setState({ restoring: false, error: error })
         });
     }
     getBackup(xindex, index) {
@@ -75,8 +75,8 @@ class Backups extends React.Component {
                         <td>
                             {(data[0].web) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Website,&nbsp;&nbsp;
                             {(data[0].db) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Database,&nbsp;&nbsp;
-                            {(data[0].mail) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Emails,&nbsp;&nbsp;
-                            {(data[0].dns) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} DNS
+                            {/* {(data[0].mail) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Emails,&nbsp;&nbsp; */}
+                            {/* {(data[0].dns) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} DNS */}
                         </td>
                         <td>
                             <button key={index} onClick={() => this.showBackups(index)} className="btn btn-theme btn-sm">
@@ -113,12 +113,12 @@ class Backups extends React.Component {
                         <td>
                             {(data.web) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Website,&nbsp;&nbsp;
                             {(data.db) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Database,&nbsp;&nbsp;
-                            {(data.mail) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Emails,&nbsp;&nbsp;
-                            {(data.dns) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} DNS
+                            {/* {(data.mail) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} Emails,&nbsp;&nbsp; */}
+                            {/* {(data.dns) ? <i className="fa fa-check text-green"></i> : <i className="fa fa-times text-danger"></i>} DNS */}
                         </td>
                         <td>{data.size} MB</td>
                         <td>
-                            <button key={index} onClick={() => this.restoreBackup(xindex, index)} className="btn btn-theme btn-sm">
+                            <button key={index} onClick={() => this.handleModalShow(xindex, index)} className="btn btn-theme btn-sm">
                                 {
                                     (this.state.restoring && this.state.restoringIndex === index) ?
                                         <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "20px", filter: "brightness(20)" }} />
@@ -133,16 +133,54 @@ class Backups extends React.Component {
             list.push(
                 <tr key={0}>
                     <td colSpan="5" className="text-center">
-                        No Backups Created
+                        No Backups
                     </td>
                 </tr>
             )
         }
         return list;
     }
+    dataChange = (event) => {
+        //  console.log(event.target)
+        let value = event.target.checked;
+        this.setState({ [event.target.name]: value })
+    }
+    handleModalShow = (xindex, index) => {
+        if (this.state.restoring) return;
+        this.setState({ showModal: true, restoringIndex: index, xIndex: xindex })
+    }
+    restoreBackup = () => {
+        if (!this.checkDisabled()) return;
+
+        this.setState({
+            restoring: true
+        })
+        let index = this.state.restoringIndex;
+        let xindex = this.state.xIndex;
+        let web = (this.state.web) ? this.getBackup(xindex, index).domain : 'no';
+        let db = (this.state.db) ? this.getBackup(xindex, index).name : 'no';
+        let mail = (this.state.mail) ? this.getBackup(xindex, index).domain : 'no';
+        let dns = (this.state.dns) ? this.getBackup(xindex, index).domain : 'no';
+
+        this.apiHandler.restoreBackup(this.server.id, this.getBackup(xindex, index).name, web, db, mail, dns, "no", (msg, data) => {
+            this.setState({
+                restoring: false,
+                restoringIndex: null,
+                xindex: null,
+                success: msg,
+                web: null,
+                db: null,
+                email: null,
+                dns: null
+            })
+        }, (error) => {
+            this.setState({ restoring: false, error: error })
+        });
+        this.setState({ showModal: false })
+
+    }
     takeBackup = () => {
         this.setState({ makingBackup: true, })
-
         this.apiHandler.createBackups(this.server.id, (msg, data) => {
             this.setState({ loading: true, success: msg, makingBackup: false })
             this.loadBackups()
@@ -152,6 +190,19 @@ class Backups extends React.Component {
     }
     setShow() {
         this.setState({ error: "", success: "", })
+    }
+    checkDisabled = () => {
+        let isChecked = false;
+        if (this.state.web) {
+            isChecked = true;
+        } else if (this.state.db) {
+            isChecked = true;
+        } else if (this.state.email) {
+            isChecked = true;
+        } else if (this.state.dns) {
+            isChecked = true;
+        }
+        return isChecked;
     }
     render() {
         return (
@@ -228,7 +279,54 @@ class Backups extends React.Component {
                         </div>
                     </div>
                 </div>
+                <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
+                    <form action="#" method="post">
+                        <Modal.Header closeButton>
+                            <Modal.Title>Restore Backup</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
 
+                            {(this.state.restoringIndex !== null) ?
+                                <div>
+
+                                    <div className="modal-form mb-3">
+                                        <label htmlFor="">Select backups to restore</label>
+                                        <div className="custom-control custom-checkbox ">
+                                            <input name="web" onChange={this.dataChange} type="checkbox" className="custom-control-input" id="web" />
+                                            <label className="custom-control-label" htmlFor="web">Restore Website</label>
+                                        </div>
+                                        <div className="custom-control custom-checkbox">
+                                            <input name="db" onChange={this.dataChange} type="checkbox" className="custom-control-input" id="db" />
+                                            <label className="custom-control-label" htmlFor="db">Restore Database</label>
+                                        </div>
+                                        {/* <div className="custom-control custom-checkbox">
+                                            <input name="email" onChange={this.dataChange} type="checkbox" className="custom-control-input" id="email" />
+                                            <label className="custom-control-label" htmlFor="email">Restore Email</label>
+                                        </div>
+                                        <div className="custom-control custom-checkbox">
+                                            <input name="dns" onChange={this.dataChange} type="checkbox" className="custom-control-input" id="dns" />
+                                            <label className="custom-control-label" htmlFor="dns">Restore DNS</label>
+                                        </div> */}
+                                    </div>
+                                    <p className="">Restoring backups from <strong>{this.state.backups[this.state.restoringIndex].name}</strong></p>
+                                </div>
+                                : ''}
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="default" onClick={this.handleModalClose}>
+                                CLOSE
+                            </Button>
+                            <Button className="btn btn-theme" onClick={this.restoreBackup}>
+                                {
+                                    (this.state.restoring) ?
+                                        <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "20px", filter: "brightness(20)" }} />
+                                        : 'Restore'
+                                }
+                            </Button>
+                        </Modal.Footer>
+                    </form>
+                </Modal>
             </>
         )
     }

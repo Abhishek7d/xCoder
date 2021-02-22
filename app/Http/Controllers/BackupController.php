@@ -23,17 +23,21 @@ class BackupController extends Controller
     {
         return Application::where('domain', $domain)->first();
     }
-    public function getAllBackups($server)
+    public function getAllBackups(Request $request, $server)
     {
         $server = Server::find($server);
-        $application = Application::where('server_id', $server->id)->get();
 
         if (!$server) {
+            return CommonFunctions::sendResponse(0, "You have not access to this resource.");
+        }
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
+        if ($server->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if (!$server->user_id == auth()->user()->id) {
-            return CommonFunctions::sendResponse(0, "You have not access to this resource");
-        }
+
+        $application = Application::where('server_id', $server->id)->get();
+
         $ssh = CommonFunctions::connect($server->ip_address);
         if (!$ssh) {
             return CommonFunctions::sendResponse(0, "Server Auth Faild");
@@ -65,7 +69,7 @@ class BackupController extends Controller
         }
         return CommonFunctions::sendResponse(1, "List of Backups", $domains);
     }
-    public function getBackups($server, $application)
+    public function getBackups(Request $request, $server, $application)
     {
         $server = Server::find($server);
 
@@ -73,9 +77,12 @@ class BackupController extends Controller
         if (!$server) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if (!$server->user_id == auth()->user()->id) {
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
+        if ($server->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
+
         $ssh = CommonFunctions::connect($server->ip_address);
         if (!$ssh) {
             return CommonFunctions::sendResponse(0, "Server Auth Faild");
@@ -150,9 +157,12 @@ class BackupController extends Controller
         if (!$server) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if (!$server->user_id == auth()->user()->id) {
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
+        if ($server->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
+
         $ssh = CommonFunctions::connect($server->ip_address);
         if (!$ssh) {
             return CommonFunctions::sendResponse(0, "Server Auth Faild");
@@ -187,15 +197,18 @@ class BackupController extends Controller
         }
         return CommonFunctions::sendResponse(1, "Backup restored successfully", $return);
     }
-    public function createBackup($server)
+    public function createBackup(Request $request, $server)
     {
         $server = Server::find($server);
         if (!$server) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if (!$server->user_id == auth()->user()->id) {
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
+        if ($server->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
+
         $ssh = CommonFunctions::connect($server->ip_address);
         if (!$ssh) {
             return CommonFunctions::sendResponse(0, "Server Auth Faild");

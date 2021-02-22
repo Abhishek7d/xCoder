@@ -37,6 +37,13 @@ class Sidebar extends React.Component {
                         <nav className="mt-2">
                             <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                                 <li className={'nav-item has-treeview '}>
+
+                                    <Link to="/projects" className={"nav-link " + ((this.state.page === "projects") ? "menu-opened" : "")}>
+                                        <i className="nav-icon fa fa-desktop"></i>
+                                        <p> Projects </p>
+                                    </Link>
+                                </li>
+                                <li className={'nav-item has-treeview '}>
                                     <Link to="/servers" className={"nav-link " + ((this.state.page === "servers") ? "menu-opened" : "")}>
                                         <i className="nav-icon fa fa-server"></i>
                                         <p>
@@ -47,7 +54,7 @@ class Sidebar extends React.Component {
                                 </li>
                                 <li className="nav-item has-treeview">
                                     <Link to="/applications" className={"nav-link " + ((this.state.page === "applications") ? "menu-opened" : "")}>
-                                        <i className="nav-icon fa fa-window-maximize"></i>
+                                        <i className="nav-icon fa fa-globe"></i>
                                         <p>
                                             Applications
                                 <i className="right fas "></i>

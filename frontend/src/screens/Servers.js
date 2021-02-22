@@ -10,6 +10,7 @@ import "../assets/css/dashboard.css";
 import CreateServerScreen from "./CreateServerScreen";
 import PageHeader from '../components/template/PageHeader';
 import Pagination from '../components/template/Pagination';
+import { read_cookie } from 'sfcookies';
 
 class Servers extends React.Component {
     constructor(props) {
@@ -19,12 +20,15 @@ class Servers extends React.Component {
             serverData: {},
             servers: [],
             regions: {},
-            selectedSever: null,
+            projectName: read_cookie('projectName'),
+            projectId: read_cookie('projectId'),
+            selectedServer: null,
             isServerClicked: false,
             loadding: true,
             showModal: false,
             serverId: serverId,
-            screenName: "Servers"
+            screenName: "Servers",
+            accessStatus: null,
         }
         this.apiHandler = new ApiHandler();
         this.createServer = React.createRef();
@@ -49,16 +53,18 @@ class Servers extends React.Component {
     getServers(page = 1) {
         this.apiHandler.getServers(page, (msg, data) => {
             data.data.forEach((s) => {
-                if (s.id === this.state.serverId) {
+                if (s.uuid === this.state.serverId) {
                     this.setState({
-                        selectedSever: s,
+                        selectedServer: s,
                         isServerClicked: true
                     })
                 }
             })
-            this.setState({ servers: data.data, loadding: false, serverData: data })
+            this.setState({ accessStatus: msg, servers: data.data, loadding: false, serverData: data })
         }, err => {
             this.showError(err);
+            this.setState({ loadding: false })
+
         })
     }
     getRegionName = (slug) => {
@@ -75,16 +81,20 @@ class Servers extends React.Component {
             servers.push(<ServerCard serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
         })
         if (servers.length < 1) {
-            servers = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Servers Created</p>
+            servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
+        }
+
+        if (typeof this.state.projectId === 'object') {
+            servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>Please select a Project.</p></div>
         }
         return servers;
     }
     serverClickHandler = (server = null) => {
         if (server) {
             if (server.status === "READY") {
-                this.setState({ selectedSever: server });
+                this.setState({ selectedServer: server });
                 if (!this.state.isServerClicked) {
-                    window.history.replaceState(null, null, "/servers/" + server.id)
+                    window.history.replaceState(null, null, "/servers/" + server.uuid)
                 }
                 this.setState({
                     isServerClicked: !this.state.isServerClicked,
@@ -118,7 +128,7 @@ class Servers extends React.Component {
                 <div className="content-wrapper">
                     <div className="section-container">
                         {(this.state.isServerClicked) ?
-                            <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedSever} />
+                            <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedServer} />
                             :
                             <>
                                 <PageHeader heading="My Servers" subHeading={this.state.servers.length + " Servers"}>

@@ -38,7 +38,14 @@ Route::group(['prefix' => 'api'], function () {
 
         //projects
         Route::post('/project', [DashboardController::class, 'createProject']);
-        Route::get('/projects', [DashboardController::class, 'projects']);
+        Route::post('/project/delete', [DashboardController::class, 'deleteProject']);
+        Route::get('/projects/{all?}', [DashboardController::class, 'projects']);
+        Route::post('/projects/delegate-access', [DashboardController::class, 'delegateAccess']);
+        Route::get('/projects/delegate-access/{project}', [DashboardController::class, 'getDelegateAccess']);
+        Route::post('/projects/delegate-access/status', [DashboardController::class, 'chamgeDuStatus']);
+        Route::post('/projects/delegate-access/delete/{id}', [DashboardController::class, 'deleteDu']);
+
+        Route::get('/access/delegate-accounts', [DashboardController::class, 'delegateAccounts']);
 
 
         //droplets
@@ -49,7 +56,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/droplets', [DashboardController::class, 'droplets']);
 
         //application
-        Route::get('/application', [WebSiteController::class, 'showDomains']);
+        Route::get('/application/{all?}', [WebSiteController::class, 'showDomains']);
         Route::post('/application/new', [WebSiteController::class, 'addDomain']);
         Route::post('/application/{application}/update-domain', [WebSiteController::class, 'updateDomainName']);
         Route::post('/application/{application}/add-ssl', [WebSiteController::class, 'addSSLToDomain']);
@@ -76,6 +83,8 @@ Route::group(['prefix' => 'api'], function () {
 
         // Notifications
         Route::get('notifications', [DashboardController::class, 'notification']);
+        Route::get('notifications/check', [DashboardController::class, 'checkNotification']);
+        Route::get('notifications/set-status', [DashboardController::class, 'changeNotificationStatus']);
 
         // Backups
         Route::post('/backup/create/{server}', [BackupController::class, 'createBackup']);

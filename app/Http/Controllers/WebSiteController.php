@@ -6,9 +6,13 @@ use Illuminate\Http\Request;
 use App\Jobs\ApplicationInstaller;
 use App\Models\Server;
 use App\Http\Controllers\helpers\CommonFunctions;
+use App\Http\Controllers\helpers\CommonFunctions as CF;
 use phpseclib\Crypt\RSA;
 use phpseclib\Net\SSH2;
 use App\Models\Application;
+use App\Models\DelegateAccess;
+use App\Models\User;
+use App\Models\Project;
 
 class WebSiteController extends Controller
 {
@@ -28,10 +32,13 @@ class WebSiteController extends Controller
     public function removeDomain(Request $request, $application)
     {
         $application = Application::find($application);
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -44,28 +51,39 @@ class WebSiteController extends Controller
         $application->delete();
         return CommonFunctions::sendResponse(1, "Application Deleted Successfully", $output);
     }
-    public function showDomains()
+    public function showDomains(Request $request)
     {
-        $apps = Application::where("user_id", auth()->user()->id)->with('server')->paginate();
-        return CommonFunctions::sendResponse(1, "List of applications", $apps);
+        if ($request->project_id) {
+            $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+            $apps = Application::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('server')->paginate();
+            return CommonFunctions::sendResponse(1, "List of applications", $apps);
+        } else {
+            return CommonFunctions::sendResponse(0, "Please select a project first");
+        }
     }
     public function addDomain(Request $request)
     {
-
         $domain = $request->get('domain');
+        $project_id = $request->get('project_id');
         $server = $request->get('server');
+        $server = CommonFunctions::getId($server, 'servers');
+        if (empty($project_id)) {
+            return CommonFunctions::sendResponse(0, "Invalid Project");
+        }
+        $project_id = CF::projectId($request->get('project_id'));
+
         if (empty($server) || empty($domain)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
         $server = Server::find($server);
-        if (!$server || $server->user_id != auth()->user()->id) {
-            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+        if (!$server || $server->user_id != $user->id) {
+            return CommonFunctions::sendResponse(0, "You have not access to this resource", $user);
         }
-
-        $application = $this->createApplicationToServer($server, $domain, auth()->user());
+        $application = $this->createApplicationToServer($server, $domain, $user, $project_id);
         return CommonFunctions::sendResponse(1, "Domain added to the server", $application);
     }
-    public function createApplicationToServer($server, $name, $user)
+    public function createApplicationToServer($server, $name, $user, $project_id)
     {
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         $connection =  @socket_connect($socket, $server->ip_address, 22);
@@ -95,6 +113,7 @@ class WebSiteController extends Controller
         $application->ip_address = $server->ip_address;
         $application->user_id = $user->id;
         $application->ssl_enabled = 0;
+        $application->project_id = $project_id;
         $application->status = CommonFunctions::$application_statuses[2];
         $application->save();
         CommonFunctions::releaseResponse(1, "Application Created Successfully", $application);
@@ -140,10 +159,13 @@ class WebSiteController extends Controller
     public function updateDomainName(Request $request, $application)
     {
         $application = Application::find($application);
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -184,10 +206,13 @@ class WebSiteController extends Controller
     public function addSSLToDomain(Request $request, $application)
     {
         $application = Application::find($application);
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -217,10 +242,13 @@ class WebSiteController extends Controller
     public function removeSSLToDomain(Request $request, $application)
     {
         $application = Application::find($application);
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -244,6 +272,9 @@ class WebSiteController extends Controller
     {
         $username = $request->get("username");
         $password = $request->get("password");
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (empty($username) || empty($password)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
@@ -254,7 +285,7 @@ class WebSiteController extends Controller
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -280,6 +311,9 @@ class WebSiteController extends Controller
     public function removeFTPToApplication(Request $request, $application)
     {
         $username = $request->get("username");
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (empty($username)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
@@ -287,7 +321,7 @@ class WebSiteController extends Controller
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -307,7 +341,7 @@ class WebSiteController extends Controller
                 unset($ftp_credentials[$key]);
             }
         }
-        $application->ftp_credentials = json_encode($ftp_credentials);
+        $application->ftp_credentials = json_encode(array_values($ftp_credentials));
 
         $application->save();
         $output = $ssh->read();
@@ -317,6 +351,9 @@ class WebSiteController extends Controller
     {
         $username = $request->get("username");
         $password = $request->get("password");
+
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+
         if (empty($username) || empty($password)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
@@ -328,7 +365,7 @@ class WebSiteController extends Controller
         if (!$application) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
-        if ($application->user_id != auth()->user()->id) {
+        if ($application->user_id != $user->id) {
             return CommonFunctions::sendResponse(0, "You have not access to this resource");
         }
         $ssh = CommonFunctions::connect($application->ip_address);
@@ -348,7 +385,7 @@ class WebSiteController extends Controller
                 $ftp_credentials[$key]->password = $password;
             }
         }
-        $application->ftp_credentials = json_encode($ftp_credentials);
+        $application->ftp_credentials = json_encode(array_values($ftp_credentials));
         $application->save();
         $output = $ssh->read();
         return CommonFunctions::sendResponse(1, "FTP removed from Domain Successfully");

@@ -60,10 +60,9 @@ class Applications extends React.Component {
         this.setState({ rspmsg: message })
     }
     loadApplications(page = 1) {
-
         this.apiHandler.getApplications(page, (msg, data) => {
             data.data.forEach((app, index) => {
-                if (app.id === parseInt(this.state.selectedApplicationFilter)) {
+                if (app.uuid === this.state.selectedApplicationFilter) {
                     this.setState({ selectedApplication: app });
                 }
             })
@@ -80,7 +79,7 @@ class Applications extends React.Component {
         let servers = [];
         this.state.servers.forEach((data, index) => {
             if (data.status === "READY") {
-                servers.push(<option key={index} value={data.id}>{data.name}</option>);
+                servers.push(<option key={index} value={data.uuid}>{data.name}</option>);
             }
         })
         return servers;
@@ -89,9 +88,9 @@ class Applications extends React.Component {
         if (this.state.selectedServerFilter !== "") {
             let applications = [];
             this.state.servers.forEach((data) => {
-                if (data.id === parseInt(this.state.selectedServerFilter)) {
+                if (data.uuid === this.state.selectedServerFilter) {
                     data.applications.forEach((application, index) => {
-                        applications.push(<option key={index} value={application.id}>{application.domain}</option>)
+                        applications.push(<option key={index} value={application.uuid}>{application.domain}</option>)
                     })
                 }
             })
@@ -105,8 +104,8 @@ class Applications extends React.Component {
             </div>
         }
         if (this.state.selectedApplication) {
-            window.history.replaceState(null, null, "/applications/" + this.state.selectedApplication.id)
-            return (<ApplicationDetails setMessage={this.setMessage} id={this.state.selectedApplication.id} key={this.state.selectedApplication.id} loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
+            window.history.replaceState(null, null, "/applications/" + this.state.selectedApplication.uuid)
+            return (<ApplicationDetails setMessage={this.setMessage} id={this.state.selectedApplication.uuid} key={this.state.selectedApplication.uuid} loadApplications={this.refreshApplications} applicationClickHandler={this.applicationClickHandler} application={this.state.selectedApplication} />)
         }
         let applications = [];
         if (this.state.selectedServerFilter === "" || this.state.selectedServerFilter === null) {
@@ -115,14 +114,14 @@ class Applications extends React.Component {
             })
         } else {
             this.state.applications.forEach((data, index) => {
-                if (data.server.id === parseInt(this.state.selectedServerFilter)) {
+                if (data.server.uuid === this.state.selectedServerFilter) {
                     applications.push(<ApplicationCard appsReload={this.loadApplications} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
                 }
             })
         }
 
         if (applications.length < 1) {
-            applications = <p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p>
+            applications = <div className="col-12 text-center"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p></div>
         }
         return applications;
     }
@@ -166,18 +165,20 @@ class Applications extends React.Component {
     updateSelectedAplication = (event) => {
         this.setState({ [event.target.name]: event.target.value })
         if (!event.target.value) {
-            this.setState({ selectedApplication: null })
+            this.setState({ selectedApplication: null, screenName: 'Applications' })
         } else {
             let selectedApplication = event.target.value;
             this.state.applications.forEach(data => {
-                if (data.id === parseInt(selectedApplication)) {
-                    this.setState({ selectedApplication: data, isApplicationClicked: true })
+                if (data.uuid === selectedApplication) {
+                    this.setState({ selectedApplication: data, isApplicationClicked: true, screenName: data.name })
                 }
             })
         }
     }
     updateSelectedServer = (event) => {
-        this.setState({ selectedApplication: null, selectedApplicationFilter: "", [event.target.name]: event.target.value })
+        var index = event.nativeEvent.target.selectedIndex;
+
+        this.setState({ selectedApplication: null, selectedApplicationFilter: "", [event.target.name]: event.target.value, screenName: event.nativeEvent.target[index].text })
     }
     applicationClickHandler = (application = null) => {
         if (!application) {
@@ -343,7 +344,8 @@ class Applications extends React.Component {
                                     </Alert>
                                     <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                         {this.state.success}
-                                    </Alert> <div className="modal-form">
+                                    </Alert>
+                                    <div className="modal-form">
                                         <label htmlFor="selectedDomain">Enter Domain Name</label>
                                         <div className="input-group">
                                             <input required type="text" className="form-control form-input-field" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />

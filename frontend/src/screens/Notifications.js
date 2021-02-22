@@ -12,20 +12,27 @@ class Notifications extends React.Component {
         super()
         this.state = {
             loading: true,
-            notifications: [],
             notificationData: {},
             oldN: [],
             newN: []
         }
         this.apiHandler = new ApiHandler();
     }
+
     componentDidMount = () => {
         this.getNotifications();
+        this.setNotificationStatus();
+    }
+    setNotificationStatus = () => {
+        this.apiHandler.setNotificationStatus((msg, data) => {
+            this.getNotifications();
+        }, err => {
+            console.log(err)
+        })
     }
     getNotifications(page = 1) {
         this.apiHandler.getNotifications(page, (msg, data) => {
             this.setState({
-                notifications: data.data,
                 notificationData: data,
                 loading: false
             })
@@ -40,8 +47,9 @@ class Notifications extends React.Component {
     filterNotifications() {
         let n = [];
         let o = [];
-        this.state.notifications.forEach(data => {
-            if (new Date(data.created_at) >= new Date()) {
+        var dateOffset = (24 * 60 * 60 * 1000) * 1;
+        this.state.notificationData.data.forEach(data => {
+            if (new Date(data.created_at).getTime() >= new Date().getTime() - dateOffset) {
                 n.push(data)
             } else {
                 o.push(data)
@@ -104,7 +112,7 @@ class Notifications extends React.Component {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="card p-0">
-                                            {(this.state.notifications.length <= 0) ?
+                                            {(this.state.notificationData.total < 1) ?
                                                 <div className="card-body">
                                                     <p className="p-0 m-0">
                                                         {(this.state.loading) ?

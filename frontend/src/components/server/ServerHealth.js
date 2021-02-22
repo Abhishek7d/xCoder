@@ -79,7 +79,7 @@ class ServerHealth extends React.Component {
             //     </div>
             // </div>
 
-            <div className="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+            <div className="col-sm-12 col-md-12 col-lg-12 col-xl-6 full-height-no">
                 <div className="card server-health">
                     <div className="card-header">
                         <div className="row">

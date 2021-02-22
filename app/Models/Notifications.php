@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Notifications extends Model
 {
     use HasFactory;
-    protected $garded = [];
 
-    protected $dateFormat = 'U';
+    //protected $dateFormat = 'U';
 }
