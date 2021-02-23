@@ -21,20 +21,38 @@ class Navigation extends React.Component {
         this.apiHandler = new ApiHandler();
     }
     componentDidMount = () => {
-
+        this.getProjects();
+        this.getDelegateAccess();
+        this.getProject()
+        this.checkNotification()
+        setInterval(() => { this.checkNotification() }, 300000);
+    }
+    getProjects = () => {
         this.apiHandler.getProjects(1, (msg, data) => {
-            this.setState({ projects: data.data })
+            if (data.data && data.data.length > 0) {
+                this.setState({
+                    projects: [...this.state.projects, {
+                        divider: true,
+                        name: 'My Projects'
+                    }],
+                })
+            }
+            this.setState({ projects: [...this.state.projects, ...data.data] })
 
         }, err => {
             this.showError(err);
         })
-        this.getProject()
-        this.checkNotification()
-        this.getDelegateAccess();
-        setInterval(() => { this.checkNotification() }, 60000);
     }
     getDelegateAccess = () => {
         this.apiHandler.getDelegateAccount((msg, data) => {
+            if (data && data.length > 0) {
+                this.setState({
+                    projects: [...this.state.projects, {
+                        divider: true,
+                        name: 'Delegate Access'
+                    }],
+                })
+            }
             data.forEach((d, index) => {
                 if (d.status === 'active') {
                     this.setState({
@@ -72,10 +90,18 @@ class Navigation extends React.Component {
     renderProjects = () => {
         let projects = [];
         this.state.projects.forEach((data, index) => {
-            projects.push(
-                <div onClick={() => this.setProject(data)} className="dropdown-item" key={index}>
-                    {data.name}
-                </div>);
+            if (data) {
+                if (data.divider) {
+                    projects.push(
+                        <h6 key={index} className="dropdown-header">{data.name}</h6>
+                    )
+                } else {
+                    projects.push(
+                        <div onClick={() => this.setProject(data)} className="dropdown-item" key={index}>
+                            {data.name}
+                        </div>);
+                }
+            }
         })
         return projects;
     }

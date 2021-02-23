@@ -12,6 +12,7 @@ use App\Models\DelegateAccess;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Notifications\Notification;
+use phpDocumentor\Reflection\Types\Self_;
 
 class CommonFunctions extends Controller
 {
@@ -118,16 +119,19 @@ class CommonFunctions extends Controller
         $user = auth()->user();
         $project_id = CommonFunctions::getId($project_uuid, 'projects');
         $dA = DelegateAccess::where([['status', 'active'], ['_delegate_user_id', auth()->user()->id], ['project_id', $project_id]]);
-        $user->delegateAccess = false;
+        $dA2 = DelegateAccess::where([['_delegate_user_id', auth()->user()->id], ['project_id', $project_id]]);
+
+        $user->delegateAccess = (isset($dA2->first()->status)) ? $dA2->first()->status : 'active';
         if ($dA->exists()) {
             $dA->update([
                 "last_active" => \Carbon\Carbon::now()
             ]);
             $project = Project::where('id', $project_id);
-            $pUser = $project->first()->user_id;
-            $user = User::find($pUser);
-            $user->delegateAccess = true;
-            $user->delegateStatus = $dA->first()->status;
+            if ($project->exists()) {
+                $pUser = $project->first()->user_id;
+                $user = User::find($pUser);
+                $user->delegateAccess = true;
+            }
         }
         return $user;
     }
@@ -142,5 +146,31 @@ class CommonFunctions extends Controller
     public static function serverId($uuid)
     {
         return DB::table('servers')->where('uuid', $uuid)->first()->id;
+    }
+    public static function reverse_string($string)
+    {
+        $str = str_split($string);
+        $str = array_reverse($str);
+        return join('', $str);
+    }
+    public static function checkDeleteCode($codeOld, $deleteCode)
+    {
+        $codes = explode('-', $codeOld);
+        $code = $codes[1];
+        $code = Self::reverse_string($code);
+        if (Self::getDiff($code, time()) > 10) {
+            return false;
+        }
+        if ($codeOld == $deleteCode) {
+            return true;
+        }
+    }
+
+    public static function getDiff($time, $time1, $format = "%i")
+    {
+        $datetime1 = new \DateTime("@$time"); //start time
+        $datetime2 = new \DateTime("@$time1"); //end time
+        $interval = $datetime1->diff($datetime2);
+        return  $interval->format($format);
     }
 }

@@ -110,8 +110,11 @@ class Projects extends React.Component {
             console.log(message);
         });
     }
-    handleDeleteProject = () => {
-
+    onEnterPress = (e) => {
+        if (e.keyCode === 13 && e.shiftKey === false) {
+            e.preventDefault();
+            this.handleAddProject();
+        }
     }
     render() {
         return (
@@ -157,7 +160,7 @@ class Projects extends React.Component {
                     </div>
                 </div>*/}
                 <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
-                    <form action="#" method="post">
+                    <form>
                         <Modal.Header closeButton>
                             <Modal.Title>ADD PROJECT</Modal.Title>
                         </Modal.Header>
@@ -173,7 +176,7 @@ class Projects extends React.Component {
                             <div className="modal-form">
                                 <label htmlFor="projectName">Project Name</label>
                                 <div className="input-group">
-                                    <input required type="text" className="form-control form-input-field" name="projectName" value={this.state.projectName} onChange={this.dataChange} id="projectName" />
+                                    <input required type="text" onKeyDown={this.onEnterPress} className="form-control form-input-field" name="projectName" value={this.state.projectName} onChange={this.dataChange} id="projectName" />
                                     <div className="input-group-append">
                                         <div className="input-group-text theme">
                                             <i className="fa fa-desktop"></i>
@@ -214,9 +217,7 @@ class Projects extends React.Component {
 
                                         </div>
                                         <div className="col-md-4">
-                                            <button type="button" onClick={this.handleDeleteProject} className="btn btn-link-danger btn-block">
-                                                <span>Delete Project</span>
-                                            </button>
+
                                         </div>
                                     </div>
 

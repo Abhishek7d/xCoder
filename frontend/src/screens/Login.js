@@ -14,7 +14,8 @@ class Login extends React.Component {
             loadding: false,
             email: "",
             password: "",
-            error: ""
+            error: "",
+            success: ''
         }
 
         this.apiHandler = new ApiHandler();
@@ -56,6 +57,13 @@ class Login extends React.Component {
     setShow() {
         this.setState({ error: "", success: "", })
     }
+    resendLink = () => {
+        this.apiHandler.resendActivationLink(this.state.email, (message, data) => {
+            this.setState({ error: "", success: message, loadding: false, loggedIn: false })
+        }, (message) => {
+            this.setState({ error: message, success: "", loadding: false, loggedIn: false })
+        })
+    }
     render() {
         if (this.state.loggedIn) {
             return <Redirect to="/servers" />
@@ -72,8 +80,14 @@ class Login extends React.Component {
                                 <h3>Login</h3>
                             </div>
                             <div className="col-sm-12 text-left">
+                                <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
+                                    {this.state.success}
+                                </Alert>
                                 <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
-                                    {this.state.error}
+                                    {this.state.error} {(this.state.error === "Email Not Verified") ?
+                                        <button onClick={() => this.resendLink()} className="btn btn-link p-0 m-0">
+                                            Resend
+                                        </button> : ''}
                                 </Alert>
                             </div>
                             <form action="#" method="post">

@@ -24,7 +24,7 @@ class Servers extends React.Component {
             projectId: read_cookie('projectId'),
             selectedServer: null,
             isServerClicked: false,
-            loadding: true,
+            loading: true,
             showModal: false,
             serverId: serverId,
             screenName: "Servers",
@@ -60,10 +60,10 @@ class Servers extends React.Component {
                     })
                 }
             })
-            this.setState({ accessStatus: msg, servers: data.data, loadding: false, serverData: data })
+            this.setState({ accessStatus: msg, servers: data.data, loading: false, serverData: data })
         }, err => {
             this.showError(err);
-            this.setState({ loadding: false })
+            this.setState({ loading: false })
 
         })
     }
@@ -71,14 +71,14 @@ class Servers extends React.Component {
         return this.state.regions[slug];
     }
     renderServers() {
-        if (this.state.loadding) {
+        if (this.state.loading) {
             return <div style={{ width: "100%", paddingLeft: "40%" }}>
-                <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceLoadding" />
+                <img alt="loading" src={require("../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceloading" />
             </div>
         }
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            servers.push(<ServerCard serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
+            servers.push(<ServerCard reloadServers={this.handlePageChange} serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
         })
         if (servers.length < 1) {
             servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>

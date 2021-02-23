@@ -22,7 +22,7 @@ use App\Http\Controllers\BackupController;
 Route::group(['prefix' => 'api'], function () {
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
-    Route::get('/resend', [UserController::class, 'resend']);
+    Route::post('/resend', [UserController::class, 'resend']);
     Route::get('/check', [UserController::class, 'checkLogin']);
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
@@ -32,24 +32,28 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::get('completed/{server_id}/{server_hash}', [DashboardController::class, 'serverCompleted']);
+    Route::post('/access/validate-token', [DashboardController::class, 'validateInvitation']);
 
     Route::group(['middleware' => 'checkAuth'], function () {
         //Route::post('/logout', [UserController::class, 'logout']);
 
         //projects
         Route::post('/project', [DashboardController::class, 'createProject']);
+        Route::post('/project/send-verification-code', [DashboardController::class, 'sendDeleteCode']);
         Route::post('/project/delete', [DashboardController::class, 'deleteProject']);
         Route::get('/projects/{all?}', [DashboardController::class, 'projects']);
         Route::post('/projects/delegate-access', [DashboardController::class, 'delegateAccess']);
         Route::get('/projects/delegate-access/{project}', [DashboardController::class, 'getDelegateAccess']);
-        Route::post('/projects/delegate-access/status', [DashboardController::class, 'chamgeDuStatus']);
+        Route::post('/projects/delegate-access/status', [DashboardController::class, 'changeDuStatus']);
         Route::post('/projects/delegate-access/delete/{id}', [DashboardController::class, 'deleteDu']);
 
         Route::get('/access/delegate-accounts', [DashboardController::class, 'delegateAccounts']);
+        Route::post('/access/accept-invitation', [DashboardController::class, 'acceptInvitation']);
 
 
         //droplets
         Route::get('/sizes', [DashboardController::class, 'availableSizes']);
+        Route::post('/droplet/send-verification-code', [DashboardController::class, 'sendDeleteVerification']);
         Route::get('/regions', [DashboardController::class, 'availableRegions']);
         Route::post('/droplet', [DashboardController::class, 'createDroplet']);
         Route::post('/droplet/{id}', [DashboardController::class, 'dropletAction']);
@@ -69,7 +73,7 @@ Route::group(['prefix' => 'api'], function () {
         //services
         Route::get('/server/{server}', [ServiceController::class, 'getStatus']);
         Route::post('/server/{server}', [ServiceController::class, 'setService']);
-        Route::get('/resouces/{server}', [ServiceController::class, 'getResources']);
+        Route::get('/resources/{server}', [ServiceController::class, 'getResources']);
 
         //cronjob
         Route::get('/cron/{server}', [ServiceController::class, 'getCronjobs']);

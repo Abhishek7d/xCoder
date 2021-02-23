@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 // import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import ApiHandler from '../model/ApiHandler';
-import { bake_cookie } from 'sfcookies';
+import { bake_cookie, delete_cookie } from 'sfcookies';
 import { Modal, Button, Alert } from 'react-bootstrap';
 
 class ProjectCard extends Component {
@@ -13,34 +13,38 @@ class ProjectCard extends Component {
             loading: false,
             error: "",
             success: "",
+            sending: true,
+            message: null,
+            codeSent: false,
+            code: null,
         }
         this.project = props.data;
         this.apiHandler = new ApiHandler();
     }
     toggleDropdown = () => this.setState(prevState => ({ dropdownOpen: !prevState.dropdownOpen }))
 
-
-    // deleteHandle = () => {
-    //     if (this.state.loadding) {
-    //         return;
-    //     }
-    //     this.setState({ error: "", success: "", loadding: true })
-    //     this.apiHandler.deleteProject(this.state.id, "destroy", (message, data) => {
-    //         this.setState({ error: "", success: message, loadding: false })
-    //         window.location.href = "/projects"
-    //     }, (message) => {
-    //         this.setState({ error: message, success: "", loadding: false })
-    //     });
-    // }
     showError(data) {
         // console.log(data)
     }
     deleteProject = () => {
-        this.apiHandler.deleteProject(this.project.id, (msg, data) => {
+        this.apiHandler.deleteProject(this.project.id, this.state.code, (msg, data) => {
+            this.setState({ error: "", success: msg, })
+            delete_cookie('projectId')
+            delete_cookie('projectName')
             window.location.reload()
         }, (error) => {
             this.setState({ error: error, success: "", })
         })
+    }
+    sendVerificationCode = () => {
+        this.setState({ sending: true, code: "", error: '', success: '' })
+        this.apiHandler.sendVerificationCode(this.project.id, 'project', (message, data) => {
+            this.setState({
+                sending: false,
+                message: message,
+                codeSent: true
+            })
+        }, (error) => { });
     }
     setProject = (data, to) => {
         console.log('project set')
@@ -57,11 +61,22 @@ class ProjectCard extends Component {
     }
     handleModalShow = () => {
         this.setState({
-            showModal: true
+            showModal: true,
+            sending: true
         })
+        this.sendVerificationCode();
+    }
+    onEnterPress = (e) => {
+        if (e.keyCode === 13 && e.shiftKey === false) {
+            e.preventDefault();
+            this.deleteHandle();
+        }
     }
     setShow() {
         this.setState({ error: "", success: "", })
+    }
+    dataChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
     }
     render() {
         return (
@@ -111,9 +126,9 @@ class ProjectCard extends Component {
                     </div>
                 </div>
                 <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
-                    <form action="#" method="post">
+                    <form>
                         <Modal.Header closeButton>
-                            <Modal.Title><span className="text-danger">Delete Project?</span></Modal.Title>
+                            <Modal.Title><span className="text-danger">Delete {this.project.name}?</span></Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
@@ -124,12 +139,31 @@ class ProjectCard extends Component {
                             </Alert>
                             <p className="m-0 p-0 text-muted">Are you sure, you want to delete this project?
                            All Servers and Applications will be deleted and it can't be restored.</p>
+                            <div className="modal-form mt-4">
+                                <label htmlFor="code">Verification Code</label>
+                                <div className="input-group">
+                                    <input onChange={this.dataChange} onKeyDown={this.onEnterPress} required type="text" className="form-control form-input-field" name="code" value={this.state.code} id="code" />
+                                </div>
+                            </div>
+                            {
+                                (!this.state.sending) ?
+                                    <>
+                                        <p className="text-small">{this.state.message} </p>
+                                    </>
+                                    :
+                                    <div style={{ textAlign: 'center' }}>
+                                        <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px" }} />
+                                    </div>
+                            }
                         </Modal.Body>
                         <Modal.Footer>
+                            <Button onClick={this.sendVerificationCode} variant="default" size="small" style={{ marginRight: "auto" }}>
+                                Resend Code
+                            </Button>
                             <Button variant="default" onClick={this.handleModalClose}>
                                 GO BACK
                                       </Button>
-                            <Button className="btn btn-theme" onClick={this.deleteProject}>
+                            <Button disabled={(this.state.codeSent && this.state.code) ? false : true} className="btn btn-theme" onClick={this.deleteProject}>
                                 {
                                     this.state.loading ?
                                         <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />

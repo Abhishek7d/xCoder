@@ -663,3 +663,11 @@ a.dropdown-item:hover {
 .modal-footer {
   margin-top: 0 !important;
 }
+
+.dropdown-header {
+  text-align: left !important;
+}
+
+.alert a {
+  color: #7973FE;
+}

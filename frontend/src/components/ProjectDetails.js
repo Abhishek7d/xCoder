@@ -4,7 +4,8 @@ import { Modal, Button, Alert } from 'react-bootstrap';
 import ApiHandler from '../model/ApiHandler';
 import { toast, ToastContainer, Flip } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
+import { bake_cookie } from 'sfcookies';
 
 class ProjectDetails extends Component {
     constructor(props) {
@@ -26,12 +27,13 @@ class ProjectDetails extends Component {
         this.setState({ error: "", success: "", })
     }
     componentDidMount = () => {
-
+        this.getDelegateAccess()
     }
     getDelegateAccess = () => {
         this.apiHandler.getDelegateAccess(this.project.id, (msg, data) => {
             this.setState({
-                delegateAccess: data
+                delegateAccess: data,
+                loading: false,
             })
         })
     }
@@ -55,9 +57,9 @@ class ProjectDetails extends Component {
                         <td>{td.disk} GB</td>
                         <td>{td.region}</td>
                         <td className='text-center'>
-                            <Link to={'/servers/' + td.uuid} className="btn btn-theme btn-sm">
+                            <button onClick={() => this.setProject(this.project, 'servers/' + td.uuid)} className="btn btn-theme btn-sm">
                                 View
-                            </Link>
+                            </button>
                         </td>
 
                     </tr>
@@ -85,9 +87,9 @@ class ProjectDetails extends Component {
                         <td>{(td.ssl_enabled === '1') ? 'Yes' : 'No'}</td>
                         <td>{JSON.parse(td.ftp_credentials).length}</td>
                         <td className='text-center'>
-                            <Link to={'/applications/' + td.uuid} className="btn btn-theme btn-sm">
+                            <button onClick={() => this.setProject(this.project, 'applications/' + td.uuid)} className="btn btn-theme btn-sm">
                                 View
-                            </Link>
+                            </button>
                         </td>
                     </tr>
                 )
@@ -109,7 +111,7 @@ class ProjectDetails extends Component {
                 tr.push(
                     <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{td.details.email}</td>
+                        <td>{(td.details) ? td.details.email : td.email}</td>
                         <td className="text-capitalize">{td.status}</td>
                         <td>{new Date(td.created_at).toDateString()}</td>
                         <td>{td.ago}</td>
@@ -137,6 +139,12 @@ class ProjectDetails extends Component {
             });
         }
         return tr;
+    }
+    setProject = (data, to) => {
+        console.log('project set')
+        bake_cookie('projectId', data.uuid)
+        bake_cookie('projectName', data.name)
+        window.location.href = '/' + to
     }
     changeServerStatus = () => {
         this.setState({
@@ -219,6 +227,12 @@ class ProjectDetails extends Component {
             }, (error) => {
                 this.setState({ loading: false, error: error, success: "", showModal: true })
             });
+        }
+    }
+    onEnterPress = (e) => {
+        if (e.keyCode === 13 && e.shiftKey === false) {
+            e.preventDefault();
+            this.addDelegateAccess();
         }
     }
     render() {
@@ -339,7 +353,7 @@ class ProjectDetails extends Component {
                     </div>
                 </div>
                 <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
-                    <form action="#" method="post">
+                    <form>
                         <Modal.Header closeButton>
                             <Modal.Title>Add User</Modal.Title>
                         </Modal.Header>
@@ -353,7 +367,7 @@ class ProjectDetails extends Component {
                             <div className="modal-form">
                                 <label htmlFor="selectedDomain">Enter Email</label>
                                 <div className="input-group">
-                                    <input placeholder="Email Address" required type="text" className="form-control form-input-field" name="delegate_user_email" value={this.state.delegate_user_email} onChange={this.dataChange} id="delegate_user_email" />
+                                    <input onKeyDown={this.onEnterPress} placeholder="Email Address" required type="text" className="form-control form-input-field" name="delegate_user_email" value={this.state.delegate_user_email} onChange={this.dataChange} id="delegate_user_email" />
                                     <div className="input-group-append">
                                         <div className="input-group-text theme">
                                             <i className="fa fa-user"></i>

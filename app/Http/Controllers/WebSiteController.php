@@ -53,10 +53,21 @@ class WebSiteController extends Controller
     }
     public function showDomains(Request $request)
     {
+        if (!Project::find(CF::projectId($request->project_id))) {
+            return CommonFunctions::sendResponse(0, "Please select a project first");
+        }
         if ($request->project_id) {
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
             $apps = Application::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('server')->paginate();
-            return CommonFunctions::sendResponse(1, "List of applications", $apps);
+            $msg = "List of applications";
+            if ($user->delegateAccess != 'active') {
+                $msg = "You do not have access to this project.";
+            } else {
+                if ($apps->count() == 0) {
+                    $msg = "Please create a Application.";
+                }
+            }
+            return CommonFunctions::sendResponse(1, $msg, $apps);
         } else {
             return CommonFunctions::sendResponse(0, "Please select a project first");
         }

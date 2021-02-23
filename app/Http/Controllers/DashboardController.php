@@ -14,8 +14,10 @@ use App\Models\User;
 use App\Models\DelegateAccess;
 use App\Models\Notifications;
 use App\Notifications\DelegateAccessInvitation;
-use Artisan;
-use Illuminate\Support\Facades\Redis;
+use App\Notifications\ServerDeleteVerification;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 
 class DashboardController extends Controller
 {
@@ -42,17 +44,50 @@ class DashboardController extends Controller
         $project->save();
         return CommonFunctions::sendResponse(1, "Project created successfully");
     }
+    public function sendDeleteCode(Request $request)
+    {
+
+        $project = Project::find($request->id);
+        $user = User::find(auth()->user()->id);
+        // $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+        if (!$project) {
+            return CommonFunctions::sendResponse(0, "Invalid Server");
+        }
+        if ($project->user_id != $user->id) {
+            return CommonFunctions::sendResponse(0, "You don't have access to this resource.");
+        }
+        $code = rand(100, 999) . "-" . CommonFunctions::reverse_string(time()) . "-" . rand(100, 999);
+        $project->delete_code = $code;
+        $project->save();
+        // $user->notify(new ServerDeleteVerification($project->name, $code, $user));
+        return CommonFunctions::sendResponse(1, "A Verification Code has been sent to your email id, please verify to delete this project");
+    }
     public function deleteProject(Request $request)
     {
         $project = Project::find($request->id);
-        $servers = Server::where('project_id', $project->id)->get();
-        foreach ($servers as $server) {
-            // delete droplets
-            // CommonFunctions::makeRequest("/droplets/$server->droplet_id", "DELETE");
-            $server->delete();
+        if (!$project) {
+            return CommonFunctions::sendResponse(0, "Invalid project");
         }
-        $project->delete();
-        return CommonFunctions::sendResponse(1, "Project deleted successfully", $servers);
+        $code = $request->get('code');
+        if ($code != $project->delete_code) {
+            return CommonFunctions::sendResponse(0, "Invalid code");
+        }
+        if (CommonFunctions::checkDeleteCode($code, $project->delete_code)) {
+            $servers = Server::where('project_id', $project->id);
+            if ($servers->exists()) {
+                foreach ($servers as $server) {
+                    // delete droplets
+                    $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
+                    $response = CommonFunctions::makeRequest($url, "DELETE", null, "X-Dangerous: true");
+                    Application::where("server_id", $server->id)->delete();
+                }
+            }
+            DelegateAccess::where('project_id', $project->id)->delete();
+            $project->delete();
+            return CommonFunctions::sendResponse(1, "Project deleted successfully");
+        } else {
+            return CommonFunctions::sendResponse(0, "Code Expired");
+        }
     }
     public function delegateAccess(Request $request)
     {
@@ -66,21 +101,31 @@ class DashboardController extends Controller
         }
         //$project = CF::projectId($project);
         $uid = User::where('email', $email);
-        if (!$uid->exists()) {
-            return CommonFunctions::sendResponse(0, "Invalid Email ID");
-        }
-        $da = DelegateAccess::where([['project_id', $project], ['_delegate_user_id', $uid->first()->id]]);
+
+        $da = DelegateAccess::where([['project_id', $project], ['email', $email]]);
         if ($da->exists()) {
             return CommonFunctions::sendResponse(0, "This user already have access");
         }
+        $uuid =  Str::uuid();
         $access = new DelegateAccess();
         $access->user_id = auth()->user()->id;
-        $access->_delegate_user_id = $uid->first()->id;
+        $access->email = $email;
+        $access->token = $uuid;
+        if ($uid->exists()) {
+            $access->_delegate_user_id = $uid->first()->id;
+        } else {
+            $access->_delegate_user_id = 0;
+        }
         $access->project_id = $project;
         $access->save();
-        $uid->first()->notify(new DelegateAccessInvitation());
-        $msg = "You have recieved a delegate access invitation from " . auth()->user()->name . ", please check the delegate access section.";
-        CommonFunctions::notifyUser($uid->first()->id, $msg);
+        if ($uid->exists()) {
+            $uid->first()->notify(new DelegateAccessInvitation($uuid));
+            $msg = "You have received a delegate access invitation from " . auth()->user()->name . ", please check the delegate access section to accept the invitation.";
+            CommonFunctions::notifyUser($uid->first()->id, $msg);
+        } else {
+            Notification::route('mail', $email)->notify(new DelegateAccessInvitation($uuid));
+        }
+
         return CommonFunctions::sendResponse(1, "Invitation sent successfully");
     }
     public function getDelegateAccess($project)
@@ -88,13 +133,47 @@ class DashboardController extends Controller
         $da = DelegateAccess::where([['user_id', auth()->user()->id], ['project_id', $project]])->with('details')->get();
         return CommonFunctions::sendResponse(1, "Users", $da);
     }
+    public function validateInvitation(Request $request)
+    {
+        $token = $request->get('token');
+        $dA = DelegateAccess::where('token', $token)->first();
+        if (User::where('email', $dA->email)->exists()) {
+            $status = 'login';
+        } else {
+            $status = 'register';
+        }
+        $data = [
+            'user' => User::find($dA->user_id)->name,
+            'project' => Project::find($dA->project_id)->name,
+            'status' => $status,
+            'email' => $dA->email
+        ];
+        if ($dA->_delegate_user_id != 0) {
+            $data['status'] = 'active';
+        }
+        return CommonFunctions::sendResponse(1, "Valid", $data);
+    }
+    public function acceptInvitation(Request $request)
+    {
+        $token = $request->get('token');
+        $accept = $request->get('accept');
+        $dA = DelegateAccess::where('token', $token)->first();
+        $user = User::where('email', $dA->email);
 
+        if (!$user->exists()) {
+            return CommonFunctions::sendResponse(0, "Invalid user");
+        }
+        $dA->_delegate_user_id = $user->first()->id;
+        $dA->status = ($accept) ? 'active' : 'rejected';
+        $dA->save();
+        return CommonFunctions::sendResponse(1, "Invitation accepted");
+    }
     public function delegateAccounts()
     {
         $da = DelegateAccess::where([['_delegate_user_id', auth()->user()->id]])->with('project')->get();
         return CommonFunctions::sendResponse(1, "Users", $da);
     }
-    public function chamgeDuStatus(Request $request)
+    public function changeDuStatus(Request $request)
     {
         $duId = $request->get('id');
         $status = $request->get('status');
@@ -157,20 +236,50 @@ class DashboardController extends Controller
         }
         return 0;
     }
-
+    public function sendDeleteVerification(Request $request)
+    {
+        $serverId = $request->get('id');
+        $server = Server::find($serverId);
+        // $user = User::find(auth()->user()->id);
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+        if (!$server) {
+            return CommonFunctions::sendResponse(0, "Invalid Server");
+        }
+        if ($server->user_id != $user->id) {
+            return CommonFunctions::sendResponse(0, "You don't have access to this resource.");
+        }
+        $code = rand(100, 999) . "-" . CommonFunctions::reverse_string(time()) . "-" . rand(100, 999);
+        $server->delete_code = $code;
+        $server->save();
+        //$user->notify(new ServerDeleteVerification($server->name, $code, $user));
+        return CommonFunctions::sendResponse(1, "A Verification Code has been sent to your email id, please verify to delete this server");
+    }
     public function dropletAction(Request $request, $id)
     {
         $action = $request->get('action');
+        $code = $request->get('code');
         $server = Server::find($id);
-        $user = auth()->user();
+        $user = CommonFunctions::userHasDelegateAccess($request->project_id);
         if ($server) {
             if ($server->user_id == $user->id) {
                 if ($action == "destroy") {
-                    $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
-                    $response = CommonFunctions::makeRequest($url, "DELETE", null, "X-Dangerous: true");
-                    Application::where("server_id", $server->id)->delete();
-                    $server->delete();
-                    return CommonFunctions::sendResponse(1, "Droplet Destroyed");
+                    $deleteCode = $server->delete_code;
+                    if ($code != $deleteCode) {
+                        return CommonFunctions::sendResponse(0, "Invalid Code");
+                    }
+                    if (CommonFunctions::checkDeleteCode($code, $deleteCode)) {
+                        $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
+                        $response = CommonFunctions::makeRequest($url, "DELETE", null, "X-Dangerous: true");
+                        Application::where("server_id", $server->id)->delete();
+                        $server->delete_code = "";
+                        $server->save();
+                        $server->delete();
+                        return CommonFunctions::sendResponse(1, "Droplet Destroyed");
+                    } else {
+                        $server->delete_code = "";
+                        $server->save();
+                        return CommonFunctions::sendResponse(0, "Code Expired");
+                    }
                 } elseif ($action == "resize") {
                     if ($server->status != "READY") {
                         return CommonFunctions::sendResponse(0, "Server is not ready yet");
@@ -200,7 +309,7 @@ class DashboardController extends Controller
                 }
                 return CommonFunctions::sendResponse(0, "Invalid Droplet Action");
             }
-            return CommonFunctions::sendResponse(0, "You dont have access to this resource");
+            return CommonFunctions::sendResponse(0, "You don't have access to this resource");
         } else {
             return CommonFunctions::sendResponse(0, "Invalid Droplet ID");
         }
@@ -210,7 +319,7 @@ class DashboardController extends Controller
     {
         $name = $request->get('name');
         $size = $request->get('size');
-        $project_id = $request->get('peojwct_id');
+        $project_id = $request->get('project_id');
         $region = $request->get('region');
         $appName = $request->get('appName');
         if (empty($project_id)) {
@@ -297,22 +406,21 @@ class DashboardController extends Controller
 
     public function droplets(Request $request)
     {
+        if (!Project::find(CF::projectId($request->project_id))) {
+            return CommonFunctions::sendResponse(0, "Please select a project first");
+        }
         if ($request->project_id) {
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
             $servers = Server::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('applications')->with("storage")->with('project')->paginate();
             $msg = "Your Droplets";
             //TODO: FIX IT
-            // if ($servers->count() == 0) {
-            //     $msg = "Please create a server first.";
-            // }
-            // if ($user->delegateAccess) {
-            //     if ($user->delegateStatus !== "active") {
-            //         $msg = "You do not have access to the project";
-            //     }
-            //     if ($user->delegateStatus != "active" && $servers->count() == 0) {
-            //         $msg = "Please create a server first.";
-            //     }
-            // }
+            if ($user->delegateAccess != 'active') {
+                $msg = "You do not have access to this project.";
+            } else {
+                if ($servers->count() == 0) {
+                    $msg = "Please create a server first.";
+                }
+            }
 
             return CommonFunctions::sendResponse(1, $msg, $servers);
         } else {

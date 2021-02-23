@@ -12,6 +12,7 @@ class DelegateAccess extends Model
     protected $table = "delegate_access";
 
     protected $appends = ['ago'];
+
     public function details()
     {
         return $this->belongsTo('App\Models\User', '_delegate_user_id')->select(['name', 'email', 'id']);
@@ -22,6 +23,6 @@ class DelegateAccess extends Model
     }
     public function getAgoAttribute()
     {
-        return \Carbon\Carbon::parse($this->last_active)->diffForHumans();
+        return ($this->last_active) ? \Carbon\Carbon::parse($this->last_active)->diffForHumans() : '';
     }
 }

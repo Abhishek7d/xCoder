@@ -11,6 +11,7 @@ import { withRouter, } from 'react-router';
 import PageHeader from '../components/template/PageHeader';
 import Status from '../components/Status';
 import Pagination from '../components/template/Pagination';
+import { read_cookie } from 'sfcookies';
 
 class Applications extends React.Component {
     constructor(props) {
@@ -22,6 +23,8 @@ class Applications extends React.Component {
             applicationData: {},
             showModal: false,
             loadding: false,
+            projectName: read_cookie('projectName'),
+            projectId: read_cookie('projectId'),
             servers: [],
             error: "",
             success: "",
@@ -37,6 +40,8 @@ class Applications extends React.Component {
             screenName: "Applications",
             serverPage: 1,
             applicationPage: 1,
+            accessStatus: null,
+
         }
         this.apiHandler = new ApiHandler();
     }
@@ -66,7 +71,7 @@ class Applications extends React.Component {
                     this.setState({ selectedApplication: app });
                 }
             })
-            this.setState({ applications: data.data, appLoadding: false, applicationData: data })
+            this.setState({ accessStatus: msg, applications: data.data, appLoadding: false, applicationData: data })
         }, err => {
             this.showError(err);
         })
@@ -121,7 +126,10 @@ class Applications extends React.Component {
         }
 
         if (applications.length < 1) {
-            applications = <div className="col-12 text-center"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Application Created</p></div>
+            applications = <div className="col-12 text-center"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
+        }
+        if (typeof this.state.projectId === 'object') {
+            applications = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>Please select a Project.</p></div>
         }
         return applications;
     }
@@ -211,6 +219,12 @@ class Applications extends React.Component {
     }
     handlePageChange = (data) => {
         this.loadApplications(data)
+    }
+    onEnterPress = (e) => {
+        if (e.keyCode === 13 && e.shiftKey === false) {
+            e.preventDefault();
+            this.handleAddApplication();
+        }
     }
     render() {
         return (
@@ -334,7 +348,7 @@ class Applications extends React.Component {
                     </section> */}
 
                         <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
-                            <form action="#" method="post">
+                            <form>
                                 <Modal.Header closeButton>
                                     <Modal.Title>ADD APPLICATION</Modal.Title>
                                 </Modal.Header>
@@ -348,7 +362,7 @@ class Applications extends React.Component {
                                     <div className="modal-form">
                                         <label htmlFor="selectedDomain">Enter Domain Name</label>
                                         <div className="input-group">
-                                            <input required type="text" className="form-control form-input-field" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
+                                            <input onKeyDown={this.onEnterPress} required type="text" className="form-control form-input-field" name="selectedDomain" value={this.state.selectedDomain} onChange={this.dataChange} id="selectedDomain" />
                                             <div className="input-group-append">
                                                 <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <rect width="45" height="45" rx="8" fill="#7973FE" />

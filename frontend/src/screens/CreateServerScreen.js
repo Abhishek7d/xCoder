@@ -143,10 +143,16 @@ class CreateServerScreen extends React.Component {
             showModal: true,
         })
     }
+    onEnterPress = (e) => {
+        if (e.keyCode === 13 && e.shiftKey === false) {
+            e.preventDefault();
+            this.formAction();
+        }
+    }
     render() {
         return (
             <Modal show={this.state.showModal} onHide={this.handleModalClose}>
-                <form action="#" method="post">
+                <form>
                     <Modal.Header closeButton>
                         <Modal.Title>Create Server</Modal.Title>
                     </Modal.Header>
@@ -160,7 +166,7 @@ class CreateServerScreen extends React.Component {
                         <div className="modal-form">
                             <label htmlFor="">Server Name</label>
                             <div className="input-group">
-                                <input type="text" required value={this.state.name} onChange={this.dataChange} name="name" className="form-control form-input-field" id="Namemanageserver"
+                                <input onKeyDown={this.onEnterPress} type="text" required value={this.state.name} onChange={this.dataChange} name="name" className="form-control form-input-field" id="Namemanageserver"
                                     placeholder="Name your Managed Server" />
                                 <div className="input-group-append">
                                     <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -202,7 +208,7 @@ class CreateServerScreen extends React.Component {
                         <div className="modal-form">
                             <label htmlFor="">Application Name</label>
                             <div className="input-group">
-                                <input type="text" required value={this.state.appName} onChange={this.dataChange} name="appName" className="form-control form-input-field" id="appName"
+                                <input onKeyDown={this.onEnterPress} type="text" required value={this.state.appName} onChange={this.dataChange} name="appName" className="form-control form-input-field" id="appName"
                                     placeholder="Application Name" />
                                 <div className="input-group-append">
                                     <svg width="38" height="38" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">

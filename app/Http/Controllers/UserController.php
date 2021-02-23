@@ -193,7 +193,7 @@ class UserController extends Controller
                 if (Auth::attempt(['email' => $email, 'password' => $password])) {
                     $user = Auth::user();
                     if (!$user->hasVerifiedEmail()) {
-                        return CommonFunctions::sendResponse(0, "Email Not Verified  <a href='#'>Resend</a>", true);
+                        return CommonFunctions::sendResponse(0, "Email Not Verified", true);
                     }
                     $user = Auth::user();
                     $token_key = Str::random(32);

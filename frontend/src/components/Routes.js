@@ -14,6 +14,7 @@ import Notifications from '../screens/Notifications';
 
 import { read_cookie } from 'sfcookies';
 import DelegateAccess from '../screens/DelegateAccess';
+import Invitation from '../screens/Invitation';
 
 let routes = [
     {
@@ -105,6 +106,13 @@ let routes = [
         }
     },
     {
+        path: '/invitations/:tokenId',
+        title: 'Invitation',
+        component: () => {
+            return <Invitation />;
+        }
+    },
+    {
         path: '/servers/:serverId',
         title: 'Server',
         component: () => {
@@ -117,6 +125,7 @@ let routes = [
             }
         }
     },
+
     {
         path: '/servers',
         title: 'Dashboard',
