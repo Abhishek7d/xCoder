@@ -52,7 +52,7 @@ class Credentials extends React.Component {
                             </div>
                             <div className="col-10">
                                 <p>
-                                    <Link to={'/applications?serverId=' + this.server.id} style={{ color: "inherit" }}>
+                                    <Link to={'/applications?serverId=' + this.server.uuid} style={{ color: "inherit" }}>
                                         {(this.server.applications) ? this.server.applications.length : 0} Applications
                             </Link>
                                 </p>

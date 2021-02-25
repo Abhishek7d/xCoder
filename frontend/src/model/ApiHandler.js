@@ -335,6 +335,26 @@ class ApiHandler {
             }
         }, failure);
     }
+    getServerUnassigned = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/droplets?project_id=" + project + "&unassigned=1", "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
 
     createServer = (serverName, serverSize, serverLocation, appName, success = () => { }, faild = () => { }) => {
         if (!serverName || !serverSize || !serverLocation || !appName) return;
@@ -389,12 +409,14 @@ class ApiHandler {
             }
         }, faild);
     }
-    getApplications = (page = 1, success = () => { }, failure = () => { }) => {
+    getApplications = (project = null, all = 0, page = 1, success = () => { }, failure = () => { }) => {
         let access_token = read_cookie("auth");
-        let project = read_cookie('projectId');
+        if (!project) {
+            project = read_cookie('projectId');
+        }
         var authHeaders = new Headers();
         authHeaders.append("Authorization", "Bearer " + access_token)
-        this.getResult("/application?project_id=" + project + "&page=" + page, "GET", null, authHeaders, (response) => {
+        this.getResult("/application/" + all + "?project_id=" + project + "&page=" + page, "GET", null, authHeaders, (response) => {
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {
                     delete_cookie("auth");
@@ -778,7 +800,7 @@ class ApiHandler {
         }, failure);
     }
 
-    createProject = (projectName, success = () => { }, faild = () => { }) => {
+    createProject = (projectName, servers = null, success = () => { }, faild = () => { }) => {
         if (!projectName) return;
         let access_token = read_cookie("auth");
         //  let project = read_cookie('projectId');
@@ -786,7 +808,37 @@ class ApiHandler {
         authHeaders.append("Authorization", "Bearer " + access_token)
         const formData = new FormData();
         formData.append("name", projectName);
+        if (servers) {
+            formData.append("servers", servers);
+        }
         this.getResult("/project", "POST", formData, authHeaders, (response) => {
+            console.log(response)
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                faild(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                faild("something went wrong");
+            }
+        }, faild);
+    }
+    assignServers = (projectName, servers = null, success = () => { }, faild = () => { }) => {
+        if (!projectName) return;
+        let access_token = read_cookie("auth");
+        //  let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("name", projectName);
+        if (servers) {
+            formData.append("servers", servers);
+        }
+        this.getResult("/project/assign", "POST", formData, authHeaders, (response) => {
             console.log(response)
             if (response.status === 0) {
                 if (response.message === "Authentication Faild") {

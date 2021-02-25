@@ -8,7 +8,7 @@ class Navigation extends React.Component {
     constructor(props) {
         super();
         this.state = {
-            loadding: false,
+            loading: false,
             error: "",
             name: read_cookie("name"),
             success: "",
@@ -36,6 +36,9 @@ class Navigation extends React.Component {
                         name: 'My Projects'
                     }],
                 })
+                if (data.data.length === 1) {
+                    this.setProject(data.data[0]);
+                }
             }
             this.setState({ projects: [...this.state.projects, ...data.data] })
 
@@ -141,12 +144,12 @@ class Navigation extends React.Component {
             form.reportValidity();
             return;
         }
-        if (this.state.loadding) {
+        if (this.state.loading) {
             return;
         }
-        this.setState({ loadding: true })
+        this.setState({ loading: true })
         this.apiHandler.createProject(this.state.name, (message, data) => {
-            this.setState({ loadding: false });
+            this.setState({ loading: false });
             window.location.href = "/projects";
         }, data => console.log(data))
     }
@@ -154,15 +157,15 @@ class Navigation extends React.Component {
         this.setState({ [event.target.name]: event.target.value })
     }
     handleLogout = () => {
-        this.setState({ error: "", success: "", loadding: true })
+        this.setState({ error: "", success: "", loading: true })
         this.apiHandler.logout((message, data) => {
-            this.setState({ error: "", success: message, loadding: false })
+            this.setState({ error: "", success: message, loading: false })
             delete_cookie("name");
             delete_cookie("email");
             delete_cookie("auth");
             window.location.href = "/login";
         }, (message) => {
-            this.setState({ error: message, success: "", loadding: false })
+            this.setState({ error: message, success: "", loading: false })
             console.log(message);
         });
     }
@@ -181,14 +184,18 @@ class Navigation extends React.Component {
                     </ul>
                     <ul className="navbar-nav ml-auto">
                         <li className="nav-item" >
-                            <div className="dropdown show prifile-dropdown">
-                                <div className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {this.state.projectName}
-                                </div>
-                                <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    {this.renderProjects()}
-                                </div>
-                            </div>
+                            {(this.state.projects.length > 0) ?
+                                <div className="dropdown show profile-dropdown">
+                                    <div className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        {this.state.projectName}
+                                    </div>
+                                    <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        {this.renderProjects()}
+                                    </div>
+                                </div> :
+                                ''
+                            }
+
                         </li>
                         <li className="nav-item">
                             <Link to="/notifications" className={"nav-link p-0"}>
@@ -214,7 +221,7 @@ class Navigation extends React.Component {
                         </li>
 
                         <li className="nav-item">
-                            <div className="dropdown show prifile-dropdown">
+                            <div className="dropdown show profile-dropdown">
                                 <div className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Hello, <b>{this.state.name}</b>
                                 </div>
@@ -250,7 +257,7 @@ class Navigation extends React.Component {
                         <Modal.Footer>
                             <Button variant="info" onClick={this.handleAddProject}>
                                 {
-                                    this.state.loadding ?
+                                    this.state.loading ?
                                         <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                         : "ADD PROJECT"
                                 }

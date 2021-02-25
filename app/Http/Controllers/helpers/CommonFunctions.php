@@ -6,13 +6,14 @@ use App\Models\User;
 use App\Models\Project;
 use phpseclib\Net\SSH2;
 use phpseclib\Crypt\RSA;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
 use App\Models\DelegateAccess;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Notifications\Notification;
 use phpDocumentor\Reflection\Types\Self_;
+use Illuminate\Notifications\Notification;
 
 class CommonFunctions extends Controller
 {
@@ -126,10 +127,9 @@ class CommonFunctions extends Controller
             $dA->update([
                 "last_active" => \Carbon\Carbon::now()
             ]);
-            $project = Project::where('id', $project_id);
+            $project = Project::where([['user_id', $dA->first()->user_id], ['id', $project_id]]);
             if ($project->exists()) {
-                $pUser = $project->first()->user_id;
-                $user = User::find($pUser);
+                $user = User::find($dA->first()->user_id);
                 $user->delegateAccess = true;
             }
         }
@@ -172,5 +172,9 @@ class CommonFunctions extends Controller
         $datetime2 = new \DateTime("@$time1"); //end time
         $interval = $datetime1->diff($datetime2);
         return  $interval->format($format);
+    }
+    public static function makeUuid($prefix, $name)
+    {
+        return (string) Str::slug($prefix . ' ' . strtolower($name) . ' ' . Str::uuid(), '-');
     }
 }

@@ -14,7 +14,7 @@ class AddUuidToApplicationsTable extends Migration
     public function up()
     {
         Schema::table('applications', function (Blueprint $table) {
-            $table->string('uuid');
+            $table->string('uuid')->nullable();
         });
     }
 

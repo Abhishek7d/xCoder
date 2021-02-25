@@ -14,7 +14,7 @@ class AddUuidToProjectTable extends Migration
     public function up()
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->string('uuid');
+            $table->string('uuid')->nullable();
         });
     }
 

@@ -51,14 +51,31 @@ class WebSiteController extends Controller
         $application->delete();
         return CommonFunctions::sendResponse(1, "Application Deleted Successfully", $output);
     }
-    public function showDomains(Request $request)
+    public function showDomains(Request $request, $all = false)
     {
         if (!Project::find(CF::projectId($request->project_id))) {
             return CommonFunctions::sendResponse(0, "Please select a project first");
         }
         if ($request->project_id) {
+            $projectId  = CommonFunctions::projectId($request->project_id);
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
-            $apps = Application::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('server')->paginate();
+
+            // Find servers
+            $servers = Server::where([['project_id', $projectId], ['user_id', $user->id]]);
+            if (!$servers->exists()) {
+                return CommonFunctions::sendResponse(0, "Please create or assign a server to the project");
+            }
+            $ids = [];
+            foreach ($servers->get() as $server) {
+                $ids[] = $server->id;
+            }
+            $perPage = '';
+            $apps = Application::where("user_id", $user->id)->whereIn('server_id', $ids);
+            if ($all) {
+                $perPage = $apps->count();
+            }
+            $apps = $apps->with('server')->paginate($perPage);
+            // $apps = Application::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('server')->paginate();
             $msg = "List of applications";
             if ($user->delegateAccess != 'active') {
                 $msg = "You do not have access to this project.";

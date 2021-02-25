@@ -14,7 +14,7 @@ class AddUuidToServersTable extends Migration
     public function up()
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->string('uuid');
+            $table->string('uuid')->nullable();
         });
     }
 

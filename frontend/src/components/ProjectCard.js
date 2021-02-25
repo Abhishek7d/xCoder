@@ -16,6 +16,7 @@ class ProjectCard extends Component {
             sending: true,
             message: null,
             codeSent: false,
+            servers: props.servers,
             code: null,
         }
         this.project = props.data;
@@ -27,13 +28,15 @@ class ProjectCard extends Component {
         // console.log(data)
     }
     deleteProject = () => {
+        this.setState({ loading: SVGComponentTransferFunctionElement })
+
         this.apiHandler.deleteProject(this.project.id, this.state.code, (msg, data) => {
-            this.setState({ error: "", success: msg, })
+            this.setState({ error: "", success: msg, loading: false })
             delete_cookie('projectId')
             delete_cookie('projectName')
             window.location.reload()
         }, (error) => {
-            this.setState({ error: error, success: "", })
+            this.setState({ error: error, success: "", loading: false })
         })
     }
     sendVerificationCode = () => {

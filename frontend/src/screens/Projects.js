@@ -17,12 +17,14 @@ class Projects extends React.Component {
             selectedProject: null,
             isProjectClicked: false,
             showModal: false,
-            loadding: true,
+            loading: true,
             projectName: "",
             screenName: 'Projects',
             error: "",
             success: "",
-            projectId: projectId
+            projectId: projectId,
+            servers: [],
+            selectedServers: null,
 
         }
         this.apiHandler = new ApiHandler();
@@ -42,16 +44,17 @@ class Projects extends React.Component {
                     })
                 }
             })
-            this.setState({ projects: data.data, loadding: false })
+            this.setState({ projects: data.data, loading: false })
         }, err => {
             this.showError(err);
         })
+        this.getServers()
     }
     renderProjects() {
 
         let projects = [];
         this.state.projects.forEach((data, index) => {
-            projects.push(<ProjectCard key={index} data={data} projectClickHandler={this.projectClickHandler} />);
+            projects.push(<ProjectCard key={index} data={data} servers={this.state.servers} projectClickHandler={this.projectClickHandler} />);
         })
         if (projects.length < 1) {
             projects = <div className="col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No projects Created</p></div>
@@ -97,17 +100,26 @@ class Projects extends React.Component {
             form.reportValidity();
             return;
         }
-        if (this.state.loadding) {
+        if (this.state.loading) {
             return;
         }
-        this.setState({ error: "", success: "", loadding: true })
-        this.apiHandler.createProject(this.state.projectName, (message, data) => {
-            this.setState({ error: "", success: message, loadding: false })
+        this.setState({ error: "", success: "", loading: true })
+        this.apiHandler.createProject(this.state.projectName, this.state.selectedServers, (message, data) => {
+            this.setState({ error: "", success: message, loading: false })
             window.location.href = "/projects"
             console.log(data, message);
         }, (message) => {
-            this.setState({ error: message, success: "", loadding: false })
+            this.setState({ error: message, success: "", loading: false })
             console.log(message);
+        });
+    }
+    getServers = () => {
+        this.apiHandler.getServerUnassigned((msg, data) => {
+            this.setState({
+                servers: data
+            })
+        }, (data) => {
+
         });
     }
     onEnterPress = (e) => {
@@ -115,6 +127,17 @@ class Projects extends React.Component {
             e.preventDefault();
             this.handleAddProject();
         }
+    }
+    renderServers = () => {
+        let select = [];
+        this.state.servers.forEach((data, index) => {
+            select.push(<option key={index} value={data.id}>{data.name}</option>)
+        })
+        return select;
+    }
+    selectChange = (event) => {
+        let value = Array.from(event.target.selectedOptions, option => option.value);
+        this.setState({ [event.target.name]: value })
     }
     render() {
         return (
@@ -171,8 +194,6 @@ class Projects extends React.Component {
                             <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
                                 {this.state.success}
                             </Alert>
-                            <div className="form-group">
-                            </div>
                             <div className="modal-form">
                                 <label htmlFor="projectName">Project Name</label>
                                 <div className="input-group">
@@ -184,6 +205,19 @@ class Projects extends React.Component {
                                     </div>
                                 </div>
                             </div>
+                            {
+                                (this.state.servers.length > 0) ?
+                                    <div className="modal-form">
+                                        <label htmlFor="assignServers">Assign Servers</label>
+                                        <div className="input-group">
+                                            <select onChange={this.selectChange} name="selectedServers" className="custom-select" size="2" multiple aria-label="multiple select">
+                                                {this.renderServers()}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    :
+                                    ''
+                            }
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="default" onClick={this.handleModalClose}>
@@ -191,7 +225,7 @@ class Projects extends React.Component {
                             </Button>
                             <Button className="btn btn-theme" onClick={this.handleAddProject}>
                                 {
-                                    this.state.loadding ?
+                                    this.state.loading ?
                                         <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                         : "ADD PROJECT"
                                 }
@@ -223,8 +257,8 @@ class Projects extends React.Component {
 
                                 </PageHeader>
                                 <div className="row">
-                                    {(!this.state.loadding) ?
-                                        <ProjectDetails project={this.state.selectedProject} projectClickHandler={this.goBack} />
+                                    {(!this.state.loading) ?
+                                        <ProjectDetails servers={this.state.servers} project={this.state.selectedProject} projectClickHandler={this.goBack} />
                                         :
                                         <div className='col-12 text-center'>
                                             <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
@@ -256,7 +290,7 @@ class Projects extends React.Component {
 
                                 </PageHeader>
                                 <div className="row">
-                                    {(!this.state.loadding) ? this.renderProjects() :
+                                    {(!this.state.loading) ? this.renderProjects() :
                                         <div className='col-12 text-center'>
                                             <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
                                         </div>}

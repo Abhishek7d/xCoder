@@ -11,6 +11,7 @@ import CreateServerScreen from "./CreateServerScreen";
 import PageHeader from '../components/template/PageHeader';
 import Pagination from '../components/template/Pagination';
 import { read_cookie } from 'sfcookies';
+import { Alert } from 'react-bootstrap';
 
 class Servers extends React.Component {
     constructor(props) {
@@ -63,8 +64,7 @@ class Servers extends React.Component {
             this.setState({ accessStatus: msg, servers: data.data, loading: false, serverData: data })
         }, err => {
             this.showError(err);
-            this.setState({ loading: false })
-
+            this.setState({ loading: false, accessStatus: err, })
         })
     }
     getRegionName = (slug) => {
@@ -78,14 +78,16 @@ class Servers extends React.Component {
         }
         let servers = [];
         this.state.servers.forEach((data, index) => {
-            servers.push(<ServerCard reloadServers={this.handlePageChange} serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
+            if (data.project_id !== null) {
+                servers.push(<ServerCard reloadServers={this.handlePageChange} serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
+            }
         })
         if (servers.length < 1) {
             servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
         }
 
         if (typeof this.state.projectId === 'object') {
-            servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>Please select a Project.</p></div>
+            servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
         }
         return servers;
     }
@@ -148,6 +150,11 @@ class Servers extends React.Component {
                                     </div>
                                 </PageHeader>
                                 <div className="row">
+                                    <div className="col-12">
+                                        <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your Droplets") ? true : false} variant="danger">
+                                            {this.state.accessStatus}
+                                        </Alert>
+                                    </div>
                                     {this.renderServers()}
                                 </div>
                                 <Pagination onPageChange={this.handlePageChange} key={this.state.serverData.current_page} data={this.state.serverData}></Pagination>

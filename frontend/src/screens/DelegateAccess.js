@@ -41,7 +41,7 @@ class DelegateAccess extends React.Component {
                 tr.push(
                     <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{td.project.name}</td>
+                        <td>{(td.project) ? td.project.name : ''}</td>
                         <td className="text-capitalize">{td.status}</td>
                         <td>{new Date(td.created_at).toDateString()}</td>
                         <td>{td.ago}</td>

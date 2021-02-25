@@ -18,6 +18,7 @@ use App\Notifications\ServerDeleteVerification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Crypt;
+use phpDocumentor\Reflection\Types\Self_;
 
 class DashboardController extends Controller
 {
@@ -35,6 +36,8 @@ class DashboardController extends Controller
     public function createProject(Request $request)
     {
         $projectName = $request->get('name');
+        $servers = $request->get('servers');
+
         if (empty($projectName)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
@@ -42,11 +45,50 @@ class DashboardController extends Controller
         $project->name = $projectName;
         $project->user_id = auth()->user()->id;
         $project->save();
+        if ($servers) {
+            $servers = explode(',', $servers);
+            foreach ($servers as $server) {
+                $ser = Server::find($server);
+                $ser->project_id = $project->id;
+                $ser->uuid = CommonFunctions::makeUuid('server', $ser->name);
+                $ser->save();
+                $this->assignUuidToApps($ser->id);
+            }
+        }
         return CommonFunctions::sendResponse(1, "Project created successfully");
+    }
+    public function assignServers(Request $request)
+    {
+        $project_id = $request->get('name');
+        $servers = $request->get('servers');
+
+        if (empty($project_id)) {
+            return CommonFunctions::sendResponse(0, "All Fields are required");
+        }
+        if ($servers) {
+            $servers = explode(',', $servers);
+            foreach ($servers as $server) {
+                $ser = Server::find($server);
+                $ser->project_id = $project_id;
+                $ser->uuid = CommonFunctions::makeUuid('server', $ser->name);
+                $ser->save();
+                $this->assignUuidToApps($ser->id);
+            }
+        }
+        return CommonFunctions::sendResponse(1, "Server assigned successfully");
+    }
+    public function assignUuidToApps($serverId)
+    {
+        $apps = Application::where('server_id', $serverId);
+        if ($apps->exists()) {
+            foreach ($apps->get() as $app) {
+                $app->uuid = CommonFunctions::makeUuid('application', $app->name);
+                $app->save();
+            }
+        }
     }
     public function sendDeleteCode(Request $request)
     {
-
         $project = Project::find($request->id);
         $user = User::find(auth()->user()->id);
         // $user = CommonFunctions::userHasDelegateAccess($request->project_id);
@@ -59,7 +101,7 @@ class DashboardController extends Controller
         $code = rand(100, 999) . "-" . CommonFunctions::reverse_string(time()) . "-" . rand(100, 999);
         $project->delete_code = $code;
         $project->save();
-        // $user->notify(new ServerDeleteVerification($project->name, $code, $user));
+        $user->notify(new ServerDeleteVerification($project->name, $code, $user));
         return CommonFunctions::sendResponse(1, "A Verification Code has been sent to your email id, please verify to delete this project");
     }
     public function deleteProject(Request $request)
@@ -125,7 +167,6 @@ class DashboardController extends Controller
         } else {
             Notification::route('mail', $email)->notify(new DelegateAccessInvitation($uuid));
         }
-
         return CommonFunctions::sendResponse(1, "Invitation sent successfully");
     }
     public function getDelegateAccess($project)
@@ -251,7 +292,7 @@ class DashboardController extends Controller
         $code = rand(100, 999) . "-" . CommonFunctions::reverse_string(time()) . "-" . rand(100, 999);
         $server->delete_code = $code;
         $server->save();
-        //$user->notify(new ServerDeleteVerification($server->name, $code, $user));
+        $user->notify(new ServerDeleteVerification($server->name, $code, $user));
         return CommonFunctions::sendResponse(1, "A Verification Code has been sent to your email id, please verify to delete this server");
     }
     public function dropletAction(Request $request, $id)
@@ -406,25 +447,61 @@ class DashboardController extends Controller
 
     public function droplets(Request $request)
     {
-        if (!Project::find(CF::projectId($request->project_id))) {
-            return CommonFunctions::sendResponse(0, "Please select a project first");
-        }
-        if ($request->project_id) {
+        //if(Project::where('user_id'))
+        if ($request->unassigned) {
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
-            $servers = Server::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('applications')->with("storage")->with('project')->paginate();
-            $msg = "Your Droplets";
-            //TODO: FIX IT
-            if ($user->delegateAccess != 'active') {
-                $msg = "You do not have access to this project.";
-            } else {
-                if ($servers->count() == 0) {
-                    $msg = "Please create a server first.";
-                }
-            }
 
-            return CommonFunctions::sendResponse(1, $msg, $servers);
+            $servers = Server::where([['project_id', null], ['uuid', ''], ["user_id", $user->id]]);
+
+            return CommonFunctions::sendResponse(1, "Servers", $servers->get());
+        }
+        if (!$request->project_id) {
+            // Count servers
+            $servers = Server::where([["user_id", auth()->user()->id]])->count();
+            // Check project
+            $myProjects = Project::where('user_id', auth()->user()->id)->exists();
+            // Check delegate projects
+            $dA = DelegateAccess::where([['status', 'active'], ['_delegate_user_id', auth()->user()->id]])->exists();
+            // Check if user have any kind of project
+            if ($myProjects || $dA) {
+                $msg = "Please select a project.";
+            } else {
+                $msg = "Please create a project. You have $servers server(s), assign these servers to the project.";
+            }
+            return CommonFunctions::sendResponse(0, $msg);
         } else {
-            return CommonFunctions::sendResponse(0, "Please select a project first");
+            $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+            if (Project::where('user_id', $user->id)->exists()) {
+                $servers = Server::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('applications')->with("storage")->with('project')->paginate();
+                $msg = "Your Droplets";
+                //TODO: FIX IT
+                if ($user->delegateAccess != 'active') {
+                    $msg = "You do not have access to this project.";
+                } else {
+                    if ($servers->count() == 0) {
+                        $msg = "No Servers found.";
+                        $servers = Server::where([['project_id', null], ["user_id", $user->id]]);
+                        if ($servers->exists()) {
+                            $msg = "Please assign your existing {$servers->count()} servers.";
+                        }
+                        $servers = $servers->paginate($servers->count());
+                        //return CommonFunctions::sendResponse(0, $msg, $servers);
+                    } else {
+                        $server = Server::where([['project_id', null], ["user_id", $user->id]]);
+                        if ($server->exists()) {
+                            $msg = "Please assign your existing {$server->count()} server(s).";
+                        }
+                    }
+                }
+                return CommonFunctions::sendResponse(1, $msg, $servers);
+            } else {
+                $servers = Server::where([["user_id", $user->id]]);
+                $msg = "Please create a project";
+                if ($servers->exists()) {
+                    $msg .= " and assign your existing {$servers->count()} server(s)";
+                }
+                return CommonFunctions::sendResponse(0, $msg);
+            }
         }
     }
     public function notification()

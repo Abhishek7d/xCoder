@@ -38,6 +38,7 @@ Route::group(['prefix' => 'api'], function () {
         //Route::post('/logout', [UserController::class, 'logout']);
 
         //projects
+        Route::post('/project/assign', [DashboardController::class, 'assignServers']);
         Route::post('/project', [DashboardController::class, 'createProject']);
         Route::post('/project/send-verification-code', [DashboardController::class, 'sendDeleteCode']);
         Route::post('/project/delete', [DashboardController::class, 'deleteProject']);
@@ -49,7 +50,6 @@ Route::group(['prefix' => 'api'], function () {
 
         Route::get('/access/delegate-accounts', [DashboardController::class, 'delegateAccounts']);
         Route::post('/access/accept-invitation', [DashboardController::class, 'acceptInvitation']);
-
 
         //droplets
         Route::get('/sizes', [DashboardController::class, 'availableSizes']);

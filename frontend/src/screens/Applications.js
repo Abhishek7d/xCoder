@@ -47,7 +47,6 @@ class Applications extends React.Component {
     }
     showError(err) {
         this.setState({ error: err })
-
     }
     setShow() {
         this.setState({ error: "", success: "", })
@@ -65,7 +64,9 @@ class Applications extends React.Component {
         this.setState({ rspmsg: message })
     }
     loadApplications(page = 1) {
-        this.apiHandler.getApplications(page, (msg, data) => {
+        this.setState({ appLoadding: true })
+
+        this.apiHandler.getApplications(null, 0, page, (msg, data) => {
             data.data.forEach((app, index) => {
                 if (app.uuid === this.state.selectedApplicationFilter) {
                     this.setState({ selectedApplication: app });
@@ -74,6 +75,7 @@ class Applications extends React.Component {
             this.setState({ accessStatus: msg, applications: data.data, appLoadding: false, applicationData: data })
         }, err => {
             this.showError(err);
+
         })
     }
     refreshApplications = () => {

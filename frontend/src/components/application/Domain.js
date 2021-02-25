@@ -1,5 +1,6 @@
 import React from 'react';
 import ApiHandler from "../../model/ApiHandler";
+import { Alert } from 'react-bootstrap';
 
 class Domain extends React.Component {
     constructor(props) {
@@ -10,8 +11,9 @@ class Domain extends React.Component {
         this.state = {
             domainName: this.application.domain,
             ssl_enabled: props.application.ssl_enabled,
-            loadding: false,
-            message: ""
+            loading: false,
+            error: "",
+            success: ''
         }
         this.apiHandler = new ApiHandler();
     }
@@ -23,27 +25,31 @@ class Domain extends React.Component {
         this.setState({ domainName: name.value })
     }
     updateDomainName = () => {
-        if (this.state.loadding) {
+        if (this.state.loading) {
             return;
         }
-        this.setState({ loadding: true });
+        this.setState({ loading: true });
         this.apiHandler.updateDomainName(this.state.domainName, this.application.id, (message) => {
-            this.setState({ loadding: false, message: message });
+            this.setState({ loading: false, success: message, error: "" });
             this.props.loadApplications();
         }, (message) => {
-            this.setState({ lodding: false, message: message });
+            this.setState({ loading: false, error: message, success: "" });
         })
     }
     updateDomainSSL = () => {
-        if (this.state.loadding) {
+        if (this.state.loading) {
             return;
         }
-        this.setState({ loadding: true });
+        this.setState({ loading: true });
         this.apiHandler.updateSSL(this.application.id, (!(this.state.ssl_enabled === "1")), (message) => {
-            this.setState({ loadding: false, message: message, ssl_enabled: (this.state.ssl_enabled === "1") ? "0" : "1" });
+            this.setState({ loading: false, success: message, error: "", ssl_enabled: (this.state.ssl_enabled === "1") ? "0" : "1" });
         }, (message) => {
-            this.setState({ lodding: false, message: message });
+            this.setState({ loading: false, error: message, success: "", ssl_enabled: "0" });
         })
+        console.log((!(this.state.ssl_enabled === "1")))
+    }
+    setShow() {
+        this.setState({ error: "", success: "", })
     }
     render() {
         return (
@@ -55,7 +61,7 @@ class Domain extends React.Component {
             //         <input className="col-md-6" type="text" onChange={this.domainNameChange} required value={this.state.domainName} placeholder="example.com"/>
             //         <button className="btn btn-info" onClick={this.updateDomainName}>
             //         {
-            //             this.state.loadding ?
+            //             this.state.loading ?
             //                 <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
             //                 : "Update"
             //         }
@@ -69,6 +75,12 @@ class Domain extends React.Component {
                         <p className="sub-heading">Current Domain Name</p>
                     </div>
                     <div className="card-body">
+                        <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
+                            {this.state.error}
+                        </Alert>
+                        <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
+                            {this.state.success}
+                        </Alert>
                         <div className="row">
                             <div className="col-8">
                                 SSL Status
@@ -81,9 +93,6 @@ class Domain extends React.Component {
                                     }
                                     <span className="slider round"></span>
                                 </label>
-                            </div>
-                            <div className="col-md-12">
-                                <p style={{ textAlign: "left", "fontSize": '10px', 'color': '#ccc' }}>{this.state.message}</p>
                             </div>
                         </div>
                         <div className="row mt-4">
@@ -102,7 +111,7 @@ class Domain extends React.Component {
                                 <div className="text-right mt-3">
                                     <button className="btn btn-theme btn-sm" onClick={this.updateDomainName}>
                                         {
-                                            this.state.loadding ?
+                                            this.state.loading ?
                                                 <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
                                                 : "Update"
                                         }
