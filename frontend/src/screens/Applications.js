@@ -75,6 +75,7 @@ class Applications extends React.Component {
             this.setState({ accessStatus: msg, applications: data.data, appLoadding: false, applicationData: data })
         }, err => {
             this.showError(err);
+            this.setState({ appLoadding: false })
 
         })
     }
@@ -131,7 +132,7 @@ class Applications extends React.Component {
             applications = <div className="col-12 text-center"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
         }
         if (typeof this.state.projectId === 'object') {
-            applications = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>Please select a Project.</p></div>
+            applications = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Applications.</p></div>
         }
         return applications;
     }
@@ -161,6 +162,7 @@ class Applications extends React.Component {
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false })
             console.log(message);
+            this.loadApplications();
         });
     }
     dataChange = (event) => {

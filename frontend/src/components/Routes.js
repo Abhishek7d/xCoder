@@ -106,7 +106,7 @@ let routes = [
         }
     },
     {
-        path: '/invitations/:tokenId',
+        path: '/invitation/:tokenId',
         title: 'Invitation',
         component: () => {
             return <Invitation />;

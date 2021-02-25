@@ -189,7 +189,7 @@ class DashboardController extends Controller
             'status' => $status,
             'email' => $dA->email
         ];
-        if ($dA->_delegate_user_id != 0) {
+        if ($dA->status == "active" || $dA->status == "disabled" || $dA->status == "rejected") {
             $data['status'] = 'active';
         }
         return CommonFunctions::sendResponse(1, "Valid", $data);
@@ -466,7 +466,10 @@ class DashboardController extends Controller
             if ($myProjects || $dA) {
                 $msg = "Please select a project.";
             } else {
-                $msg = "Please create a project. You have $servers server(s), assign these servers to the project.";
+                $msg = "Please create a project.";
+                if ($servers !== 0) {
+                    $msg .= " You have $servers server(s), assign these servers to the project.";
+                }
             }
             return CommonFunctions::sendResponse(0, $msg);
         } else {

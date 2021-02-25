@@ -61,6 +61,9 @@ class Invitation extends React.Component {
                     project: data.project,
                     loadding: false
                 })
+                if (data.status === "active") {
+                    window.location.href = "/delegate-access";
+                }
             }, (error) => {
 
             })
@@ -100,9 +103,7 @@ class Invitation extends React.Component {
             bake_cookie("name", data.name);
             bake_cookie("email", data.email);
             bake_cookie("auth", data.access_tokens.pop());
-            if (this.state.data === "active") {
-                window.location.href = "/delegate-access/" + this.state.token;
-            }
+
             //window.location.href = "/delegate-access/" + this.state.token;
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false, loggedIn: false })
@@ -144,9 +145,9 @@ class Invitation extends React.Component {
                                 <h3>Delegate Access Invitation</h3>
                                 {(this.state.loadding) ? '' :
                                     <p className="text-muted">
-                                        {(this.state.data === 'active') ? <p>
-                                            No Action required, Login to your accout to view the invitation.
-                                        </p> :
+                                        {(this.state.data === 'active') ? <>
+                                            No Action required, Login to your account to view the invitation.
+                                        </> :
                                             <><b>{this.state.user}</b> has send you an invitation to manage the project: <b>{this.state.project}</b>.  </>
                                         }
                                     </p>
@@ -231,22 +232,28 @@ class Invitation extends React.Component {
                                         </>
                                         :
                                         <>{(this.state.loggedIn) ?
-                                            <div className="col-sm-12 mt-4">
-                                                <button type="button" onClick={() => this.acceptInvitation(true)} className="btn btn-block btn-theme">
-                                                    {this.state.loadding ?
-                                                        <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                                        :
-                                                        "Accept Invitation"
-                                                    }
-                                                </button>
-                                                <button type="button" onClick={() => this.acceptInvitation(false)} className="btn btn-block btn-theme-outline">
-                                                    {this.state.loadding ?
-                                                        <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                                        :
-                                                        "Reject"
-                                                    }
-                                                </button>
-                                            </div>
+                                            <>
+                                                {
+                                                    (this.state.data === "active") ? "" :
+
+                                                        <div className="col-sm-12 mt-4">
+                                                            <button type="button" onClick={() => this.acceptInvitation(1)} className="btn btn-block btn-theme">
+                                                                {this.state.loadding ?
+                                                                    <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                                    :
+                                                                    "Accept Invitation"
+                                                                }
+                                                            </button>
+                                                            <button type="button" onClick={() => this.acceptInvitation(0)} className="btn btn-block btn-theme-outline">
+                                                                {this.state.loadding ?
+                                                                    <img alt="loadding" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                                                    :
+                                                                    "Reject"
+                                                                }
+                                                            </button>
+                                                        </div>
+                                                }
+                                            </>
                                             :
                                             <> <div className="col-sm-12 modal-form mt-4">
                                                 <div className="input-group">

@@ -53,10 +53,11 @@ class WebSiteController extends Controller
     }
     public function showDomains(Request $request, $all = false)
     {
-        if (!Project::find(CF::projectId($request->project_id))) {
-            return CommonFunctions::sendResponse(0, "Please select a project first");
-        }
+
         if ($request->project_id) {
+            if (!Project::find(CF::projectId($request->project_id))) {
+                return CommonFunctions::sendResponse(0, "Invalid Project");
+            }
             $projectId  = CommonFunctions::projectId($request->project_id);
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
 
