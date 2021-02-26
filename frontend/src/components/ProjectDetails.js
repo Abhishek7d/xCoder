@@ -312,7 +312,7 @@ class ProjectDetails extends Component {
                             {
                                 (this.state.servers.length > 0) ?
                                     <div className="modal-form">
-                                        <label htmlFor="assignServers">Assign Servers</label>
+                                        <label htmlFor="assignServers">Servers</label>
                                         <div className="input-group">
                                             <select onChange={this.selectChange} name="selectedServers" className="custom-select" size="1" multiple aria-label="multiple select">
                                                 {this.renderServersSelect()}

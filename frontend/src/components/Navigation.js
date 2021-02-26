@@ -2,7 +2,7 @@ import React from 'react';
 import ApiHandler from '../model/ApiHandler';
 import { read_cookie, delete_cookie, bake_cookie } from 'sfcookies';
 import { Link } from 'react-router-dom';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal, Button, Alert } from 'react-bootstrap';
 
 class Navigation extends React.Component {
     constructor(props) {
@@ -16,7 +16,10 @@ class Navigation extends React.Component {
             showModal: false,
             projects: [],
             notifications: [],
-            projectName: 'No Project Select'
+            servers: [],
+            projectName: 'No Project Select',
+            selectedServers: null,
+            selectedProject: null,
         }
         this.apiHandler = new ApiHandler();
     }
@@ -25,6 +28,7 @@ class Navigation extends React.Component {
         this.getDelegateAccess();
         this.getProject()
         this.checkNotification()
+        this.getServers()
         setInterval(() => { this.checkNotification() }, 300000);
     }
     getProjects = () => {
@@ -38,6 +42,7 @@ class Navigation extends React.Component {
                 })
                 if (data.data.length === 1) {
                     this.setProject(data.data[0]);
+
                 }
             }
             this.setState({ projects: [...this.state.projects, ...data.data] })
@@ -108,11 +113,82 @@ class Navigation extends React.Component {
         })
         return projects;
     }
+    getServers = () => {
+        this.apiHandler.getServerUnassigned((msg, data) => {
+            this.setState({
+                servers: data
+            })
+        }, (data) => {
+            this.showError(data);
+        });
+    }
+    handleModalShow2 = () => {
+        this.setState({
+            showModal2: true,
+        })
+    }
+    handleModalClose2 = () => {
+        this.setState({
+            showModal2: false,
+            selectedServers: null
+        })
+    }
+    renderServersSelect = () => {
+        let select = [];
+        this.state.servers.forEach((data, index) => {
+            select.push(<option key={index} value={data.id}>{data.name}</option>)
+        })
+        return select;
+    }
+    renderProjectsSelect = () => {
+        let projects = [<option key="no" value="0">Select a Project</option>];
+        this.state.projects.forEach((data, index) => {
+            if (data) {
+                if (data.divider) {
+                } else {
+                    projects.push(
+                        <option value={data.id} key={index}>
+                            {data.name}
+                        </option>);
+                }
+            }
+        })
+        return projects;
+    }
+    // setProjectId = () => {
+    //     let id = [];
+    //     let uuid = read_cookie('projectId');
+    //     let p = this.state.projects.find(project => project.uuid === uuid);
+    //     id.push(p.id);
+    //     this.setState({ selectedProject: id })
+    // }
+    selectChange = (event) => {
+        let value = Array.from(event.target.selectedOptions, option => option.value);
+        if (event.target.name === "selectedProject") {
+            value = event.target.value;
+        }
+        this.setState({ [event.target.name]: value })
+    }
+    handleAssignProject = () => {
+        if (!this.state.selectedProject || !this.state.selectedServers) {
+            return;
+        }
+        this.setState({
+            loading: true,
+        })
+        this.apiHandler.assignServers(this.state.selectedProject, this.state.selectedServers, (message, data) => {
+            this.setState({ error: "", success: message, loading: false })
+            window.location.reload();
+        }, (message) => {
+            this.setState({ error: message, success: "", loading: false })
+            console.log(message);
+        })
+    }
     getProject = () => {
         let project = read_cookie('projectName')
         if (!Array.isArray(project)) {
             this.setState({
-                projectName: project
+                projectName: project,
             })
         } else {
             this.setState({
@@ -124,7 +200,7 @@ class Navigation extends React.Component {
         if (read_cookie('projectId') !== data.uuid) {
             bake_cookie('projectId', data.uuid)
             bake_cookie('projectName', data.name)
-            this.getProject()
+            this.getProject();
             window.location.reload();
         }
     }
@@ -173,6 +249,55 @@ class Navigation extends React.Component {
     render() {
         return (
             <>
+                <Modal centered show={this.state.showModal2} onHide={this.handleModalClose2}>
+                    <form>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Assign Servers to {this.state.projectName} </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
+                                {this.state.error}
+                            </Alert>
+                            <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
+                                {this.state.success}
+                            </Alert>
+                            <div className="modal-form">
+                                <label htmlFor="projectName">Project</label>
+                                <div className="input-group">
+                                    <select onChange={this.selectChange} name="selectedProject" className="custom-select">
+                                        {this.renderProjectsSelect()}
+                                    </select>
+                                </div>
+                            </div>
+                            {
+                                (this.state.servers.length > 0) ?
+                                    <div className="modal-form">
+                                        <label htmlFor="assignServers">Servers</label>
+                                        <div className="input-group">
+                                            <select onChange={this.selectChange} name="selectedServers" className="custom-select" size="1" multiple aria-label="multiple select">
+                                                {this.renderServersSelect()}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    :
+                                    ''
+                            }
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="default" onClick={this.handleModalClose2}>
+                                CLOSE
+                            </Button>
+                            <Button disabled={(this.state.selectedProject && this.state.selectedProject !== "0" && this.state.selectedServers && this.state.selectedServers.length > 0) ? false : true} className="btn btn-theme" onClick={this.handleAssignProject}>
+                                {
+                                    this.state.loading ?
+                                        <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                        : "Assign"
+                                }
+                            </Button>
+
+                        </Modal.Footer>
+                    </form>
+                </Modal>
                 <nav className="main-header navbar navbar-expand navbar-white navbar-light">
                     <ul className="navbar-nav">
                         <li className="nav-item">
@@ -183,6 +308,14 @@ class Navigation extends React.Component {
                         </li>
                     </ul>
                     <ul className="navbar-nav ml-auto">
+                        <li className="nav-item" >
+                            {(this.state.projects.length > 0 && this.state.servers.length > 0) ?
+                                <button onClick={this.handleModalShow2} className="btn btn-theme">
+                                    Assign Servers
+                                </button> :
+                                ''
+                            }
+                        </li>
                         <li className="nav-item" >
                             {(this.state.projects.length > 0) ?
                                 <div className="dropdown show profile-dropdown">
@@ -195,7 +328,6 @@ class Navigation extends React.Component {
                                 </div> :
                                 ''
                             }
-
                         </li>
                         <li className="nav-item">
                             <Link to="/notifications" className={"nav-link p-0"}>

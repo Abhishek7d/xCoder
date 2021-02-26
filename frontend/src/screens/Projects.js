@@ -25,7 +25,7 @@ class Projects extends React.Component {
             projectId: projectId,
             servers: [],
             selectedServers: null,
-
+            accessStatus: null,
         }
         this.apiHandler = new ApiHandler();
     }
@@ -44,21 +44,19 @@ class Projects extends React.Component {
                     })
                 }
             })
-            this.setState({ projects: data.data, loading: false })
+            this.setState({ projects: data.data, loading: false, accessStatus: msg })
         }, err => {
             this.showError(err);
+            this.setState({ loading: false, accessStatus: err })
+
         })
         this.getServers()
     }
     renderProjects() {
-
         let projects = [];
         this.state.projects.forEach((data, index) => {
             projects.push(<ProjectCard key={index} data={data} servers={this.state.servers} projectClickHandler={this.projectClickHandler} />);
         })
-        if (projects.length < 1) {
-            projects = <div className="col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No projects Created</p></div>
-        }
         return projects;
     }
     projectClickHandler = (project = null) => {
@@ -85,6 +83,7 @@ class Projects extends React.Component {
         this.setState({
             showModal: true,
         })
+        this.getServers();
     }
     handleModalClose = () => {
         this.setState({
@@ -141,99 +140,58 @@ class Projects extends React.Component {
     }
     render() {
         return (
-            <>
-                {/* <div className="container-fluid p-0">
-                    <Navigation name="Projects" />
-                    <Sidebar />
-                    <div className="content-wrapper">
-                        <section className="content-header">
-                            <div className="container-fluid">
-                                <div className="row mb-2">
-
-                                </div>
-                            </div>
-                        </section>
-
-                        <section className="content">
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <div className="col-12">
-                                        {(this.state.isProjectClicked) ?
-                                            <ProjectDetails projectClickHandler={this.projectClickHandler} />
-                                            :
-                                            <div className="card card-primary card-outline">
-                                                <div className="card-header">
-                                                    <div className="col-3 float-left">
-                                                        <button className="btn btn-info start_new_app" onClick={this.handleModalShow}>New Project</button>
-                                                    </div>
-
-                                                </div>
-                                                <div className="card-body">
-                                                    <div className="col-12 application_page_cards" id="huddles">
-                                                        {this.renderProjects()}
-                                                    </div>
-                                                </div>
-                                                <div className="card-footer"></div>
-                                            </div>
-                                        }
+            <> <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
+                <form>
+                    <Modal.Header closeButton>
+                        <Modal.Title>ADD PROJECT</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
+                            {this.state.error}
+                        </Alert>
+                        <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
+                            {this.state.success}
+                        </Alert>
+                        <div className="modal-form">
+                            <label htmlFor="projectName">Project Name</label>
+                            <div className="input-group">
+                                <input required type="text" onKeyDown={this.onEnterPress} className="form-control form-input-field" name="projectName" value={this.state.projectName} onChange={this.dataChange} id="projectName" />
+                                <div className="input-group-append">
+                                    <div className="input-group-text theme">
+                                        <i className="fa fa-desktop"></i>
                                     </div>
                                 </div>
                             </div>
-                        </section>
-                    </div>
-                </div>*/}
-                <Modal centered show={this.state.showModal} onHide={this.handleModalClose}>
-                    <form>
-                        <Modal.Header closeButton>
-                            <Modal.Title>ADD PROJECT</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Alert onClose={() => this.setShow()} show={(this.state.error !== "") ? true : false} variant="danger" dismissible>
-                                {this.state.error}
-                            </Alert>
-                            <Alert onClose={() => this.setShow()} show={(this.state.success !== "") ? true : false} variant="success" dismissible>
-                                {this.state.success}
-                            </Alert>
-                            <div className="modal-form">
-                                <label htmlFor="projectName">Project Name</label>
-                                <div className="input-group">
-                                    <input required type="text" onKeyDown={this.onEnterPress} className="form-control form-input-field" name="projectName" value={this.state.projectName} onChange={this.dataChange} id="projectName" />
-                                    <div className="input-group-append">
-                                        <div className="input-group-text theme">
-                                            <i className="fa fa-desktop"></i>
-                                        </div>
+                        </div>
+                        {
+                            (this.state.servers.length > 0) ?
+                                <div className="modal-form">
+                                    <label htmlFor="assignServers">Assign Servers</label>
+                                    <div className="input-group">
+                                        <select onChange={this.selectChange} name="selectedServers" className="custom-select" size="1" multiple aria-label="multiple select">
+                                            {this.renderServers()}
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
+                                :
+                                ''
+                        }
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="default" onClick={this.handleModalClose}>
+                            CLOSE
+                            </Button>
+                        <Button className="btn btn-theme" onClick={this.handleAddProject}>
                             {
-                                (this.state.servers.length > 0) ?
-                                    <div className="modal-form">
-                                        <label htmlFor="assignServers">Assign Servers</label>
-                                        <div className="input-group">
-                                            <select onChange={this.selectChange} name="selectedServers" className="custom-select" size="2" multiple aria-label="multiple select">
-                                                {this.renderServers()}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    :
-                                    ''
+                                this.state.loading ?
+                                    <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
+                                    : "ADD PROJECT"
                             }
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button variant="default" onClick={this.handleModalClose}>
-                                CLOSE
-                            </Button>
-                            <Button className="btn btn-theme" onClick={this.handleAddProject}>
-                                {
-                                    this.state.loading ?
-                                        <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-                                        : "ADD PROJECT"
-                                }
-                            </Button>
+                        </Button>
 
-                        </Modal.Footer>
-                    </form>
-                </Modal>
+                    </Modal.Footer>
+                </form>
+            </Modal>
                 <div className="container-fluid p-0">
                     <Navigation name="Project" />
                     <Sidebar />
@@ -290,7 +248,13 @@ class Projects extends React.Component {
 
                                 </PageHeader>
                                 <div className="row">
-                                    {(!this.state.loading) ? this.renderProjects() :
+                                    <div className="col-12">
+                                        <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your projects") ? true : false} variant="info">
+                                            {this.state.accessStatus}
+                                        </Alert>
+                                    </div>
+                                    {(!this.state.loading) ?
+                                        this.renderProjects() :
                                         <div className='col-12 text-center'>
                                             <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
                                         </div>}

@@ -30,8 +30,13 @@ class DashboardController extends Controller
         if ($all) {
             $perPage = $projects->count();
         }
-        $projects = $projects->with('servers')->with('delegateUsers')->with('applications')->paginate($perPage);
-        return CommonFunctions::sendResponse(1, "Your projects", $projects);
+        $projects = $projects->with('servers')->with('delegateUsers');
+        $msg = "Please create a project.";
+        if ($projects->count() > 0) {
+            $msg = "Your projects";
+        }
+        $projects = $projects->with('applications')->paginate($perPage);
+        return CommonFunctions::sendResponse(1, $msg, $projects);
     }
     public function createProject(Request $request)
     {
@@ -450,9 +455,7 @@ class DashboardController extends Controller
         //if(Project::where('user_id'))
         if ($request->unassigned) {
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
-
             $servers = Server::where([['project_id', null], ['uuid', ''], ["user_id", $user->id]]);
-
             return CommonFunctions::sendResponse(1, "Servers", $servers->get());
         }
         if (!$request->project_id) {

@@ -75,7 +75,7 @@ class Applications extends React.Component {
             this.setState({ accessStatus: msg, applications: data.data, appLoadding: false, applicationData: data })
         }, err => {
             this.showError(err);
-            this.setState({ appLoadding: false })
+            this.setState({ appLoadding: false, accessStatus: err, })
 
         })
     }
@@ -126,13 +126,6 @@ class Applications extends React.Component {
                     applications.push(<ApplicationCard appsReload={this.loadApplications} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
                 }
             })
-        }
-
-        if (applications.length < 1) {
-            applications = <div className="col-12 text-center"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
-        }
-        if (typeof this.state.projectId === 'object') {
-            applications = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>No Applications.</p></div>
         }
         return applications;
     }
@@ -296,6 +289,11 @@ class Applications extends React.Component {
                         }
 
                         <div className="row">
+                            <div className="col-12">
+                                <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your applications") ? true : false} variant="info">
+                                    {this.state.accessStatus}
+                                </Alert>
+                            </div>
                             {this.renderApplications()}
                         </div>
                         <Pagination onPageChange={this.handlePageChange} key={this.state.applicationData.current_page} data={this.state.applicationData}></Pagination>

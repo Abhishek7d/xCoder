@@ -82,13 +82,6 @@ class Servers extends React.Component {
                 servers.push(<ServerCard reloadServers={this.handlePageChange} serverClickHandler={this.serverClickHandler} region={this.getRegionName(data.region)} key={data.id} server={data} />);
             }
         })
-        if (servers.length < 1) {
-            servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
-        }
-
-        if (typeof this.state.projectId === 'object') {
-            servers = <div className="text-center col-12"><p style={{ textAlign: "center", marginTop: "20px", color: "#949292" }}>{this.state.accessStatus}</p></div>
-        }
         return servers;
     }
     serverClickHandler = (server = null) => {
@@ -151,7 +144,7 @@ class Servers extends React.Component {
                                 </PageHeader>
                                 <div className="row">
                                     <div className="col-12">
-                                        <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your Droplets") ? true : false} variant="danger">
+                                        <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your Droplets") ? true : false} variant="info">
                                             {this.state.accessStatus}
                                         </Alert>
                                     </div>

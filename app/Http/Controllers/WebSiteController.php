@@ -77,7 +77,7 @@ class WebSiteController extends Controller
             }
             $apps = $apps->with('server')->paginate($perPage);
             // $apps = Application::where([['project_id', CF::projectId($request->project_id)], ["user_id", $user->id]])->with('server')->paginate();
-            $msg = "List of applications";
+            $msg = "Your applications";
             if ($user->delegateAccess != 'active') {
                 $msg = "You do not have access to this project.";
             } else {

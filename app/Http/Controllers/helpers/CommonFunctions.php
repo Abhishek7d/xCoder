@@ -137,15 +137,42 @@ class CommonFunctions extends Controller
     }
     public static function getId($uuid, $table)
     {
-        return DB::table($table)->where('uuid', $uuid)->first()->id;
+        if ($uuid) {
+            $tbl = DB::table($table)->where('uuid', $uuid);
+            if ($tbl->exists()) {
+                return $tbl->first()->id;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
     public static function projectId($uuid)
     {
-        return DB::table('projects')->where('uuid', $uuid)->first()->id;
+        if ($uuid) {
+            $tbl = DB::table('projects')->where('uuid', $uuid);
+            if ($tbl->exists()) {
+                return $tbl->first()->id;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
     public static function serverId($uuid)
     {
-        return DB::table('servers')->where('uuid', $uuid)->first()->id;
+        if ($uuid) {
+            $tbl = DB::table('servers')->where('uuid', $uuid);
+            if ($tbl->exists()) {
+                return $tbl->first()->id;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
     public static function reverse_string($string)
     {
