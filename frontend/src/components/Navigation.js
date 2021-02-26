@@ -51,8 +51,19 @@ class Navigation extends React.Component {
         })
     }
     getDelegateAccess = () => {
+        let p = 0;
         this.apiHandler.getDelegateAccount((msg, data) => {
-            if (data && data.length > 0) {
+
+            data.forEach((d, index) => {
+                if (d.status === 'active') {
+                    this.setState({
+                        projects: [...this.state.projects, d.project],
+                    })
+                    p++;
+                }
+            })
+
+            if (data && data.length > 0 && p > 0) {
                 this.setState({
                     projects: [...this.state.projects, {
                         divider: true,
@@ -60,13 +71,7 @@ class Navigation extends React.Component {
                     }],
                 })
             }
-            data.forEach((d, index) => {
-                if (d.status === 'active') {
-                    this.setState({
-                        projects: [...this.state.projects, d.project],
-                    })
-                }
-            })
+
         })
     }
     checkNotification = () => {
