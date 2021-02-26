@@ -64,7 +64,7 @@ class WebSiteController extends Controller
             // Find servers
             $servers = Server::where([['project_id', $projectId], ['user_id', $user->id]]);
             if (!$servers->exists()) {
-                return CommonFunctions::sendResponse(0, "Please create or assign a server to the project");
+                return CommonFunctions::sendResponse(0, "Please create or assign a server first.");
             }
             $ids = [];
             foreach ($servers->get() as $server) {

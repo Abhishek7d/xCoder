@@ -32,9 +32,17 @@ class Projects extends React.Component {
     showError = (err) => {
 
     }
-
+    refreshPage = () => {
+        this.getProjects();
+        this.getServers();
+    }
     componentDidMount() {
         document.title = "Your Projects";
+        this.getProjects();
+        this.getServers();
+    }
+    getProjects = () => {
+        this.setState({ loading: true, accessStatus: null })
         this.apiHandler.getProjects(0, (msg, data) => {
             data.data.forEach((s) => {
                 if (s.uuid === this.state.projectId) {
@@ -50,7 +58,6 @@ class Projects extends React.Component {
             this.setState({ loading: false, accessStatus: err })
 
         })
-        this.getServers()
     }
     renderProjects() {
         let projects = [];
@@ -193,7 +200,7 @@ class Projects extends React.Component {
                 </form>
             </Modal>
                 <div className="container-fluid p-0">
-                    <Navigation name="Project" />
+                    <Navigation onProjectChange={this.refreshPage} name="Project" />
                     <Sidebar />
                     {(this.state.isProjectClicked) ?
                         <div className="content-wrapper">

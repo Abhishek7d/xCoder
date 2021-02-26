@@ -51,9 +51,16 @@ class Applications extends React.Component {
     setShow() {
         this.setState({ error: "", success: "", })
     }
+    refreshPage = () => {
+        this.getServers();
+        this.loadApplications();
+    }
     componentDidMount() {
         document.title = "Your Applications";
+        this.getServers();
         this.loadApplications();
+    }
+    getServers = () => {
         this.apiHandler.getServers(this.state.serverPage, (msg, data) => {
             this.setState({ servers: data.data })
         }, err => {
@@ -64,8 +71,7 @@ class Applications extends React.Component {
         this.setState({ rspmsg: message })
     }
     loadApplications(page = 1) {
-        this.setState({ appLoadding: true })
-
+        this.setState({ appLoadding: true, accessStatus: null })
         this.apiHandler.getApplications(null, 0, page, (msg, data) => {
             data.data.forEach((app, index) => {
                 if (app.uuid === this.state.selectedApplicationFilter) {
@@ -226,7 +232,7 @@ class Applications extends React.Component {
     render() {
         return (
             <div className="container-fluid p-0">
-                <Navigation name={this.state.screenName} />
+                <Navigation onProjectChange={this.refreshPage} name={this.state.screenName} />
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">

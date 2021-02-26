@@ -46,7 +46,7 @@ class Login extends React.Component {
             bake_cookie("name", data.name);
             bake_cookie("email", data.email);
             bake_cookie("auth", data.access_tokens.pop());
-            window.location.href = "/servers";
+            window.location.href = "/projects";
         }, (message) => {
             this.setState({ error: message, success: "", loadding: false, loggedIn: false })
         });
@@ -66,7 +66,7 @@ class Login extends React.Component {
     }
     render() {
         if (this.state.loggedIn) {
-            return <Redirect to="/servers" />
+            return <Redirect to="/projects" />
         }
         return (
             <div className="main-container">

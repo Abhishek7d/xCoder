@@ -4,6 +4,7 @@ import { read_cookie, delete_cookie, bake_cookie } from 'sfcookies';
 import { Link } from 'react-router-dom';
 import { Modal, Button, Alert } from 'react-bootstrap';
 
+
 class Navigation extends React.Component {
     constructor(props) {
         super();
@@ -26,7 +27,6 @@ class Navigation extends React.Component {
     componentDidMount = () => {
         this.getProjects();
         this.getDelegateAccess();
-        this.getProject()
         this.checkNotification()
         this.getServers()
         setInterval(() => { this.checkNotification() }, 300000);
@@ -42,11 +42,10 @@ class Navigation extends React.Component {
                 })
                 if (data.data.length === 1) {
                     this.setProject(data.data[0]);
-
                 }
             }
             this.setState({ projects: [...this.state.projects, ...data.data] })
-
+            this.getProject()
         }, err => {
             this.showError(err);
         })
@@ -155,13 +154,7 @@ class Navigation extends React.Component {
         })
         return projects;
     }
-    // setProjectId = () => {
-    //     let id = [];
-    //     let uuid = read_cookie('projectId');
-    //     let p = this.state.projects.find(project => project.uuid === uuid);
-    //     id.push(p.id);
-    //     this.setState({ selectedProject: id })
-    // }
+
     selectChange = (event) => {
         let value = Array.from(event.target.selectedOptions, option => option.value);
         if (event.target.name === "selectedProject") {
@@ -177,19 +170,38 @@ class Navigation extends React.Component {
             loading: true,
         })
         this.apiHandler.assignServers(this.state.selectedProject, this.state.selectedServers, (message, data) => {
-            this.setState({ error: "", success: message, loading: false })
-            window.location.reload();
+            this.setState({ error: "", success: message, loading: false, showModal2: false })
+            this.projectChanged();
+            this.getServers();
         }, (message) => {
             this.setState({ error: message, success: "", loading: false })
             console.log(message);
         })
     }
+    // setProjectId = () => {
+    //     let id = [];
+    //     let uuid = read_cookie('projectId');
+    //     let p = this.state.projects.find(project => project.uuid === uuid);
+    //     id.push(p.id);
+    //     this.setState({ selectedProject: id })
+    // }
+    projectChanged = () => {
+        this.props.onProjectChange();
+    }
     getProject = () => {
         let project = read_cookie('projectName')
+        let uuid = read_cookie('projectId');
+        let p = this.state.projects.find(project => project.uuid === uuid);
+        console.log(p)
         if (!Array.isArray(project)) {
-            this.setState({
-                projectName: project,
-            })
+            if (p) {
+                this.setState({
+                    projectName: project,
+                })
+            } else {
+                delete_cookie("projectId")
+                delete_cookie("projectName")
+            }
         } else {
             this.setState({
                 projectName: 'Select a Project'
@@ -200,18 +212,24 @@ class Navigation extends React.Component {
         if (read_cookie('projectId') !== data.uuid) {
             bake_cookie('projectId', data.uuid)
             bake_cookie('projectName', data.name)
-            this.getProject();
-            window.location.reload();
+            this.setState({
+                projectName: data.name,
+            })
+            this.projectChanged();
         }
     }
     handleModalShow = () => {
         this.setState({
             showModal: true,
+            error: "",
+            success: ""
         })
     }
     handleModalClose = () => {
         this.setState({
             showModal: false,
+            error: "",
+            success: ""
         })
     }
     handleAddProject = () => {
@@ -226,7 +244,7 @@ class Navigation extends React.Component {
         this.setState({ loading: true })
         this.apiHandler.createProject(this.state.name, (message, data) => {
             this.setState({ loading: false });
-            window.location.href = "/projects";
+            this.projectChanged();
         }, data => console.log(data))
     }
     dataChange = (event) => {

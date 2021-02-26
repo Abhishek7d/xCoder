@@ -37,10 +37,12 @@ class Servers extends React.Component {
     showError = (err) => {
 
     }
-
     componentDidMount() {
         document.title = "Your Servers";
         this.getServers();
+        this.getRegions();
+    }
+    getRegions = () => {
         this.apiHandler.getRegions((regions) => {
             let tmp_regions = this.state.regions;
             regions.forEach(region => {
@@ -52,6 +54,7 @@ class Servers extends React.Component {
         })
     }
     getServers(page = 1) {
+        this.setState({ loading: true, accessStatus: null, })
         this.apiHandler.getServers(page, (msg, data) => {
             data.data.forEach((s) => {
                 if (s.uuid === this.state.serverId) {
@@ -115,10 +118,14 @@ class Servers extends React.Component {
     handlePageChange = (data) => {
         this.getServers(data)
     }
+    refreshPage = () => {
+        this.getServers();
+        this.getRegions();
+    }
     render() {
         return (
             <div className="container-fluid p-0">
-                <Navigation name={this.state.screenName} />
+                <Navigation onProjectChange={this.refreshPage} name={this.state.screenName} />
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">
@@ -128,7 +135,7 @@ class Servers extends React.Component {
                             <>
                                 <PageHeader heading="My Servers" subHeading={this.state.servers.length + " Servers"}>
                                     <div className="row">
-                                        <div className="col-md-4" style={{marginLeft:'auto'}}>
+                                        <div className="col-md-4" style={{ marginLeft: 'auto' }}>
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
                                                 <span>Create Server</span>
                                                 <i className="fa fa-plus"></i>
