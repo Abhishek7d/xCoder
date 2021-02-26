@@ -58,27 +58,6 @@ class ServerHealth extends React.Component {
     }
     render() {
         return (
-            // <div className="tab-pane fade" id={"pills-" + this.props.tabId} role="tabpanel" aria-labelledby={"pills-" + this.props.tabId + "-tab"}>
-            //     <div onClick={this.loadResources} className="col-md-12" style={{ display: "flex" }}>
-            //         <h5 className="col-sm-2" style={{ minWidth: "max-content" }}>Refresh Data</h5>
-            //         <i className={(this.state.loadding) ? "fas fa-sync spin" : "fas fa-sync "} style={{ width: "17px", height: "17px" }}></i>
-            //     </div>
-            //     <div className="col-sm-12">
-            //         <span style={{ fontSize: "12px" }}>CPU Usage - {this.state.cpu}%</span>
-            //         <div className="progress mt-1 mb-3" style={{ borderRadius: "10px", height: "10px" }}>
-            //             <div className="progress-bar bg-success" role="progressbar" style={{ width: this.state.cpu + "%", color: "rgb(40 167 69) !important" }} >-</div>
-            //         </div>
-            //         <span style={{ fontSize: "12px" }}>RAM Usage - {this.state.memory.available}  Free of {this.state.memory.total} (Used: {this.state.memory.used})</span>
-            //         <div className="progress mt-1 mb-3" style={{ borderRadius: "10px", height: "10px" }}>
-            //             <div className="progress-bar bg-success" role="progressbar" style={{ width: this.state.memory.percentage + "%", color: "rgb(40 167 69) !important" }} >-</div>
-            //         </div>
-            //         <span style={{ fontSize: "12px", marginTop: "10px" }}>Disk Usage - {this.state.disk.available} Free of {this.state.disk.total} (Used: {this.state.disk.used})</span>
-            //         <div className="progress mt-1 mb-3" style={{ borderRadius: "10px", height: "10px" }}>
-            //             <div className="progress-bar bg-success" role="progressbar" style={{ width: this.state.disk.percentage + "%", color: "rgb(40 167 69) !important" }}>-</div>
-            //         </div>
-            //     </div>
-            // </div>
-
             <div className="col-sm-12 col-md-12 col-lg-12 col-xl-6 full-height-no">
                 <div className="card server-health">
                     <div className="card-header">
@@ -118,9 +97,6 @@ class ServerHealth extends React.Component {
                                     </div>
                                     <div className="server-status-name">
                                         CPU
-                                    </div>
-                                    <div className="server-status-subtext">
-
                                     </div>
                                 </div>
                             </div>

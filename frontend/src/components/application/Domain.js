@@ -53,21 +53,6 @@ class Domain extends React.Component {
     }
     render() {
         return (
-            // <div className="tab-pane fade show" id={this.props.tabId} role="tabpanel" aria-labelledby={this.props.tabId}>
-            //     <p style={{textAlign:"center"}}>{this.state.message}</p>
-            //     <br/>
-            //     <div className="row" style={{width:"70%"}}>
-            //         <div className="col-md-4">Domain Name</div>
-            //         <input className="col-md-6" type="text" onChange={this.domainNameChange} required value={this.state.domainName} placeholder="example.com"/>
-            //         <button className="btn btn-info" onClick={this.updateDomainName}>
-            //         {
-            //             this.state.loading ?
-            //                 <img src={require("../../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />
-            //                 : "Update"
-            //         }
-            //         </button>
-            //     </div>
-            // </div>
             <div className="col-md-12 col-lg-4 full-height">
                 <div className="card">
                     <div className="card-header">

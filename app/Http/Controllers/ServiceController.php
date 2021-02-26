@@ -160,7 +160,7 @@ class ServiceController extends Controller
         $newList = [];
         $i = 1;
         foreach ($data as $key => $d) {
-            if ($i > 9) {
+            if ($i > 9 && $d->CMD != "sudo /usr/local/vesta/bin/v-update-letsencrypt-ssl") {
                 array_push($newList, $d);
             }
             $i++;

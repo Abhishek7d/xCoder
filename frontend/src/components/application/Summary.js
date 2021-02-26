@@ -16,22 +16,6 @@ class Summary extends React.Component {
 
     render() {
         return (
-            // <div className="tab-pane fade show active" id={this.props.tabId} role="tabpanel" aria-labelledby={this.props.tabId}>
-            //     <div className="row ml-2">
-            //         <div className="col-md-3 d-flex flex-column">
-            //             <span className="mt-3 font-weight-bold text-info">Name :</span>
-            //             <span className="mt-3 font-weight-bold text-info">Domain Name :</span>
-            //             <span className="mt-3 font-weight-bold text-info">Status :</span>
-            //             <span className="mt-3 font-weight-bold text-info">IP Address :</span>
-            //         </div>
-            //         <div className="col-md-5 d-flex flex-column">
-            //             <span className="mt-3 font-weight-bold text-primary">{this.application.name}</span>
-            //             <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.domain}</span>
-            //             <span className="mt-3 font-weight-bold text-primary">{this.application.status}</span>
-            //             <span className="mt-3 font-weight-bold text-primary" onClick={this.props.copyToClipBoard} title={"Click to Copy"}>{this.application.server.ip_address}</span>
-            //         </div>
-            //     </div>
-            // </div>
             <div className="col-sm-6 col-md-6 col-lg-4 full-height">
                 <div className="card">
                     <div className="card-header">

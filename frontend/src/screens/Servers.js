@@ -128,13 +128,7 @@ class Servers extends React.Component {
                             <>
                                 <PageHeader heading="My Servers" subHeading={this.state.servers.length + " Servers"}>
                                     <div className="row">
-                                        <div className="col-md-4">
-
-                                        </div>
-                                        <div className="col-md-4">
-
-                                        </div>
-                                        <div className="col-md-4">
+                                        <div className="col-md-4" style={{marginLeft:'auto'}}>
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
                                                 <span>Create Server</span>
                                                 <i className="fa fa-plus"></i>
