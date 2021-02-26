@@ -80,9 +80,7 @@ class Applications extends React.Component {
             })
             this.setState({ accessStatus: msg, applications: data.data, appLoadding: false, applicationData: data })
         }, err => {
-            this.showError(err);
             this.setState({ appLoadding: false, accessStatus: err, })
-
         })
     }
     refreshApplications = () => {
