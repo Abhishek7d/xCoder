@@ -455,7 +455,7 @@ class DashboardController extends Controller
         //if(Project::where('user_id'))
         if ($request->unassigned) {
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
-            $servers = Server::where([['project_id', null], ['uuid', ''], ["user_id", $user->id]]);
+            $servers = Server::where([['uuid', ''], ["user_id", $user->id]])->whereNull('project_id');
             return CommonFunctions::sendResponse(1, "Servers", $servers->get());
         }
         if (!$request->project_id) {
@@ -486,14 +486,14 @@ class DashboardController extends Controller
                 } else {
                     if ($servers->count() == 0) {
                         $msg = "No Servers found.";
-                        $servers = Server::where([['project_id', null], ["user_id", $user->id]]);
+                        $servers = Server::where([["user_id", $user->id]])->whereNull('project_id');
                         if ($servers->exists()) {
                             $msg = "Please assign your existing {$servers->count()} servers.";
                         }
                         $servers = $servers->paginate($servers->count());
                         //return CommonFunctions::sendResponse(0, $msg, $servers);
                     } else {
-                        $server = Server::where([['project_id', null], ["user_id", $user->id]]);
+                        $server = Server::where([["user_id", $user->id]])->whereNull('project_id');
                         if ($server->exists()) {
                             $msg = "Please assign your existing {$server->count()} server(s).";
                         }
