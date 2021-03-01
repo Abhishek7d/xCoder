@@ -455,8 +455,8 @@ class DashboardController extends Controller
         //if(Project::where('user_id'))
         if ($request->unassigned) {
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
-            $servers = Server::where([['uuid', ''], ["user_id", $user->id]])->where(function ($query) {
-                $query->where('project_id', '=', 0)->orWhereNull('project_id');
+            $servers = Server::where([["user_id", $user->id]])->where(function ($query) {
+                $query->where('project_id', 0)->orWhereNull('project_id');
             });
             return CommonFunctions::sendResponse(1, "Servers", $servers->get());
         }
