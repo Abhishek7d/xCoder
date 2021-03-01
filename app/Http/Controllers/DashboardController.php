@@ -486,14 +486,14 @@ class DashboardController extends Controller
                 } else {
                     if ($servers->count() == 0) {
                         $msg = "No Servers found.";
-                        $servers = Server::where([["user_id", $user->id]])->whereNull('project_id');
+                        $servers = Server::where([["user_id", $user->id]])->whereNull('project_id')->orWhere('project_id', 0);
                         if ($servers->exists()) {
                             $msg = "Please assign your existing {$servers->count()} servers.";
                         }
                         $servers = $servers->paginate($servers->count());
                         //return CommonFunctions::sendResponse(0, $msg, $servers);
                     } else {
-                        $server = Server::where([["user_id", $user->id]])->whereNull('project_id');
+                        $server = Server::where([["user_id", $user->id]])->whereNull('project_id')->orWhere('project_id', 0);
                         if ($server->exists()) {
                             $msg = "Please assign your existing {$server->count()} server(s).";
                         }
