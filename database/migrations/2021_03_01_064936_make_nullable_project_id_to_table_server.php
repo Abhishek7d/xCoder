@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use phpDocumentor\Reflection\Types\Nullable;
+use App\Models\Server;
 
 class MakeNullableProjectIdToTableServer extends Migration
 {
@@ -15,7 +16,7 @@ class MakeNullableProjectIdToTableServer extends Migration
     public function up()
     {
         Schema::table('servers', function (Blueprint $table) {
-            $table->bigInteger('project_id')->nullable()->change();
+            $table->bigInteger('project_id')->nullable()->default(null)->change();
         });
     }
 
