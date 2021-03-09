@@ -7,6 +7,7 @@ use App\Http\Controllers\WebSiteController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\BlockStorageController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,6 +96,11 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/backups/{server}/{application}', [BackupController::class, 'getBackups']);
         Route::get('/backups/{server}', [BackupController::class, 'getAllBackups']);
         Route::post('/backup/restore/{server}', [BackupController::class, 'restoreBackup']);
+
+        // Invoices
+        Route::post('/invoice/statistics', [InvoiceController::class, 'getStatistics']);
+        Route::get('/invoice/generate/{date}', [InvoiceController::class, 'generateInvoice']);
+        Route::get('/invoice/{id}', [InvoiceController::class, 'getInvoiceDetails']);
     });
 });
 Route::view("/{path?}", "app");

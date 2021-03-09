@@ -19,7 +19,7 @@ class Database extends React.Component {
                 <div className="card">
                     <div className="card-header">
                         <h6 className="heading">Credentials</h6>
-                        <p className="sub-heading">SSH/SFTP Access</p>
+                        <p className="sub-heading">Database/PhpMyAdmin</p>
                     </div>
                     <div className="card-body server-details-list">
                         <div className="row">

@@ -80,7 +80,7 @@
             font-weight: bold;
             font-size: 18px;
             line-height: 21px;
-            color: #000000;
+            color: #3e3e3e;
             margin: 0 0 2px 0;
         }
 
@@ -170,6 +170,49 @@
             color: #B5B5C3;
         }
     }
+
+    &.invoice {
+        color: #3e3e3e;
+
+        p {
+            color: #3e3e3e;
+            line-height: 1.4rem;
+        }
+
+        td {
+            color: #3e3e3e;
+        }
+
+        .brand-image {
+            width: 40px;
+        }
+
+        .brand-text {
+            display: inline-block;
+            margin-top: 2px;
+
+        }
+
+        .address {
+            vertical-align: top;
+
+            p {
+                width: 300px;
+            }
+
+            .email {
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+.bg-striped {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.mb-100 {
+    margin-bottom: 100px;
 }
 
 .btn-theme {
@@ -693,12 +736,12 @@ a.dropdown-item {
 }
 
 .btn-primary {
-    background-color: #7973fe !important;
-    border-color: #7973fe !important;
+    background-color: #453dfd !important;
+    border-color: #453dfd !important;
 }
 
 .btn-link {
-    color: #7973fe !important;
+    color: #453dfd !important;
 
     &:focus {
         border: 0;
@@ -739,5 +782,13 @@ a.dropdown-item {
 }
 
 .alert a {
-    color: #7973FE;
+    color: #453dfd;
+}
+
+.text-theme {
+    color: #453dfd !important;
+}
+
+.p-100 {
+    padding: 80px !important;
 }

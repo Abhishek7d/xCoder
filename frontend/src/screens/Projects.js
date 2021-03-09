@@ -207,7 +207,7 @@ class Projects extends React.Component {
                             <div className="section-container">
                                 <PageHeader
                                     back={<i onClick={this.goBack} className="fas fa-arrow-left"></i>}
-                                    heading={this.state.selectedProject.name} subHeading=""/>
+                                    heading={this.state.selectedProject.name} subHeading="" />
                                 <div className="row">
                                     {(!this.state.loading) ?
                                         <ProjectDetails servers={this.state.servers} project={this.state.selectedProject} projectClickHandler={this.goBack} />
@@ -225,7 +225,7 @@ class Projects extends React.Component {
                                     heading="My Projects"
                                     subHeading={this.state.projects.length + " Projects"}>
                                     <div className="row">
-                                        <div className="col-md-4 offset-md-8">
+                                        <div className="col-md-4 offset-lg-8">
                                             <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
                                                 <span>Create Project</span>
                                                 <i className="fa fa-plus"></i>

@@ -81,7 +81,7 @@
   font-weight: bold;
   font-size: 18px;
   line-height: 21px;
-  color: #000000;
+  color: #3e3e3e;
   margin: 0 0 2px 0;
 }
 
@@ -160,6 +160,48 @@
   line-height: 14px;
   text-align: center;
   color: #B5B5C3;
+}
+
+.card.invoice {
+  color: #3e3e3e;
+}
+
+.card.invoice p {
+  color: #3e3e3e;
+  line-height: 1.4rem;
+}
+
+.card.invoice td {
+  color: #3e3e3e;
+}
+
+.card.invoice .brand-image {
+  width: 40px;
+}
+
+.card.invoice .brand-text {
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.card.invoice .address {
+  vertical-align: top;
+}
+
+.card.invoice .address p {
+  width: 300px;
+}
+
+.card.invoice .address .email {
+  font-weight: bold;
+}
+
+.bg-striped {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mb-100 {
+  margin-bottom: 100px;
 }
 
 .btn-theme {
@@ -626,12 +668,12 @@ a.dropdown-item:hover {
 }
 
 .btn-primary {
-  background-color: #7973fe !important;
-  border-color: #7973fe !important;
+  background-color: #453dfd !important;
+  border-color: #453dfd !important;
 }
 
 .btn-link {
-  color: #7973fe !important;
+  color: #453dfd !important;
 }
 
 .btn-link:focus {
@@ -669,5 +711,13 @@ a.dropdown-item:hover {
 }
 
 .alert a {
-  color: #7973FE;
+  color: #453dfd;
+}
+
+.text-theme {
+  color: #453dfd !important;
+}
+
+.p-100 {
+  padding: 80px !important;
 }

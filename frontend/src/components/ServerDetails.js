@@ -135,10 +135,9 @@ class ServerDetails extends Component {
                     heading={this.server.name} subHeading="">
                     {(this.state.regionsLoaded && !this.state.unavailableRegions[this.server.region]) ?
                         <div className="row">
-                            <div className="col-12 text-center text-sm-right">
-                                <button type="button" onClick={this.handleModalShow} className="btn btn-theme">
-                                    <span>Add Storage</span>
-                                    <i className="fa fa-plus"></i>
+                            <div className="col-md-4 offset-lg-8">
+                                <button type="button" onClick={this.handleModalShow} className="btn btn-block btn-theme">
+                                    Add Storage <i className="mr-2 fa fa-plus"></i>
                                 </button>
                             </div>
                         </div>

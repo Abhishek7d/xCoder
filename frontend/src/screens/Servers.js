@@ -119,6 +119,13 @@ class Servers extends React.Component {
         this.getServers(data)
     }
     refreshPage = () => {
+        if (this.state.isServerClicked) {
+            window.history.replaceState(null, null, "/servers")
+        }
+        this.setState({
+            isServerClicked: false,
+            serverId: null
+        })
         this.getServers();
         this.getRegions();
     }

@@ -1136,6 +1136,49 @@ class ApiHandler {
             }
         }, failure);
     }
+    loadStatistics = (year, success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        const formData = new FormData();
+        formData.append("project_id", project);
+        formData.append("year", year);
+        this.getResult("/invoice/statistics", "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    getInvoiceDetails = (id, success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        let project = read_cookie('projectId');
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+        this.getResult("/invoice/" + id + "?project_id=" + project, "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
 }
 
 export default ApiHandler;

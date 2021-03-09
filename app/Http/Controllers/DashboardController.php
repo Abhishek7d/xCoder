@@ -13,6 +13,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Models\DelegateAccess;
 use App\Models\Notifications;
+use App\Models\Storage;
 use App\Notifications\DelegateAccessInvitation;
 use App\Notifications\ServerDeleteVerification;
 use Illuminate\Support\Facades\Notification;
@@ -317,9 +318,19 @@ class DashboardController extends Controller
                         $url = "/droplets/$server->droplet_id/destroy_with_associated_resources/dangerous";
                         $response = CommonFunctions::makeRequest($url, "DELETE", null, "X-Dangerous: true");
                         Application::where("server_id", $server->id)->delete();
+                        $storage = Storage::where("server_id", $server->id);
+                        $storage = $storage->first();
+                        $body = [
+                            "type" => "detach",
+                            "droplet_id" => $server->droplet_id,
+                            "region" => $storage->region
+                        ];
+                        CommonFunctions::makeRequest("/volumes/$storage->storage_id/actions", "POST", json_encode($body));
+                        CommonFunctions::makeRequest("/volumes/$storage->storage_id", "DELETE");
                         $server->delete_code = "";
                         $server->save();
                         $server->delete();
+                        $storage->delete();
                         return CommonFunctions::sendResponse(1, "Droplet Destroyed");
                     } else {
                         $server->delete_code = "";

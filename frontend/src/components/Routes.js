@@ -11,10 +11,10 @@ import Logout from '../screens/Logout';
 import Profile from '../screens/Profile';
 import Projects from '../screens/Projects';
 import Notifications from '../screens/Notifications';
-
 import { read_cookie } from 'sfcookies';
 import DelegateAccess from '../screens/DelegateAccess';
 import Invitation from '../screens/Invitation';
+import Invoices from '../screens/Invoices';
 
 let routes = [
     {
@@ -205,6 +205,33 @@ let routes = [
             }
         }
     },
+    {
+        path: '/invoices/:uuId',
+        title: 'Invoice Details',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <Invoices />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/invoices',
+        title: 'Invoices',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <Invoices />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+
     {
         path: '/',
         component: (obj) => {

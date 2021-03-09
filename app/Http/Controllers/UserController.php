@@ -207,7 +207,7 @@ class UserController extends Controller
                     return CommonFunctions::sendResponse(0, "Login Faild");
                 }
             } else {
-                return CommonFunctions::sendResponse(0, "Email not found");
+                return CommonFunctions::sendResponse(0, "Email not found.");
             }
         } else {
             return CommonFunctions::sendResponse(0, "All Fields are required");

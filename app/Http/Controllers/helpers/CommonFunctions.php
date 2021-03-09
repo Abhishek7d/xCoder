@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\helpers;
 
+use DateTime;
+use DatePeriod;
+use DateInterval;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Project;
 use phpseclib\Net\SSH2;
@@ -12,7 +16,9 @@ use App\Models\Notifications;
 use App\Models\DelegateAccess;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use phpDocumentor\Reflection\Types\Self_;
+use App\Http\Controllers\InvoiceController;
+use App\Models\Invoices;
+use App\Models\ServerSize;
 use Illuminate\Notifications\Notification;
 
 class CommonFunctions extends Controller
@@ -174,6 +180,19 @@ class CommonFunctions extends Controller
             return 0;
         }
     }
+    public static function invoiceId($uuid)
+    {
+        if ($uuid) {
+            $tbl = DB::table('invoices')->where('uuid', $uuid);
+            if ($tbl->exists()) {
+                return $tbl->first()->id;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
     public static function reverse_string($string)
     {
         $str = str_split($string);
@@ -193,15 +212,145 @@ class CommonFunctions extends Controller
         }
     }
 
-    public static function getDiff($time, $time1, $format = "%i")
+    public static function getDiff($time, $time1, $format = "minutes")
     {
         $datetime1 = new \DateTime("@$time"); //start time
         $datetime2 = new \DateTime("@$time1"); //end time
         $interval = $datetime1->diff($datetime2);
-        return  $interval->format($format);
+        $minutes = $interval->days * 24 * 60;
+        $minutes += $interval->h * 60;
+        $minutes += $interval->i;
+        if ($format == "hours") {
+            $minutes = round($minutes / 60, 2);
+        }
+        if ($format == "i:s") {
+            $minutes =  $interval->i . 'm ' . $interval->s . 's';
+        }
+        return $minutes;
     }
     public static function makeUuid($prefix, $name)
     {
         return (string) Str::slug($prefix . ' ' . strtolower($name) . ' ' . Str::uuid(), '-');
+    }
+    public static function formatTimestamp($time)
+    {
+        return (new Carbon($time))->format('M d, Y - h:i A') . ' ' .  config('app.timezone');
+    }
+    public static function getInvoice($project_id, $date)
+    {
+        $data = ['available' => false, 'data' => null];
+        $invoice = Invoices::where([['project_id', $project_id], ['month_year', $date]]);
+        if ($invoice->exists()) {
+            $data['available'] = true;
+            $data['data'] = $invoice->first();
+        }
+        return $data;
+    }
+    public static function generateDates($startAt, $_end, $_year, $project_id)
+    {
+        $array = array();
+        $year = $_year . '-01-01';
+        $end = "$_year-12-31";
+        if (strtotime($end) > strtotime($_end)) {
+            $end = $_end;
+        }
+        $interval = new DateInterval('P1D');
+        if (strtotime($year) < strtotime($startAt)) {
+            $start = new DateTime($startAt);
+        } else {
+            $start = new DateTime($year);
+        }
+        $realEnd = new DateTime($end);
+        $period = new DatePeriod($start, $interval, $realEnd);
+        $startDate = (int) $start->format('d');
+        $startMonth = $start->format('m') . '-' . $start->format('Y');
+
+        foreach ($period as $date) {
+            $array[$date->format('m') . '-' . $date->format('Y')] = [
+                'year' => $date->format('Y'),
+                'month' => $date->format('m'),
+                'start' => 01,
+                'end' => (int) $date->format('d'),
+                'hours' => (int) $date->format('d') * 24,
+                'days' => (int) $date->format('d'),
+                'invoice' => Self::getInvoice($project_id, $date->format('M, Y')),
+            ];
+        }
+        if (strtotime($year) < strtotime($startAt)) {
+            $lastDate = $array[$startMonth]['year'] . '-' . $array[$startMonth]['month'] . '-' . $array[$startMonth]['end'];
+            $array[$startMonth]['start'] = $startDate;
+            $array[$startMonth]['days'] = $array[$startMonth]['end'] - $startDate;
+            $array[$startMonth]['hours'] = SELF::getDiff(strtotime($startAt), strtotime($lastDate), "hours");
+        }
+        return array_reverse(array_values($array));
+        //return $array;
+    }
+
+    public static function getCostTillDate($servers)
+    {
+        $start = date('Y-m') . '-01';
+        $end = Carbon::now();
+        $total = 0;
+        $invoice = new InvoiceController();
+
+        foreach ($servers as $server) {
+            $getCost = $invoice->getServerCost($server, date('Y-m-d h:i:s'), true);
+            $total += ($getCost) ? $getCost['totalCharge'] : 0;
+        }
+        return [
+            'hours' => SELF::getDiff(strtotime($start), strtotime($end), "hours"),
+            'cost' => round($total, 2),
+        ];
+    }
+
+    public static function getEstimated($servers)
+    {
+        $start = date('Y-m') . '-01';
+        $end = date('Y-m-t');
+        $total = 0;
+        $invoice = new InvoiceController();
+        $ser = [];
+        foreach ($servers as $server) {
+            $getCost = $invoice->getServerCost($server, date('Y-m'));
+            $ser[] = $getCost;
+            $total += ($getCost) ? $getCost['totalCharge'] : 0;
+        }
+        return [
+            'hours' => SELF::getDiff(strtotime($start), strtotime($end), "hours"),
+            'cost' => round($total, 2)
+        ];
+    }
+
+    public static function getSizeDetails($slug)
+    {
+        $size = ServerSize::where('slug', $slug);
+        if ($size->exists()) {
+            return $size->first();
+        } else {
+            return false;
+        }
+    }
+    public static function isTaxEnabled()
+    {
+        return [
+            'status' => false,
+            'tax' => 18
+        ];
+    }
+    public static function previousArrears($invoiceDate, $project, $user)
+    {
+        $preArrears = 0;
+        $preMonth = date('M, Y', strtotime($invoiceDate . " -1 month"));
+        $invoice = Invoices::where([
+            ['user_id', $user],
+            ['project_id', $project],
+            ['month_year', $preMonth],
+            ['payment_date', null],
+            ['status', 'unpaid']
+        ]);
+        if ($invoice->exists()) {
+            $preArrears = $invoice->first()->grand_total;
+        }
+        return $preArrears;
     }
 }

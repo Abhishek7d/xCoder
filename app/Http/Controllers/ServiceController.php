@@ -40,8 +40,9 @@ class ServiceController extends Controller
         $mysql_status = $ssh->exec(str_replace("SERVICE", "mysql", $this->checkStatus));
         $ngnix_status = $ssh->exec(str_replace("SERVICE", "nginx", $this->checkStatus));
         $cron_status = $ssh->exec(str_replace("SERVICE", "cron", $this->checkStatus));
+        $vsftpd_status = $ssh->exec(str_replace("SERVICE", "vsftpd", $this->checkStatus));
 
-        $data = ['nginx' => trim($ngnix_status), 'apache' => trim($apache_status), 'mysql' => trim($mysql_status), 'cron' => trim($cron_status)];
+        $data = ['nginx' => trim($ngnix_status), 'apache' => trim($apache_status), 'mysql' => trim($mysql_status), 'cron' => trim($cron_status), 'vsftpd' => trim($vsftpd_status)];
 
         return CommonFunctions::sendResponse(1, "Service Status", $data);
     }
@@ -78,6 +79,9 @@ class ServiceController extends Controller
                 break;
             case "cron":
                 $service_name = "cron";
+                break;
+            case "vsftpd":
+                $service_name = "vsftpd";
                 break;
             default:
                 return CommonFunctions::sendResponse(0, "Invalid Service Name");

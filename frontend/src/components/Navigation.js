@@ -7,7 +7,8 @@ import { Modal, Button, Alert } from 'react-bootstrap';
 
 class Navigation extends React.Component {
     constructor(props) {
-        super();
+        super(props);
+        this.props = props
         this.state = {
             loading: false,
             error: "",
@@ -45,7 +46,12 @@ class Navigation extends React.Component {
                 }
             }
             this.setState({ projects: [...this.state.projects, ...data.data] })
-            this.getProject()
+
+            // todo: replace this with redux state management
+            setTimeout(() => {
+                this.getProject()
+            }, 1000)
+            // 
         }, err => {
             this.showError(err);
         })
@@ -77,7 +83,6 @@ class Navigation extends React.Component {
     checkNotification = () => {
         this.apiHandler.checkNotifications((msg, data) => {
             this.setState({ notifications: data })
-
         }, (error) => {
             this.showError(error);
         })
@@ -197,7 +202,7 @@ class Navigation extends React.Component {
         let project = read_cookie('projectName')
         let uuid = read_cookie('projectId');
         let p = this.state.projects.find(project => project.uuid === uuid);
-        console.log(p)
+        //  console.log(p)
         if (!Array.isArray(project)) {
             if (p) {
                 this.setState({

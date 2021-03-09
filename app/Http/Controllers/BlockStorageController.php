@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\helpers\CommonFunctions;
 use App\Models\Storage;
 use App\Models\Server;
+use App\Models\StorageChanges;
 
 class BlockStorageController extends Controller
 {
@@ -60,6 +61,10 @@ class BlockStorageController extends Controller
         $storage->server_id = $server->id;
         $storage->size = $size;
         $storage->save();
+        $changes = new StorageChanges();
+        $changes->storage_id = $storage->id;
+        $changes->size = $size;
+        $changes->save();
         $body = [
             "type" => "attach",
             "droplet_id" => $server->droplet_id,
@@ -113,6 +118,10 @@ class BlockStorageController extends Controller
         }
         $storage->size = $size;
         $storage->save();
+        $changes = new StorageChanges();
+        $changes->storage_id = $storage->id;
+        $changes->size = $size;
+        $changes->save();
         return CommonFunctions::sendResponse(1, "Block Storage Resized successfully");
     }
     public function deleteBlockStorage(Request $request)
