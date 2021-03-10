@@ -25,12 +25,19 @@ class CreateStorageChangesTable extends Migration
         $allStorage = Storage::withTrashed()->get();
         if ($allStorage->count() > 0) {
             foreach ($allStorage as $storage) {
-                $changes = new StorageChanges();
-                $changes->storage_id = $storage->id;
-                $changes->size = $storage->size;
-                $changes->created_at = $storage->created_at;
-                $changes->updated_at = $storage->created_at;
-                $changes->save();
+                if (!StorageChanges::where([
+                    ['storage_id', $storage->id],
+                    ['size', $storage->size],
+                    ['created_at', $storage->created_at],
+                    ['updated_at', $storage->updated_at],
+                ])->exists()) {
+                    $changes = new StorageChanges();
+                    $changes->storage_id = $storage->id;
+                    $changes->size = $storage->size;
+                    $changes->created_at = $storage->created_at;
+                    $changes->updated_at = $storage->created_at;
+                    $changes->save();
+                }
             }
         }
     }
