@@ -2,6 +2,7 @@ import React from 'react';
 import ApiHandler from "../../model/ApiHandler";
 import { Alert } from 'react-bootstrap';
 import { Modal, Button } from 'react-bootstrap';
+import Loader from '../../components/template/Loader';
 
 class Backups extends React.Component {
     constructor(props) {
@@ -194,7 +195,7 @@ class Backups extends React.Component {
                                     {(this.state.loading) ?
                                         <tr>
                                             <td className="text-center" colSpan="6">
-                                                <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceLoadding" />
+                                                <Loader type="card" />
                                             </td>
                                         </tr>
                                         :

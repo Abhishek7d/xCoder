@@ -7,6 +7,7 @@ import PageHeader from '../components/template/PageHeader';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import { Button, Alert } from 'react-bootstrap';
+import Loader from '../components/template/Loader';
 
 class DelegateAccess extends React.Component {
     constructor(props) {
@@ -127,7 +128,7 @@ class DelegateAccess extends React.Component {
                                                         {(this.state.loading) ?
                                                             <tr>
                                                                 <td colSpan="6" className="text-center">
-                                                                    <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px" }} />
+                                                                    <Loader type="card" />
                                                                 </td>
                                                             </tr>
                                                             :

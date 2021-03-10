@@ -4,6 +4,7 @@ import ApiHandler from '../../model/ApiHandler';
 import { withRouter } from 'react-router';
 import { read_cookie } from 'sfcookies';
 // import { Alert } from 'react-bootstrap';
+import Loader from '../template/Loader';
 
 class InvoiceDetails extends React.Component {
     constructor(props) {
@@ -133,9 +134,8 @@ class InvoiceDetails extends React.Component {
     render() {
         return (
             <> {(this.state.loading) ?
-                <div className='col-12 text-center'>
-                    <img alt="" src={require("../../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
-                </div> : <div className="row">
+                <Loader loading={this.state.loading} />
+                : <div className="row">
                     <div className="col-12">
                         <button onClick={this.props.goBack} className="btn btn-light mb-3 d-print-none">
                             <i className="cursor-pointer fas fa-arrow-left"></i> Back

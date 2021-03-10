@@ -2,6 +2,7 @@ import React from 'react';
 import ApiHandler from '../../model/ApiHandler';
 import AddCronJobModal from "./AddCronJobModal";
 import EditCronJobModal from './EditCronJobModal';
+import Loader from '../../components/template/Loader';
 
 class CronJobsCard extends React.Component {
     constructor(props) {
@@ -137,7 +138,7 @@ class CronJobsCard extends React.Component {
                                 {(this.state.serviceLoadding) ?
                                     <tr>
                                         <td className="text-center" colSpan="5">
-                                            <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{ width: "50px", margin: "auto" }} className="align-middle" />
+                                            <Loader type="card" />
                                         </td>
                                     </tr>
                                     :

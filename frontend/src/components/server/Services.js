@@ -1,5 +1,6 @@
 import React from 'react';
 import ApiHandler from '../../model/ApiHandler';
+import Loader from '../../components/template/Loader';
 
 class Services extends React.Component {
     constructor(props) {
@@ -72,9 +73,7 @@ class Services extends React.Component {
                     <div className="card-body services">
                         {
                             (this.state.serviceLoadding) ?
-                                <div className="row" style={{ height: "75%" }}>
-                                    <img alt="loadding" src={require("../../assets/images/loading.gif")} style={{ width: "50px", margin: "auto" }} className="align-middle" />
-                                </div>
+                                <Loader type="card" />
                                 :
                                 <div>
                                     <div className="row">

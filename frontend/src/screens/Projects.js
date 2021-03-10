@@ -7,6 +7,7 @@ import ProjectDetails from '../components/ProjectDetails';
 import { Alert, Modal, Button } from 'react-bootstrap';
 import PageHeader from '../components/template/PageHeader';
 import { withRouter } from 'react-router';
+import Loader from '../components/template/Loader';
 
 class Projects extends React.Component {
     constructor(props) {
@@ -221,31 +222,35 @@ class Projects extends React.Component {
                         :
                         <div className="content-wrapper">
                             <div className="section-container">
-                                <PageHeader
-                                    heading="My Projects"
-                                    subHeading={this.state.projects.length + " Projects"}>
-                                    <div className="row">
-                                        <div className="col-md-4 offset-lg-8">
-                                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
-                                                <span>Create Project</span>
-                                                <i className="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
+                                {(this.state.loading) ? <Loader /> :
+                                    <>
+                                        <PageHeader
+                                            heading="My Projects"
+                                            subHeading={this.state.projects.length + " Projects"}>
+                                            <div className="row">
+                                                <div className="col-md-4 offset-lg-8">
+                                                    <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
+                                                        <span>Create Project</span>
+                                                        <i className="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
 
-                                </PageHeader>
-                                <div className="row">
-                                    <div className="col-12">
-                                        <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your projects") ? true : false} variant="info">
-                                            {this.state.accessStatus}
-                                        </Alert>
-                                    </div>
-                                    {(!this.state.loading) ?
-                                        this.renderProjects() :
-                                        <div className='col-12 text-center'>
-                                            <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
-                                        </div>}
-                                </div>
+                                        </PageHeader>
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your projects") ? true : false} variant="info">
+                                                    {this.state.accessStatus}
+                                                </Alert>
+                                            </div>
+                                            {(!this.state.loading) ?
+                                                this.renderProjects() :
+                                                <div className='col-12 text-center'>
+                                                    <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
+                                                </div>}
+                                        </div>
+                                    </>
+                                }
                             </div>
                         </div>
                     }

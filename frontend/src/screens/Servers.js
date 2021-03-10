@@ -12,6 +12,7 @@ import PageHeader from '../components/template/PageHeader';
 import Pagination from '../components/template/Pagination';
 import { read_cookie } from 'sfcookies';
 import { Alert } from 'react-bootstrap';
+import Loader from '../components/template/Loader';
 
 class Servers extends React.Component {
     constructor(props) {
@@ -74,11 +75,7 @@ class Servers extends React.Component {
         return this.state.regions[slug];
     }
     renderServers() {
-        if (this.state.loading) {
-            return <div style={{ width: "100%", paddingLeft: "40%" }}>
-                <img alt="loading" src={require("../assets/images/loading.gif")} style={{ width: "100px" }} className="serviceloading" />
-            </div>
-        }
+
         let servers = [];
         this.state.servers.forEach((data, index) => {
             if (data.project_id !== null) {
@@ -136,29 +133,33 @@ class Servers extends React.Component {
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">
-                        {(this.state.isServerClicked) ?
-                            <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedServer} />
-                            :
+                        {(this.state.loading) ? <Loader /> :
                             <>
-                                <PageHeader heading="My Servers" subHeading={this.state.servers.length + " Servers"}>
-                                    <div className="row">
-                                        <div className="col-md-4" style={{ marginLeft: 'auto' }}>
-                                            <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
-                                                <span>Create Server</span>
-                                                <i className="fa fa-plus"></i>
-                                            </button>
+                                {(this.state.isServerClicked) ?
+                                    <ServerDetails serverClickHandler={this.goBack} server={this.state.selectedServer} />
+                                    :
+                                    <>
+                                        <PageHeader heading="My Servers" subHeading={this.state.servers.length + " Servers"}>
+                                            <div className="row">
+                                                <div className="col-md-4" style={{ marginLeft: 'auto' }}>
+                                                    <button type="button" onClick={this.handleModalShow} className="btn btn-theme btn-block">
+                                                        <span>Create Server</span>
+                                                        <i className="fa fa-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </PageHeader>
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your Droplets") ? true : false} variant="info">
+                                                    {this.state.accessStatus}
+                                                </Alert>
+                                            </div>
+                                            {this.renderServers()}
                                         </div>
-                                    </div>
-                                </PageHeader>
-                                <div className="row">
-                                    <div className="col-12">
-                                        <Alert show={(this.state.accessStatus !== null && this.state.accessStatus !== "Your Droplets") ? true : false} variant="info">
-                                            {this.state.accessStatus}
-                                        </Alert>
-                                    </div>
-                                    {this.renderServers()}
-                                </div>
-                                <Pagination onPageChange={this.handlePageChange} key={this.state.serverData.current_page} data={this.state.serverData}></Pagination>
+                                        <Pagination onPageChange={this.handlePageChange} key={this.state.serverData.current_page} data={this.state.serverData}></Pagination>
+                                    </>
+                                }
                             </>
                         }
                     </div>

@@ -10,6 +10,7 @@ import PageHeader from '../components/template/PageHeader';
 import { read_cookie } from 'sfcookies';
 import { Alert } from 'react-bootstrap';
 import InvoiceDetails from '../components/invoice/InvoiceDetails';
+import Loader from '../components/template/Loader';
 
 class Invoices extends React.Component {
     constructor(props) {
@@ -122,24 +123,25 @@ class Invoices extends React.Component {
                 <Sidebar />
                 <div className="content-wrapper">
                     <div className="section-container">
-                        {(this.state.isClicked) ?
-                            <></> :
-                            <PageHeader
-                                heading={"Invoice"} subHeading="Your Invoices">
-                                <div className="row">
-                                    <div className="offset-lg-8 col-sm-4 col-md-4 mb-2 mb-sm-0  align-self-center">
-                                        <select onChange={this.selectChange} className="custom-select" name="year">
-                                            <option value="2021">2021</option>
-                                            <option value="2020">2020</option>
-                                            <option value="2019">2019</option>
-                                            <option value="2018">2018</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </PageHeader>
-                        }
-                        {(!this.state.loading) ?
-                            <>
+                        {
+                            (this.state.loading) ? <Loader loading={this.state.loading} /> : <>
+
+                                {(this.state.isClicked) ?
+                                    <></> :
+                                    <PageHeader
+                                        heading={"Invoice"} subHeading="Your Invoices">
+                                        <div className="row">
+                                            <div className="offset-lg-8 col-sm-4 col-md-4 mb-2 mb-sm-0  align-self-center">
+                                                <select onChange={this.selectChange} className="custom-select" name="year">
+                                                    <option value="2021">2021</option>
+                                                    <option value="2020">2020</option>
+                                                    <option value="2019">2019</option>
+                                                    <option value="2018">2018</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </PageHeader>
+                                }
                                 <Alert show={(this.state.stats === null) ? true : false} variant="info">
                                     Your billing statistics will be available soon.
                                 </Alert>
@@ -242,11 +244,8 @@ class Invoices extends React.Component {
                                         }
                                     </>
                                 }
-                            </> :
-                            <div className='col-12 text-center'>
-                                <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "100px", filter: "brightness(1)" }} />
-                            </div>}
-
+                            </>
+                        }
                     </div>
                 </div>
             </div>
