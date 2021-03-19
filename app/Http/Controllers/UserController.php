@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Mail\Message;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\helpers\CommonFunctions;
-// use Auth;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller

@@ -21,6 +21,22 @@ use App\Http\Controllers\InvoiceController;
 */
 
 Route::group(['prefix' => 'api'], function () {
+
+    // admin routes
+    Route::group(['prefix' => 'admin'], function () {
+        Route::post('/login', [UserController::class, 'login']);
+        Route::post('/register', [UserController::class, 'register']);
+        Route::post('/resend', [UserController::class, 'resend']);
+        Route::get('/check', [UserController::class, 'checkLogin']);
+        Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
+        Route::post('/reset', [UserController::class, 'reset']);
+        Route::post('/reset/password', [UserController::class, 'resetPassword']);
+        Route::post('/change/password', [UserController::class, 'changePassword']);
+        Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
+        Route::post('/logout', [UserController::class, 'logout']);
+    });
+
+
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/resend', [UserController::class, 'resend']);

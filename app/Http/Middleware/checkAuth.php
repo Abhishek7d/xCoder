@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Http\Controllers\helpers\CommonFunctions;
 use Auth;
+
 class checkAuth
 {
     /**
@@ -22,21 +23,21 @@ class checkAuth
         $header = $request->header('Authorization');
         if (Str::startsWith($header, 'Bearer ')) {
             $auth_header = Str::substr($header, 7);
-            $token = explode(':',$auth_header);
+            $token = explode(':', $auth_header);
             $user = User::find($token[0]);
-            
-            if($user && (count($token) > 1) ){
+
+            if ($user && (count($token) > 1)) {
                 $tokens = json_decode($user->access_tokens);
                 if (($key = array_search($auth_header, $tokens)) !== false) {
-                    if($user->hasVerifiedEmail()){
+                    if ($user->hasVerifiedEmail()) {
                         Auth::login($user);
                         return $next($request);
-                    }else{
+                    } else {
                         return CommonFunctions::sendResponse(0, "Email Not Verified");
                     }
                 }
             }
         }
-        return CommonFunctions::sendResponse(0, "Authentication Faild");
+        return CommonFunctions::sendResponse(0, "Authentication Failed");
     }
 }

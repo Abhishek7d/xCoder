@@ -18,7 +18,7 @@ class InvoiceController extends Controller
 {
     public function getInvoiceDetails(Request $request, $id)
     {
-        $user = auth()->user()->id;
+        $user = auth()->user();
         $projectId = $request->project_id;
         $invoiceId = $id;
         $details = [];
@@ -27,7 +27,7 @@ class InvoiceController extends Controller
             return CF::sendResponse(0, "Invalid Invoice", $request->input());
         }
         $projectId = CF::projectId($projectId);
-        $invoice = Invoices::where([['uuid', $invoiceId], ['project_id', $projectId], ['user_id', $user]]);
+        $invoice = Invoices::where([['uuid', $invoiceId], ['project_id', $projectId], ['user_id', $user->id]]);
         if (!$invoice->exists()) {
             return CF::sendResponse(0, "Invalid Invoice", $request->input());
         }
@@ -44,27 +44,24 @@ class InvoiceController extends Controller
         $details['dueDate'] =  date('M d, Y', strtotime($invoice->first()->created_at . " + 5 days"));
         $details['invoiceDate'] =  date('M d, Y', strtotime($invoice->first()->created_at));
         $details['invoiceMonth'] =  date('M, Y', strtotime($invoice->first()->month_year));
-        $details['userMail'] = "";
-        $details['salesMail'] = "";
+        $details['userMail'] = $user->email;
+        $details['salesMail'] = "sales@parvaty.me";
         $details['invoicedTo'] =  [
-            User::find($invoice->first()->user_id)->name,
-            'C Block Old Secretoriate',
-            'Sultania Rd, Bhopal',
-            'Madhya Pradesh 462001'
+            $user->name,
         ];
+        array_push($details['invoicedTo'], ...$this->getAddress());
         $details['payTo'] =  [
-            'Parvaty Cloud Inc',
-            '1809, George Avenue',
-            'Sultania Rd, Bhopal',
-            'Madhya Pradesh 462001'
+            'Parvaty Cloud Hosting',
         ];
+        array_push($details['payTo'], ...$this->getAddress());
         $details['items'] =  $invoiceItems;
         return CF::sendResponse(1, "Details", $details);
     }
     public function getAddress()
     {
-        //todo
-
+        return [
+            'Your Address', 'Will be Displayed Here'
+        ];
     }
     public function getStatistics(Request $request)
     {

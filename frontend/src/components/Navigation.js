@@ -386,8 +386,8 @@ class Navigation extends React.Component {
                                     Hello, <b>{this.state.name}</b>
                                 </div>
                                 <div className="dropdown-menu" style={{ left: '-50px' }} aria-labelledby="dropdownMenuLink">
-                                    <Link to="/profile" className="dropdown-item" role="button">
-                                        Profile
+                                    <Link to="/change-password" className="dropdown-item" role="button">
+                                        Change Password
                                 </Link>
                                     <Link to="/delegate-access" className="dropdown-item" role="button">
                                         Delegate Access

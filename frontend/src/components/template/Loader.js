@@ -13,7 +13,7 @@ class Loader extends PureComponent {
       return (
         <div className="d-flex flex-row justify-content-center align-items-center loaderClassCard">
           <div className="p-2">
-            <div class="dot-pulse"></div>
+            <div className="dot-pulse"></div>
           </div>
         </div>
       );
@@ -21,7 +21,7 @@ class Loader extends PureComponent {
       return (
         <div className="d-flex flex-row justify-content-center align-items-center loaderClass">
           <div className="p-2">
-            <div class="dot-pulse"></div>
+            <div className="dot-pulse"></div>
           </div>
         </div>
       );

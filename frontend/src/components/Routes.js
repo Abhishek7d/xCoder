@@ -8,7 +8,7 @@ import ResetScreen from '../screens/ResetScreen';
 import Servers from '../screens/Servers';
 import Applications from '../screens/Applications';
 import Logout from '../screens/Logout';
-import Profile from '../screens/Profile';
+import ChangePassword from '../screens/ChangePassword';
 import Projects from '../screens/Projects';
 import Notifications from '../screens/Notifications';
 import { read_cookie } from 'sfcookies';
@@ -180,12 +180,12 @@ let routes = [
     },
 
     {
-        path: '/profile',
-        title: 'Profile',
+        path: '/change-password',
+        title: 'Change Password',
         component: () => {
             let cookie = read_cookie("auth")
             if (typeof cookie !== "object") {
-                return <Profile />;
+                return <ChangePassword />;
             }
             else {
                 return <Redirect to="/login" />;

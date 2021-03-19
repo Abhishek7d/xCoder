@@ -641,14 +641,9 @@ a.dropdown-item {
     }
 
     &:hover {
-        background: linear-gradient(90.12deg, #AC2FF1 0.08%, #7973FE 99.9%);
-        box-shadow: 0px 8px 8px rgba(158, 65, 245, 0.3);
-        border-radius: 24px;
-        padding: 8px 20px;
         color: white;
-        text-decoration: none;
-        border: none;
-        cursor: pointer;
+        transform: translateY(-3px);
+        background: linear-gradient(90.12deg, #AC2FF1 99.9%, #7973FE 0.08%);
     }
 }
 

@@ -1,0 +1,26 @@
+// Variable overrides
+$theme-colors: (
+    "primary": #554dfe,
+    "danger": #ff4136,
+    "info": #7973fe,
+);
+// Roboto Family
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap");
+// font family
+$font-family-sans-serif:
+    // Safari for OS X and iOS (San Francisco)
+    // -apple-system,
+    "Roboto",
+    // Chrome < 56 for OS X (San Francisco)
+    // BlinkMacSystemFont,
+    "Roboto",
+    // Windows
+    "Roboto",
+    // Android
+    "Roboto",
+    // Basic web fallback
+    "Helvetica Neue",
+    Arial, sans-serif,
+    // Emoji fonts
+    "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol" !default;

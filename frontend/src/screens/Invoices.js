@@ -84,7 +84,7 @@ class Invoices extends React.Component {
         let tr = [];
         if (this.state.stats.invoices.months) {
             this.state.stats.invoices.months.forEach((data, index) => {
-                tr.push(<tr key={data.id}>
+                tr.push(<tr key={index}>
                     <td>{index + 1}</td>
                     <td>{(data.invoice.available) ? <button className="btn btn-link" onClick={() => { this.handleClick(data.invoice.data.uuid) }}>View</button> : '...'}</td>
                     <td>{data.month + ", " + data.year}</td>

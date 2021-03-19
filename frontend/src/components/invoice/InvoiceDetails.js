@@ -28,6 +28,8 @@ class InvoiceDetails extends React.Component {
             invoiceMonth: null,
             invoicedTo: null,
             payTo: null,
+            userMail: null,
+            salesMail: null,
             loading: true,
             invoiceId: props.invoiceId
         }
@@ -62,6 +64,8 @@ class InvoiceDetails extends React.Component {
                 invoiceMonth: data.invoiceMonth,
                 invoicedTo: data.invoicedTo,
                 payTo: data.payTo,
+                userMail: data.userMail,
+                salesMail: data.salesMail,
                 loading: false
             })
         }, error => {
@@ -80,7 +84,7 @@ class InvoiceDetails extends React.Component {
         let td = [];
         if (this.state.stats) {
             this.state.stats.forEach((data, index) => {
-                td.push(<tr key={data.id}>
+                td.push(<tr key={index}>
                     <td>{data.item}</td>
                     {/* <td className="text-center text-capitalize">{data.cost_type}</td> */}
                     {(data.cost_type === "monthly") ?
@@ -92,41 +96,39 @@ class InvoiceDetails extends React.Component {
                 </tr>)
 
             });
-            tr.push(<tbody>{td}</tbody>)
+            tr.push(<tbody key="tbody">{td}</tbody>)
         }
-        tr.push(
-            <tfoot>
-                <tr key="total">
-                    <th className="text-right" colSpan="3">Total</th>
-                    <th className="" >${parseFloat(this.state.total).toFixed(2)}</th>
-                </tr>
-                {
-                    (this.state.taxAmount) ? <tr key="tax">
-                        <th className="text-right" colSpan="3">Tax {this.state.taxPercent + "%"} (+)</th>
-                        <th className="" >${this.state.taxAmount}</th>
-                    </tr> : ''
-                }
-                {
-                    (this.state.previousArrears) ? <tr key="pre">
-                        <th className="text-right" colSpan="3">Previous Arrears (+)</th>
-                        <th className="" >${this.state.previousArrears}</th>
-                    </tr> : ''
-                }
-                {
-                    (this.state.grandTotal !== this.state.total) ? <tr key="grandtotal" className="bg-striped">
-                        <th colSpan="3" className="text-right "><h5>Grand Total: </h5></th>
-                        <th className=""><h5>${parseFloat(this.state.grandTotal).toFixed(2)}</h5></th>
-                    </tr> : ''
-                }
-            </tfoot>
-        )
+        tr.push(<tfoot key="tfoot">
+            <tr key="total">
+                <th className="text-right" colSpan="3">Total</th>
+                <th className="" >${parseFloat(this.state.total).toFixed(2)}</th>
+            </tr>
+            {
+                (this.state.taxAmount) ? <tr key="tax">
+                    <th className="text-right" colSpan="3">Tax {this.state.taxPercent + "%"} (+)</th>
+                    <th className="" >${this.state.taxAmount}</th>
+                </tr> : <></>
+            }
+            {
+                (this.state.previousArrears) ? <tr key="pre">
+                    <th className="text-right" colSpan="3">Previous Arrears (+)</th>
+                    <th className="" >${this.state.previousArrears}</th>
+                </tr> : <></>
+            }
+            {
+                (this.state.grandTotal !== this.state.total) ? <tr key="grandtotal" className="bg-striped">
+                    <th colSpan="3" className="text-right "><h5>Grand Total: </h5></th>
+                    <th className=""><h5>${parseFloat(this.state.grandTotal).toFixed(2)}</h5></th>
+                </tr> : <></>
+            }
+        </tfoot>)
         return tr
     }
     renderAddress = (data) => {
         let p = [];
         if (this.state.stats) {
-            data.forEach((line) => {
-                p.push(<span> {line} <br /></span>)
+            data.forEach((line, index) => {
+                p.push(<span key={index}> {line} <br /></span>)
             })
         }
         return p;
@@ -171,14 +173,14 @@ class InvoiceDetails extends React.Component {
                                                     <p className='mt-3'>
                                                         {this.renderAddress(this.state.invoicedTo)}
                                                     </p>
-                                                    <p className="email">anil.kumar@newrise.in</p>
+                                                    <p className="email">{this.state.userMail}</p>
                                                 </td>
                                                 <td className="address text-right">
                                                     <h6 className="text-bold"> Pay To:</h6>
                                                     <p className="ml-auto mt-3">
                                                         {this.renderAddress(this.state.payTo)}
                                                     </p>
-                                                    <p className="ml-auto email">sales@parvaty.me</p>
+                                                    <p className="ml-auto email">{this.state.salesMail}</p>
                                                 </td>
                                             </tr>
                                         </tbody>
