@@ -9,6 +9,8 @@ use App\Http\Controllers\BlockStorageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\InvoiceController;
 
+use App\Http\Controllers\admin\UserController as AdminUserController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,20 +22,25 @@ use App\Http\Controllers\InvoiceController;
 |
 */
 
+Route::get('/admin/password/reset/{token}', [AdminUserController::class, 'returnToFrontEnd'])->name('admin.password.reset');
+Route::get('/admin/email/verification/{id}', [AdminUserController::class, 'verify'])->name('admin.verification.verify');
+
 Route::group(['prefix' => 'api'], function () {
 
     // admin routes
     Route::group(['prefix' => 'admin'], function () {
-        Route::post('/login', [UserController::class, 'login']);
-        Route::post('/register', [UserController::class, 'register']);
-        Route::post('/resend', [UserController::class, 'resend']);
-        Route::get('/check', [UserController::class, 'checkLogin']);
-        Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
-        Route::post('/reset', [UserController::class, 'reset']);
-        Route::post('/reset/password', [UserController::class, 'resetPassword']);
-        Route::post('/change/password', [UserController::class, 'changePassword']);
-        Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
-        Route::post('/logout', [UserController::class, 'logout']);
+        Route::post('/login', [AdminUserController::class, 'login']);
+        Route::post('/register', [AdminUserController::class, 'register']);
+        Route::post('/resend', [AdminUserController::class, 'resend']);
+        Route::get('/check', [AdminUserController::class, 'checkLogin']);
+        //Route::get('email/verify/{id}', [AdminUserController::class, 'verify'])->name('admin.verification.verify');
+        Route::post('/reset', [AdminUserController::class, 'reset']);
+        Route::post('/reset/password', [AdminUserController::class, 'resetPassword']);
+        Route::post('/logout', [AdminUserController::class, 'logout']);
+
+        Route::group(['middleware' => 'checkAuth'], function () {
+            Route::post('/change/password', [AdminUserController::class, 'changePassword']);
+        });
     });
 
 
@@ -44,7 +51,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('email/verify/{id}', [UserController::class, 'verify'])->name('verification.verify');
     Route::post('/reset', [UserController::class, 'reset']);
     Route::post('/reset/password', [UserController::class, 'resetPassword']);
-    Route::post('/change/password', [UserController::class, 'changePassword']);
     Route::get('password/reset/{token}', [UserController::class, 'returnToFrontEnd'])->name('password.reset');
     Route::post('/logout', [UserController::class, 'logout']);
 
@@ -53,6 +59,7 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['middleware' => 'checkAuth'], function () {
         //Route::post('/logout', [UserController::class, 'logout']);
+        Route::post('/change/password', [UserController::class, 'changePassword']);
 
         //projects
         Route::post('/project/assign', [DashboardController::class, 'assignServers']);
@@ -119,8 +126,8 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/invoice/{id}', [InvoiceController::class, 'getInvoiceDetails']);
     });
 });
-Route::view("/{path?}", "app");
-Route::view("/{path?}/{subpath?}", "app");
-Route::view("/{path?}/{subpath?}/{subsubpath?}", "app");
+// Route::view("/{path?}", "app");
+// Route::view("/{path?}/{subpath?}", "app");
+// Route::view("/{path?}/{subpath?}/{subsubpath?}", "app");
 
 // Route::any('/', [UserController::class, 'default']);

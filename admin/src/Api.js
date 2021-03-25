@@ -4,8 +4,9 @@ class Api {
 
     // 
     constructor() {
-        this.baseUrl = "http://127.0.0.1:8000/api";
+        this.baseUrl = "http://127.0.0.1:8000/api/admin";
         this.state = store.getState();
+        // this.dispatch = useDispatch()
     }
 
     get = (method, url, data = null, auth = false, success = () => { }, errors = () => { }) => {
@@ -50,6 +51,14 @@ class Api {
             }
         }
         return formData;
+    }
+    checkUser = () => {
+        this.get("GET", "/check", null, true, (data, msg) => {
+            store.dispatch({ type: "set", userPermissions: data })
+            localStorage.setItem('userPermissions', JSON.stringify(data));
+        }, (error) => {
+            console.log(error)
+        })
     }
 }
 export default Api;

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Models\User;
+use App\Models\AdminUsers as User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,7 +21,7 @@ class UserController extends Controller
     public function returnToFrontEnd(Request $request, $token)
     {
         $email = $request->get('email');
-        return redirect("/reset?token=$token&email=$email");
+        return redirect(config('app.admin_url') . "/admin/reset-password/$token/$email");
     }
     public function checkLogin(Request $request)
     {
@@ -30,12 +30,20 @@ class UserController extends Controller
             $auth_header = Str::substr($header, 7);
             $token = explode(':', $auth_header);
             $user = User::find($token[0]);
-
+            if (!$user->hasPermissionTo('access-admin-panel')) {
+                return CommonFunctions::sendResponse(0, "Invalid User", []);
+            }
             if ($user && (count($token) > 1)) {
                 $tokens = json_decode($user->access_tokens);
                 if (($key = array_search($auth_header, $tokens)) !== false) {
                     if ($user->hasVerifiedEmail()) {
-                        return CommonFunctions::sendResponse(1, "user valid", true);
+                        $permissions = [];
+                        if (count($user->getAllPermissions()) > 1) {
+                            foreach ($user->getAllPermissions() as $permission) {
+                                $permissions[] = ['name' => $permission->name];
+                            };
+                        }
+                        return CommonFunctions::sendResponse(1, "user valid", $permissions);
                     } else {
                         return CommonFunctions::sendResponse(0, "Email Not Verified");
                     }
@@ -56,6 +64,9 @@ class UserController extends Controller
                 $users = User::where("email", $email)->get();
                 if (count($users) > 0) {
                     $user = $users[0];
+                    if (!$user->hasPermissionTo('access-admin-panel')) {
+                        return CommonFunctions::sendResponse(0, "Invalid User", true);
+                    }
                     if (Password::tokenExists($user, $token)) {
                         $user->password = Hash::make($password);
                         $user->save();
@@ -75,19 +86,25 @@ class UserController extends Controller
     public function changePassword(Request $request)
     {
         $password = $request->get('password');
-        $old_password = $request->get('old_password');
-        $email = $request->get('email');
+        $password_confirmation = $request->get('password_confirmation');
+        $old_password = $request->get('current_password');
+        $email = auth()->user()->email;
 
         // $credentials = ['password'=>$password, 'password_confirmation'=>$password_confirmation, 'token'=>$token];
-
+        if ($password_confirmation !== $password) {
+            return CommonFunctions::sendResponse(0, "Password did not matched");
+        }
         if (!empty($password) && !empty($old_password) && !empty($email)) {
             $users = User::where("email", $email)->get();
             if (count($users) > 0) {
                 $user = $users[0];
+                if (!$user->hasPermissionTo('access-admin-panel')) {
+                    return CommonFunctions::sendResponse(0, "Invalid User", true);
+                }
                 if (Hash::check($old_password, $user->password)) {
                     $user->password = Hash::make($password);
                     $user->save();
-                    return CommonFunctions::sendResponse(1, "Password Changed successfully");
+                    return CommonFunctions::sendResponse(1, "Password Changed.");
                 } else {
                     return CommonFunctions::sendResponse(0, "Invalid old password");
                 }
@@ -100,20 +117,22 @@ class UserController extends Controller
     public function verify(Request $request, $id)
     {
 
-        $success_route = "/";
+        $success_route = config("app.admin_url") . "/admin/login";
 
         $user = User::find($id);
-
+        if (!$user->hasPermissionTo('access-admin-panel')) {
+            return redirect($success_route . '/invalid-user');
+        }
         if (!$user) {
-            return redirect("/");
+            return redirect($success_route . '/invalid-user');
         }
         if ($user->hasVerifiedEmail()) {
-            return redirect($success_route);
+            return redirect($success_route . '/already-verified');
         }
         if ($user->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
-        return redirect($success_route);
+        return redirect($success_route . '/verified');
     }
     public function reset(Request $request)
     {
@@ -122,6 +141,9 @@ class UserController extends Controller
             $users = User::where("email", $email)->get();
             if (count($users) > 0) {
                 $user = $users[0];
+                if (!$user->hasPermissionTo('access-admin-panel')) {
+                    return CommonFunctions::sendResponse(0, "Invalid User", true);
+                }
                 $token = Password::getRepository()->create($user);
                 $user->sendPasswordResetNotification($token);
                 return CommonFunctions::sendResponse(1, "Password Reset Mail sent successfully");
@@ -139,8 +161,11 @@ class UserController extends Controller
             $users = User::where("email", $email)->get();
             if (count($users) > 0) {
                 $user = $users[0];
+                if (!$user->hasPermissionTo('access-admin-panel')) {
+                    return CommonFunctions::sendResponse(0, "Invalid User", true);
+                }
                 if ($user->hasVerifiedEmail()) {
-                    return redirect("/");
+                    return CommonFunctions::sendResponse(1, "Email already verified.");
                 }
                 $user->sendEmailVerificationNotification();
                 return CommonFunctions::sendResponse(1, "Verification mail Resend successfully");
@@ -189,11 +214,15 @@ class UserController extends Controller
             $users = User::where("email", $email)->get();
             if (count($users) > 0) {
                 if (Auth::attempt(['email' => $email, 'password' => $password])) {
-                    $user = Auth::user();
+                    $user = User::find(Auth::user()->id);
+
                     if (!$user->hasVerifiedEmail()) {
                         return CommonFunctions::sendResponse(0, "Email Not Verified", true);
                     }
-                    $user = Auth::user();
+                    if (!$user->hasPermissionTo('access-admin-panel')) {
+                        return CommonFunctions::sendResponse(0, "Invalid User", true);
+                    }
+
                     $token_key = Str::random(32);
                     $token = $user->id . ":" . $token_key;
                     $tokens = json_decode($user->access_tokens);

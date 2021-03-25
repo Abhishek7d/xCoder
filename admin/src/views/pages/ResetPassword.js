@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 // import { useDispatch } from 'react-redux'
-// import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import Cookies from 'js-cookie';
 import Api from '../../Api';
 import {
@@ -24,9 +24,10 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 
-const ForgotPassword = () => {
+const ResetPassword = () => {
     // const dispatch = useDispatch()
-    // const history = useHistory();
+    const history = useHistory();
+    const params = useParams();
     const token = Cookies.get('authToken');
     const [loading, isLoading] = useState(false)
     const [alert, showAlert] = useState({
@@ -35,9 +36,14 @@ const ForgotPassword = () => {
         type: 'info'
     });
     const [form, setForm] = useState({
+        token: null,
         email: null,
+        password: null,
+        password_confirmation: null
     })
-
+    useEffect(() => {
+        setForm(preForm => ({ ...preForm, email: params.email, token: params.token }));
+    }, [params]);
     const setInput = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
@@ -49,13 +55,16 @@ const ForgotPassword = () => {
     }
     const resetPassword = (event) => {
         event.preventDefault();
-        sendVerification();
+        changePassword();
     }
-    const sendVerification = () => {
+    const changePassword = () => {
         isLoading(true)
-        new Api().get("POST", "/reset", form, false, (data, msg) => {
+        new Api().get("POST", "/reset/password", form, false, (data, msg) => {
             isLoading(false)
             showAlert({ show: true, text: msg, type: 'success' })
+            setTimeout(() => {
+                history.push('/login')
+            }, 1000)
         }, (error) => {
             isLoading(false)
             showAlert({ show: true, text: error, type: 'danger' })
@@ -71,8 +80,9 @@ const ForgotPassword = () => {
                         <CCardGroup>
                             <CCard className="p-4">
                                 <CCardBody>
-                                    <h1>Forgot Password</h1>
-                                    <p className="text-muted">Enter your email to reset your account</p>
+
+                                    <h1>Reset Password</h1>
+                                    <p className="text-muted">Enter new password</p>
                                     <Alert color={alert.type} show={alert.show} onShowChange={dismissAlert} closeButton>
                                         {alert.text}
                                     </Alert>
@@ -80,10 +90,18 @@ const ForgotPassword = () => {
                                         <CInputGroup className="mb-3">
                                             <CInputGroupPrepend>
                                                 <CInputGroupText>
-                                                    <CIcon name="cil-user" />
+                                                    <CIcon name="cil-lock-locked" />
                                                 </CInputGroupText>
                                             </CInputGroupPrepend>
-                                            <CInput name="email" type="text" placeholder="Email" onChange={setInput} />
+                                            <CInput name="password" type="password" placeholder="Password" onChange={setInput} />
+                                        </CInputGroup>
+                                        <CInputGroup className="mb-3">
+                                            <CInputGroupPrepend>
+                                                <CInputGroupText>
+                                                    <CIcon name="cil-lock-locked" />
+                                                </CInputGroupText>
+                                            </CInputGroupPrepend>
+                                            <CInput name="password_confirmation" type="password" placeholder="Confirm Password" onChange={setInput} />
                                         </CInputGroup>
                                         <CRow>
                                             <CCol xs="6" className="text-left">
@@ -108,4 +126,4 @@ const ForgotPassword = () => {
     )
 }
 
-export default ForgotPassword
+export default ResetPassword

@@ -16,9 +16,11 @@ import {
 // import CIcon from '@coreui/icons-react'
 
 // sidebar nav config
-import navigation from './_nav'
+import _nav from './_nav'
+import { withPermission } from '../reusable/Permissions';
 
 const TheSidebar = () => {
+    const nav = withPermission(_nav)
     const dispatch = useDispatch()
     const show = useSelector(state => state.sidebarShow)
 
@@ -42,7 +44,7 @@ const TheSidebar = () => {
             </CSidebarBrand>
             <CSidebarNav>
                 <CCreateElement
-                    items={navigation}
+                    items={nav}
                     components={{
                         CSidebarNavDivider,
                         CSidebarNavDropdown,

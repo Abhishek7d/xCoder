@@ -123,7 +123,12 @@ class ApiHandler {
         formData.append("password", newPassword);
         formData.append("old_password", oldPassword);
 
-        this.getResult("/change/password", "POST", formData, null, (response) => {
+        let access_token = read_cookie("auth");
+
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        this.getResult("/change/password", "POST", formData, authHeaders, (response) => {
             if (response.status === 0) {
                 faild(response.message)
             } else if (response.status === 1) {

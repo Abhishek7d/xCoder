@@ -9,7 +9,7 @@ import {
     //   CHeaderNavLink,
     CSubheader,
     CBreadcrumbRouter,
-    CLink,
+    // CLink,
     CImg
 } from '@coreui/react'
 // import CIcon from '@coreui/icons-react'
@@ -27,6 +27,7 @@ import {
 const TheHeader = () => {
     const dispatch = useDispatch()
     const sidebarShow = useSelector(state => state.sidebarShow)
+
 
     const toggleSidebar = () => {
         const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'

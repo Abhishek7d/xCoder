@@ -1,64 +1,30 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import { useSelector } from 'react-redux'
-import { cilMoney, cilUser } from '@coreui/icons'
+// import { useSelector } from 'react-redux'
+import sidebarMenu from 'src/reusable/Sidebar'
 
-const MyText = () => {
-    const show = useSelector(state => state.userRole)
-    return show;
-}
-const _nav = [
-    {
-        _tag: 'CSidebarNavTitle',
-        _children: ['Dashboard']
-    },
-    {
-        _tag: 'CSidebarNavItem',
-        name: 'Dashboard',
-        to: '/dashboard',
-        icon: <CIcon name="cil-speedometer" customClasses="c-sidebar-nav-icon" />,
-        badge: {
-            color: 'success',
-            text: <MyText />,
-        }
-    },
-    {
-        _tag: 'CSidebarNavItem',
-        name: 'Settings',
-        to: '/dashboard/settings',
-        icon: <CIcon name="cil-settings" customClasses="c-sidebar-nav-icon" />,
+// const MyText = () => {
+//     const show = useSelector(state => state.userRole)
+//     return show;
+// }
 
-    },
-    {
-        _tag: 'CSidebarNavTitle',
-        _children: ['Accounts']
-    },
-    {
-        _tag: 'CSidebarNavDropdown',
-        name: 'Accounts',
-        route: '/dashboard/accounts',
-        icon: <CIcon name="cil-home" customClasses="c-sidebar-nav-icon" />,
-        _children: [
-            {
-                _tag: 'CSidebarNavItem',
-                name: 'All Accounts',
-                to: '/dashboard/accounts',
-                icon: <CIcon content={cilUser} customClasses="c-sidebar-nav-icon" />,
-            },
-            {
-                _tag: 'CSidebarNavItem',
-                name: 'Payments',
-                to: '/dashboard/accounts/payments',
-                icon: <CIcon content={cilMoney} customClasses="c-sidebar-nav-icon" />,
-            },
-        ]
-    },
-    {
-        _tag: 'CSidebarNavItem',
-        name: 'Payments',
-        to: '/payments',
-        icon: <CIcon content={cilMoney} customClasses="c-sidebar-nav-icon" />,
-    },
-]
+const sidebar = new sidebarMenu();
+// Dashboard
+sidebar.header("Dashboard")
+sidebar.menu('dashboard')
+sidebar.menu('dashboard.users')
 
-export default _nav
+// Droplets
+sidebar.header("Droplets")
+sidebar.menu('droplets.users')
+sidebar.menu('droplets.projects')
+sidebar.menu('droplets')
+sidebar.menu('droplets.invoices',)
+
+// Settings
+sidebar.header("Settings")
+sidebar.menu('dashboard.settings')
+sidebar.menu('dashboard.payments')
+sidebar.menu('dashboard.notifications')
+
+export default sidebar.sidebarMenu

@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Cookies from 'js-cookie';
-
 import {
     Redirect
 } from 'react-router-dom'
@@ -11,10 +10,13 @@ import {
     TheHeader
 } from './index'
 // const Login = React.lazy(() => import('../views/pages/Login'));
+import Api from '../Api';
 
 const TheLayout = () => {
-    const token = Cookies.get('authToken');
-
+    const token = Cookies.get('authToken')
+    useEffect(() => {
+        new Api().checkUser()
+    }, [])
     return (
         <div className="c-app c-default-layout">
             <TheSidebar />
