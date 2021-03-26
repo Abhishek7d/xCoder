@@ -4,7 +4,6 @@
     "description": "Parvaty CoreUI React Admin Panel",
     "license": "MIT",
     "private": true,
-    "homepage": ".",
     "dependencies": {
         "@coreui/chartjs": "^2.0.0",
         "@coreui/coreui": "^3.4.0",
