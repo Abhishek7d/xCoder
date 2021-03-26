@@ -1,0 +1,2 @@
+(this["webpackJsonpparvaty-admin-panel"]=this["webpackJsonpparvaty-admin-panel"]||[]).push([[11],{513:function(a,n,e){"use strict";e.r(n);e(1);var t=e(24);n.default=function(a){return Object(t.jsx)(t.Fragment,{children:"Servers"})}}}]);
+//# sourceMappingURL=11.1cc3d878.chunk.js.map
