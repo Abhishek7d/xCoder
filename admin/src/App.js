@@ -39,7 +39,7 @@ const App = () => {
     }
 
     return (
-        <BrowserRouter basename={'/admin'}>
+        <BrowserRouter>
             <React.Suspense fallback={loading}>
                 <Switch>
                     {/* <Route exact path="/login" name="Login Page" render={props => <Login {...props} />} /> */}
