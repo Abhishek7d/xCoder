@@ -38,7 +38,7 @@ class ApplicationCard extends React.Component {
         this.setState({ error: "", success: "", loading: true })
         this.apiHandler.deleteApplication(this.state.id, (message, data) => {
             this.setState({ error: "", success: message, loading: false })
-            window.location.href = "/applications";
+            this.props.appsReload()
         }, (message) => {
             this.setState({ error: message, success: "", loading: false })
             console.log(message);
@@ -137,7 +137,7 @@ class ApplicationCard extends React.Component {
                             <Button variant="default" onClick={this.handleModalClose}>
                                 GO BACK
                                       </Button>
-                            <Button disabled={(this.state.code === this.application.name) ? false : true} className="btn btn-theme" onClick={this.deleteProject}>
+                            <Button disabled={(this.state.code === this.application.name) ? false : true} className="btn btn-theme" onClick={this.deleteHandle}>
                                 {
                                     this.state.loading ?
                                         <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px", filter: "brightness(20)" }} />

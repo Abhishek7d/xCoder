@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Mail\Message;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\helpers\CommonFunctions;
+use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -201,6 +202,13 @@ class UserController extends Controller
                     array_push($tokens, $token);
                     $user->access_tokens = $tokens;
                     $user->save();
+                    $projects = Project::where('user_id', auth()->user()->id)->count();
+                    if ($projects == 0) {
+                        $project = new Project();
+                        $project->name = "Default Project";
+                        $project->user_id = auth()->user()->id;
+                        $project->save();
+                    }
                     return CommonFunctions::sendResponse(1, "Login Success", $user);
                 } else {
                     return CommonFunctions::sendResponse(0, "Login Faild");

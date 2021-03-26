@@ -95,16 +95,31 @@ class ServerCard extends React.Component {
                         <div className="card-header" onClick={() => this.props.serverClickHandler(this.props.server)}>
                             <div className="row no-gutters">
                                 <div className="col-2 p-1 align-self-center pl-0">
-                                    <img alt="wordpress" style={{ width: "100%" }} src={require("../assets/images/wordpress.png")} />
+                                    <i style={{ fontSize: '35px' }} className="nav-icon fa fa-server"></i>
                                 </div>
                                 <div className="col-8 p-2 align-self-center">
                                     <h6 className="heading">{this.server.name}</h6>
                                     <p className="sub-heading">
-                                        Created: {new Date(this.state.created_at).toDateString()}
+                                        {
+                                            (this.server.status !== "READY") ?
+                                                <>Bringing your plan to life..</>
+                                                :
+                                                <>Created: {new Date(this.state.created_at).toDateString()}</>
+                                        }
                                     </p>
                                 </div>
                                 <div title={this.server.status} className="col-2 align-self-center text-right">
-                                    <Status status={this.server.status} />
+                                    {
+                                        (this.server.status !== "READY") ?
+                                            <>
+                                                <img alt="" src={require("../assets/images/loading.gif")} style={{ width: "25px" }} />
+                                            </>
+                                            :
+                                            <>
+                                                <Status status={this.server.status} />
+                                            </>
+                                    }
+
                                 </div>
                             </div>
                         </div>

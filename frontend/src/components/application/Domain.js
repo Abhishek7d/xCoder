@@ -73,10 +73,14 @@ class Domain extends React.Component {
                             <div className="col-4">
                                 <label className="switch" onClick={this.updateDomainSSL}>
                                     {(this.state.ssl_enabled === "1") ?
-                                        <input type="checkbox" defaultChecked />
-                                        : <input type="checkbox" />
+                                        <><input type="checkbox" defaultChecked />
+                                            <span className="slider round"></span>
+                                        </>
+                                        : <><input type="checkbox" />
+                                            <span className="slider round"></span>
+                                        </>
                                     }
-                                    <span className="slider round"></span>
+
                                 </label>
                             </div>
                         </div>

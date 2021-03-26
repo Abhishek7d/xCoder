@@ -126,8 +126,8 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/invoice/{id}', [InvoiceController::class, 'getInvoiceDetails']);
     });
 });
-// Route::view("/{path?}", "app");
-// Route::view("/{path?}/{subpath?}", "app");
-// Route::view("/{path?}/{subpath?}/{subsubpath?}", "app");
+Route::view("/{path?}", "app");
+Route::view("/{path?}/{subpath?}", "app");
+Route::view("/{path?}/{subpath?}/{subsubpath?}", "app");
 
-// Route::any('/', [UserController::class, 'default']);
+Route::any('/', [UserController::class, 'default']);

@@ -323,15 +323,39 @@ class InvoiceController extends Controller
 
 
         $rate = CF::getSizeDetails($server->size);
-        if ($totalHours > $maxHours) {
-            $chargeType = 'monthly';
-            $serverCharge = round($rate->parvaty_price_monthly, 4);
-            $_rate = $rate->parvaty_price_monthly;
+        if ($rate) {
+            if ($totalHours > $maxHours) {
+                $chargeType = 'monthly';
+                $serverCharge = round($rate->parvaty_price_monthly, 4);
+                $_rate = $rate->parvaty_price_monthly;
+            } else {
+                $chargeType = 'hourly';
+                $serverCharge = round($rate->parvaty_price_hourly * $totalHours, 4);
+                $_rate = $rate->parvaty_price_hourly;
+            }
         } else {
-            $chargeType = 'hourly';
-            $serverCharge = round($rate->parvaty_price_hourly * $totalHours, 4);
-            $_rate = $rate->parvaty_price_hourly;
+            $sizes = CF::makeRequest("/sizes", "GET");
+            if ($sizes['status']) {
+                $sizes = json_decode($sizes['data'])->sizes;
+                $item = null;
+                foreach ($sizes as $struct) {
+                    if ($server->size == $struct->slug) {
+                        $item = $struct;
+                        break;
+                    }
+                }
+            }
+            if ($totalHours > $maxHours) {
+                $chargeType = 'monthly';
+                $serverCharge = round(($item->price_monthly * 2), 4);
+                $_rate = $item->price_monthly * 2;
+            } else {
+                $chargeType = 'hourly';
+                $serverCharge = round(($item->price_hourly * 2) * $totalHours, 4);
+                $_rate = $item->price_hourly * 2;
+            }
         }
+
         if ($blockStorage->exists()) {
             $blockStorage = $this->getStorageCost($blockStorage->first(), $lastDate, $tillDate);
             $totalCharges = $serverCharge + $blockStorage['totalCharge'];

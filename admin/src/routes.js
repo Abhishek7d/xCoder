@@ -91,7 +91,6 @@ const routes = [
         component: Projects,
         permission: 'droplets.projects.view',
         icon: cilFolder
-
     },
     {
         path: '/dashboard/droplets/users',

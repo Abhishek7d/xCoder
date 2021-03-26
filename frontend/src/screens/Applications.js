@@ -118,12 +118,12 @@ class Applications extends React.Component {
         let applications = [];
         if (this.state.selectedServerFilter === "" || this.state.selectedServerFilter === null) {
             this.state.applications.forEach((data, index) => {
-                applications.push(<ApplicationCard appsReload={this.loadApplications} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
+                applications.push(<ApplicationCard appsReload={this.refreshPage} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
             })
         } else {
             this.state.applications.forEach((data, index) => {
                 if (data.server.uuid === this.state.selectedServerFilter) {
-                    applications.push(<ApplicationCard appsReload={this.loadApplications} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
+                    applications.push(<ApplicationCard appsReload={this.refreshPage} key={data.id} application={data} applicationClickHandler={this.applicationClickHandler} />);
                 }
             })
         }
@@ -153,10 +153,10 @@ class Applications extends React.Component {
         }
         this.setState({ error: "", success: "", loadding: true })
         this.apiHandler.createApplication(this.state.selectedServerId, this.state.selectedDomain, this.state.isWordpress, (message, data) => {
-            this.setState({ error: "", success: message, loadding: false })
+            this.setState({ error: "", success: message, loadding: false, showModal: false })
             this.loadApplications();
         }, (message) => {
-            this.setState({ error: message, success: "", loadding: false })
+            this.setState({ error: message, success: "", loadding: false, showModal: false })
             console.log(message);
             this.loadApplications();
         });
@@ -241,7 +241,7 @@ class Applications extends React.Component {
                                     : <> {
                                         (!this.state.selectedApplication) ?
                                             <PageHeader
-                                                heading="My Applications" subHeading={this.state.applications.length + " Applicatinos"}>
+                                                heading="My Applications" subHeading={this.state.applications.length + " Applications"}>
                                                 <div className="row">
                                                     <div className="col-sm-4 col-md-4 mb-2 mb-sm-0  align-self-center">
                                                         <select className="custom-select" name="selectedServerFilter" value={this.state.selectedServerFilter} onChange={this.updateSelectedServer} id="selectedServerFilter">

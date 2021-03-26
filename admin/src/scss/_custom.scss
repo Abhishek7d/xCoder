@@ -35,3 +35,48 @@
     -webkit-flex-direction: row;
     flex-direction: row;
 }
+.card {
+    border-radius: 5px;
+    border: 0;
+    box-shadow: 0px 2px 15px #d6d3d3b8;
+    .card-header {
+        font-weight: 800;
+        border-radius: 5px 5px 10px 10px;
+        box-shadow: 0 2px 20px #d6d3d3b8;
+        border: 0;
+        padding: 1.25rem;
+    }
+    .card-footer {
+        font-weight: 800;
+        border-radius: 10px 10px 5px 5px;
+        box-shadow: 0 -2px 20px #d6d3d3b8;
+        border: 0;
+        padding: 1.25rem;
+    }
+    .card-body.has-table {
+        div.row:not(.table-responsive) {
+            padding: 1rem 1.25rem 1.5rem 1rem;
+            border-bottom: 1px solid #efefef;
+        }
+    }
+
+    .table {
+        th {
+            border-top: 0;
+        }
+        th,
+        td {
+            border-top-color: #efefef;
+            border-bottom-color: #efefef;
+            &:first-child {
+                padding-left: 1.3rem;
+            }
+            &:last-child {
+                padding-right: 1.3rem;
+                svg {
+                    right: 13px;
+                }
+            }
+        }
+    }
+}
