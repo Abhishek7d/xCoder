@@ -37,7 +37,6 @@ const App = () => {
         })
         return route
     }
-
     return (
         <BrowserRouter>
             <React.Suspense fallback={loading}>

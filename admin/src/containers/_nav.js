@@ -1,7 +1,7 @@
-import React from 'react'
-import CIcon from '@coreui/icons-react'
+// import React from 'react'
+// import CIcon from '@coreui/icons-react'
 // import { useSelector } from 'react-redux'
-import { cilCloudy, cilEnvelopeClosed, cilEnvelopeLetter, cilFolder, cilMoney, cilResizeBoth, cilUser } from '@coreui/icons'
+// import { cilCloudy, cilEnvelopeClosed, cilEnvelopeLetter, cilFolder, cilMoney, cilResizeBoth, cilUser } from '@coreui/icons'
 import sidebarMenu from 'src/reusable/Sidebar'
 
 // const MyText = () => {

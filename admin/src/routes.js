@@ -1,5 +1,5 @@
 import React from 'react';
-import { cilCloudy, cilEnvelopeClosed, cilEnvelopeLetter, cilFolder, cilMoney, cilResizeBoth, cilUser } from '@coreui/icons'
+import { cilCloudy, cilEnvelopeClosed, cilEnvelopeLetter, cilFolder, cilMoney, cilResizeBoth } from '@coreui/icons'
 
 // Dashboard
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));

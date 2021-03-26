@@ -1,10 +1,10 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+// import { useDispatch } from 'react-redux'
 // import Api from '../../Api'
-import { usePermission } from '../../reusable/Permissions';
+// import { usePermission } from '../../reusable/Permissions';
 import {
-    CBadge,
-    CButton,
+    // CBadge,
+    // CButton,
     // CButton,
     // CButtonGroup,
     CCard,
@@ -13,7 +13,7 @@ import {
     CCardHeader,
     CCol,
     CDataTable,
-    CInput,
+    // CInput,
     // CProgress,
     CRow,
     // CCallout,
@@ -39,8 +39,8 @@ const usersData = [
 const fields = ['id', 'name', 'droplets', 'applications', 'registered', 'action']
 // const fields2 = ['name', 'registered', 'domain', 'status']
 const Dashboard = (props) => {
-    const can = usePermission
-    const dispatch = useDispatch()
+    // const can = usePermission
+    // const dispatch = useDispatch()
     // const show = useSelector(state => state.userPermissions)
     //   const show2 = useSelector(state => state.userRole)
 

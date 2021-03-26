@@ -115,7 +115,7 @@ const TheHeaderDropdown = () => {
                         tag="div"
                         color="light"
                         className="text-center">
-                        <strong>{user.name}'s Account</strong>
+                        <strong>{(user) ? user.name : 'User'}'s Account</strong>
                     </CDropdownItem>
                     <CDropdownItem>
                         <CIcon name="cil-bell" className="mfe-2" />
