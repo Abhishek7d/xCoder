@@ -4,7 +4,8 @@ class Api {
 
     // 
     constructor() {
-        this.baseUrl = "http://127.0.0.1:8000/api/admin";
+        // this.baseUrl = "http://127.0.0.1:8000/api/admin";
+        this.baseUrl = "https://parvaty.me/api/admin";
         this.state = store.getState();
         // this.dispatch = useDispatch()
     }

@@ -95,12 +95,12 @@ class WebSiteController extends Controller
         $domain = $request->get('domain');
         $project_id = $request->get('project_id');
         $server = $request->get('server');
-        $server = CommonFunctions::getId($server, 'servers');
+        
         if (empty($project_id)) {
             return CommonFunctions::sendResponse(0, "Invalid Project");
         }
         $project_id = CF::projectId($request->get('project_id'));
-
+        $server = CommonFunctions::getId($server, 'servers');
         if (empty($server) || empty($domain)) {
             return CommonFunctions::sendResponse(0, "All Fields are required");
         }
