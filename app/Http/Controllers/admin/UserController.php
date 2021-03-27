@@ -11,9 +11,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\helpers\CommonFunctions;
+use App\Models\AdminUsers;
 
 class UserController extends Controller
 {
+
+
     public function default()
     {
         return CommonFunctions::sendResponse(0, "route not found");
@@ -257,5 +260,22 @@ class UserController extends Controller
             }
         }
         return CommonFunctions::sendResponse(0, "Logged out failed");
+    }
+
+    public function allUsers(Request $request)
+    {
+        $user = AdminUsers::find(auth()->user()->id);
+        $sort = CommonFunctions::checkQueryString($request);
+        error_log(json_encode($sort));
+        if ($user->can('dashboard.users.view')) {
+            $users = AdminUsers::permission('access-admin-panel')
+                ->select('id', 'name', 'email', 'created_at')
+                ->orderBy($sort->column, $sort->asc)
+                ->paginate($sort->perPage);
+
+            return CommonFunctions::sendResponse(1, "Access Granted", $users);
+        } else {
+            return CommonFunctions::sendResponse(0, "Permission Denied", null);
+        }
     }
 }

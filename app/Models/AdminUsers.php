@@ -16,6 +16,8 @@ class AdminUsers extends Authenticatable implements MustVerifyEmail
 
     protected $table = "users";
     protected $guard_name = 'web';
+    protected $appends = array('has_roles', 'has_permissions');
+
     /**
      * The attributes that are mass assignable.
      *
@@ -31,7 +33,7 @@ class AdminUsers extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'roles', 'permissions'
     ];
 
     /**
@@ -62,5 +64,13 @@ class AdminUsers extends Authenticatable implements MustVerifyEmail
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new AdminPasswordResetNotification($token));
+    }
+    public function getHasRolesAttribute()
+    {
+        return $this->getRoleNames();
+    }
+    public function getHasPermissionsAttribute()
+    {
+        return $this->getAllPermissions()->pluck('name');
     }
 }

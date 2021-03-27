@@ -20,6 +20,8 @@ use App\Http\Controllers\InvoiceController;
 use App\Models\Invoices;
 use App\Models\ServerSize;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
+use stdClass;
 
 class CommonFunctions extends Controller
 {
@@ -352,5 +354,28 @@ class CommonFunctions extends Controller
             $preArrears = $invoice->first()->grand_total;
         }
         return $preArrears;
+    }
+
+    public static function checkQueryString(Request $request)
+    {
+
+        $in = $request->input();
+        $column = "id";
+        $asc = "desc";
+        $perPage = '15';
+        if (isset($in['sort'])) {
+            $column = $in['sort']['column'];
+            $asc = ($in['sort']['asc']) ? 'asc' : 'desc';
+        }
+        if (isset($in['perPage'])) {
+            $perPage = $in['perPage'];
+        }
+        error_log(json_encode($in));
+
+        return (object) [
+            'column' => $column,
+            'asc' => $asc,
+            'perPage' => $perPage
+        ];
     }
 }

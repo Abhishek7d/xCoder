@@ -80,3 +80,50 @@
         }
     }
 }
+.table {
+    tr {
+        th {
+            padding: 0.5rem 0.75rem;
+            &:first-child {
+                .form-check-input {
+                    width: 15px;
+                    height: 15px;
+                    margin-top: -7px;
+                    opacity: 0.4;
+                    &:checked {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+        td {
+            &:first-child {
+                .form-check-input {
+                    width: 15px;
+                    height: 15px;
+                    margin-top: 3px;
+                    opacity: 0.4;
+                    &:checked {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+        &:hover {
+            td {
+                &:first-child {
+                    .form-check-input {
+                        opacity: 1;
+                    }
+                }
+            }
+            th {
+                &:first-child {
+                    .form-check-input {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}

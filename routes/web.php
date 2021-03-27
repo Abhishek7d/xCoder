@@ -39,7 +39,13 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/logout', [AdminUserController::class, 'logout']);
 
         Route::group(['middleware' => 'checkAuth'], function () {
+
+            // Users
             Route::post('/change/password', [AdminUserController::class, 'changePassword']);
+            Route::post('/users', [AdminUserController::class, 'allUsers']);
+
+            // Invoices
+            Route::get('/invoice/generate/{date}', [InvoiceController::class, 'generateInvoice']);
         });
     });
 
@@ -122,7 +128,6 @@ Route::group(['prefix' => 'api'], function () {
 
         // Invoices
         Route::post('/invoice/statistics', [InvoiceController::class, 'getStatistics']);
-        Route::get('/invoice/generate/{date}', [InvoiceController::class, 'generateInvoice']);
         Route::get('/invoice/{id}', [InvoiceController::class, 'getInvoiceDetails']);
     });
 });

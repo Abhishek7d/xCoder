@@ -4,29 +4,37 @@ class Api {
 
     // 
     constructor() {
-        // this.baseUrl = "http://127.0.0.1:8000/api/admin";
-        this.baseUrl = "https://parvaty.me/api/admin";
+        // Url
+        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+            this.baseUrl = "http://127.0.0.1:8000/api/admin";
+        } else {
+            this.baseUrl = "https://parvaty.me/api/admin";
+        }
         this.state = store.getState();
         // this.dispatch = useDispatch()
     }
 
     get = (method, url, data = null, auth = false, success = () => { }, errors = () => { }) => {
+        // headers
+        var headers = new Headers();
         // let Params
         let parameters = {};
         parameters.method = method;
 
         // set auth header
         if (auth) {
-            var authHeaders = new Headers();
-            authHeaders.append("Authorization", "Bearer " + this.state.authToken)
-            parameters.headers = authHeaders;
+            headers.append("Authorization", "Bearer " + this.state.authToken)
         }
         // Form data
         if (data) {
-            const formData = this.getFormData(data)
-            parameters.body = formData
+            if (data.hasOwnProperty('raw')) {
+                headers.append("Content-Type", "application/json")
+                parameters.body = JSON.stringify(data)
+            } else {
+                parameters.body = this.getFormData(data)
+            }
         }
-
+        parameters.headers = headers;
         // Send
         fetch(this.baseUrl + url, parameters).then(res => res.json())
             .then(
