@@ -38,7 +38,7 @@ class TestCommand extends Command
      */
     public function handle()
     {
-        $this->info('Task Run Successful at ' . date('Y-m-d h:i:s'));
-        Log::info('Task Run Successful at ' . date('Y-m-d h:i:s'));
+        $this->info('Task Run Successful at - ' . date('Y-m-d h:i:s'));
+        Log::info('Task Run Successful at - ' . date('Y-m-d h:i:s'));
     }
 }
