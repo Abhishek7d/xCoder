@@ -11,17 +11,22 @@ import {
     CCol,
     CRow,
     CButton,
+    CButtonGroup,
     CInputCheckbox,
 } from '@coreui/react'
-// import CIcon from '@coreui/icons-react'
 
 import Api from '../../Api';
-
+import CIcon from '@coreui/icons-react';
+import { cilUserPlus, cilTrash, cilLockLocked } from '@coreui/icons'
+import { removeElem } from 'src/reusable/Helper';
+import { hasElem } from '../../reusable/Helper';
+// const selectedRows = [];
 const Users = (props) => {
     // const dispatch = useDispatch()
+
     const [loading, isLoading] = useState(false)
     const [users, setUsers] = useState(null)
-    const [page, setPage] = useState(1)
+    const [selectedRows, setSelectedItems] = useState([0])
     const [request, setRequest] = useState({
         sort: null,
         search: null,
@@ -33,14 +38,14 @@ const Users = (props) => {
     const fields = [
         {
             key: 'check_box',
-            label: <CInputCheckbox className="ml-0" />,
+            label: <CInputCheckbox onChange={e => selectAll(e)} className="ml-0" />,
             _style: { width: '1%' },
             sorter: false,
             filter: false
         },
         {
             key: 'id',
-            _style: { width: '5%' },
+            _style: { width: '10%' },
         },
         'name',
         'email',
@@ -57,7 +62,6 @@ const Users = (props) => {
         isLoading(true)
         new Api().get("POST", "/users?page=" + request.page, request, true, (data, msg) => {
             console.log(data)
-
             isLoading(false)
             setUsers(data)
         }, (error) => {
@@ -65,10 +69,45 @@ const Users = (props) => {
         })
 
     }
-    const makeCheckbox = () => {
-
+    const addToSelectedList = (event, id) => {
+        if (event.target.checked) {
+            let array = addOrRemoveItem(selectedRows, id)
+            setSelectedItems({ ...selectedRows, array });
+            console.log(selectedRows)
+        } else {
+            let array = addOrRemoveItem(selectedRows, id)
+            setSelectedItems({ ...selectedRows, array });
+            console.log(selectedRows)
+        }
     }
 
+    const addOrRemoveItem = (array, item) => {
+        let arr = Array.from(item)
+        if (array.find(i => i === item)) {
+            array = removeElem(array, item)
+        } else {
+            array.push(...arr)
+        }
+        return array
+    }
+
+    const selectAll = (event) => {
+        if (event.target.checked) {
+            let all = []
+            users.data.forEach((data) => {
+                all.push(data.id)
+            })
+            setSelectedItems(all);
+        } else {
+            setSelectedItems([]);
+        }
+    }
+    const isSelected = () => {
+        if (selectedRows.length > 0) {
+            return false
+        }
+        return true
+    }
     useEffect(() => {
         getUsersData()
     }, [request])
@@ -82,6 +121,21 @@ const Users = (props) => {
                             Admin Users
                         </CCardHeader>
                         <CCardBody className="p-0 has-table">
+                            <CRow className="mt-1">
+                                <CCol md="12">
+                                    <CButtonGroup>
+                                        <CButton disabled={isSelected()} size="sm" color="danger">
+                                            <CIcon content={cilTrash} />
+                                        </CButton>
+                                        <CButton disabled={isSelected()} size="sm" color="info">
+                                            <CIcon content={cilLockLocked} />
+                                        </CButton>
+                                        <CButton size="sm" color="success">
+                                            <CIcon content={cilUserPlus} />
+                                        </CButton>
+                                    </CButtonGroup>
+                                </CCol>
+                            </CRow>
                             <CDataTable
                                 items={(users) ? users.data : []}
                                 fields={fields}
@@ -92,8 +146,6 @@ const Users = (props) => {
                                 }
                                 clickableRows
                                 columnFilter
-                                tableFilter
-                                itemsPerPageSelect={{ 2: 2 }}
                                 itemsPerPage={(users) ? users.per_page : 10}
                                 hover
                                 sorter
@@ -101,11 +153,12 @@ const Users = (props) => {
                                 onSorterValueChange={e => setRequest({ ...request, sort: e })}
                                 onColumnFilterChange={e => setRequest({ ...request, filter: e })}
                                 onTableFilterChange={e => setRequest({ ...request, search: e })}
-                                onRowClick={e => console.log(e)}
+
                                 scopedSlots={{
                                     'check_box': (item) => (
                                         <td >
-                                            <CInputCheckbox className="ml-0" />
+                                            <CInputCheckbox key={item.id} checked={hasElem(selectedRows, item.id)}
+                                                onChange={(e) => addToSelectedList(e, item.id)} className="ml-0" />
                                         </td>
                                     ),
                                     'created_at': (item) => (
@@ -119,10 +172,10 @@ const Users = (props) => {
                                                 <CButton color="primary" size="sm">
                                                     Edit
                                                 </CButton>
-                                                <CButton color="danger" size="sm">
+                                                <CButton className="ml-2" color="danger" size="sm">
                                                     Delete
                                                 </CButton>
-                                                <CButton color="info" size="sm">
+                                                <CButton className="ml-2" color="info" size="sm">
                                                     Details
                                                 </CButton>
                                             </td>

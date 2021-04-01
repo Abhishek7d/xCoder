@@ -266,13 +266,23 @@ class UserController extends Controller
     {
         $user = AdminUsers::find(auth()->user()->id);
         $sort = CommonFunctions::checkQueryString($request);
+        $in = $request->input();
+
         error_log(json_encode($sort));
+
         if ($user->can('dashboard.users.view')) {
             $users = AdminUsers::permission('access-admin-panel')
-                ->select('id', 'name', 'email', 'created_at')
-                ->orderBy($sort->column, $sort->asc)
+                ->select('id', 'name', 'email', 'created_at');
+            if ($in['filter'] !== null) {
+                $users->where(function ($q) use ($in) {
+                    foreach ($in['filter'] as $column => $value) {
+                        if ($value !== null || $value !== '')
+                            $q = $q->where($column, 'LIKE', '%' . $value . '%');
+                    }
+                });
+            }
+            $users = $users->orderBy($sort->column, $sort->asc)
                 ->paginate($sort->perPage);
-
             return CommonFunctions::sendResponse(1, "Access Granted", $users);
         } else {
             return CommonFunctions::sendResponse(0, "Permission Denied", null);
