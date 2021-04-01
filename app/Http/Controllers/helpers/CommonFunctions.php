@@ -16,7 +16,7 @@ use App\Models\Notifications;
 use App\Models\DelegateAccess;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\admin\droplet\InvoiceController;
 use App\Models\Invoices;
 use App\Models\ServerSize;
 use Illuminate\Notifications\Notification;
