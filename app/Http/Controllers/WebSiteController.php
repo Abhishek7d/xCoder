@@ -173,6 +173,9 @@ class WebSiteController extends Controller
             $config = str_replace("VESTA_DB_USER", "admin_$db_name", $config);
             $config = str_replace("VESTA_DB_PASSWORD", $db_password, $config);
             $ssh->write("$config\n");
+
+            // Install Wordpress DB
+            $ssh->write("wp core install --url=http://$domain_name --title=WordPress --admin_user=admin --admin_password=$db_password --admin_email=$user->email" . "\n");
             $application->db_name = "admin_$domain";
             $application->db_username = "admin_$domain";
             $application->db_password = $db_password;
