@@ -41,6 +41,31 @@ class Summary extends React.Component {
                             </div>
                             <div onClick={this.props.copyToClipBoard} title={"Click to Copy"} className="col-10"><p>{this.application.server.ip_address}</p></div>
                         </div>
+                        <div className="row">
+                            <div className="col-2">
+                                <img src={require("../../assets/images/icons/server-user.svg")} alt="" srcSet="" />
+                            </div>
+                            <div className="col-10" onClick={this.props.copyToClipBoard} title={"Database Name - Click to Copy"} >
+                                <p>
+                                    {(this.application.username) ? this.application.username : 'Unknown'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-2">
+                                <img src={require("../../assets/images/icons/server-password.svg")} alt="" srcSet="" />
+                            </div>
+                            <div className="col-10" onClick={this.props.copyToClipBoard} title={"Database Password - Click to Copy"} >
+                                <p>
+                                    {(this.application.password) ? this.application.password : 'Unknown'}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="text-center mt-4">
+                            <a rel="noopener noreferrer" href={((this.application.ssl_enabled === "1") ? "https://" : 'http://') + this.application.domain + "/wp-login.php"} target="_blank" className="btn btn-theme btn-sm">
+                                Login to Wordpress
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
