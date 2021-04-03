@@ -16,3 +16,4 @@ admin/.editorconfig
 .gitignore
 .gitignore
 frontend/src/model/config.js
+frontend/src/model/config.js

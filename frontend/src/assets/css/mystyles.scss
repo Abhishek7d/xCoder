@@ -457,15 +457,18 @@ input {
         -webkit-appearance: none;
         color: #ac2ff1;
         margin-top: -1px;
+        background-color: #ad2ff136;
     }
 
     input[type="range"]::-webkit-slider-thumb {
-        width: 10px;
+        width: 15px;
         -webkit-appearance: none;
-        height: 10px;
+        height: 15px;
+        margin-top: -3px;
         cursor: ew-resize;
-        background: #434343;
-        box-shadow: -80px 0 0 80px #43e5f7;
+        background: #ac2ff1;
+        box-shadow: 1px 0px 10px #ac2ff1;
+        border-radius: 50%;
     }
 }
 
