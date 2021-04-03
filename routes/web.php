@@ -8,6 +8,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\BlockStorageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\admin\droplet\InvoiceController as Invoice;
 
 use App\Http\Controllers\admin\UserController as AdminUserController;
 
@@ -45,7 +46,7 @@ Route::group(['prefix' => 'api'], function () {
             Route::post('/users', [AdminUserController::class, 'allUsers']);
 
             // Invoices
-            Route::get('/invoice/generate/{date}', [InvoiceController::class, 'generateInvoice']);
+            Route::get('/invoice/generate/{date}', [Invoice::class, 'generateInvoice']);
         });
     });
 
