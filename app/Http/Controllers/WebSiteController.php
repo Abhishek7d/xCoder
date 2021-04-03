@@ -160,7 +160,7 @@ class WebSiteController extends Controller
             // install wp cli
             $ssh->write("wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar\n");
             $ssh->write("chmod +x wp-cli.phar\n");
-            $ssh->write("mv wp-cli.phar /usr/local/bin/wp\n");
+            $ssh->write("sudo mv wp-cli.phar /usr/local/bin/wp\n");
             // install wp
             $ssh->write("wget " . $this->wp_download_link . "\n");
             $ssh->write("unzip latest.zip\n");
