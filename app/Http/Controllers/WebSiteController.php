@@ -151,6 +151,7 @@ class WebSiteController extends Controller
         if ($install_wp) {
             //create database
             $db_password = CommonFunctions::generateRandomString(8);
+            $password = CommonFunctions::generateRandomString(8);
             $db_name = $domain;
             // $ssh->write("./v-delete-database admin admin_$db_name\n");
             $ssh->write("./v-add-database admin $db_name $db_name $db_password mysql\n");
@@ -175,10 +176,12 @@ class WebSiteController extends Controller
             $ssh->write("$config\n");
 
             // Install Wordpress DB
-            $ssh->write("wp core install --url=http://$domain_name --title=WordPress --admin_user=admin --admin_password=$db_password --admin_email=$user->email" . "\n");
+            $ssh->write("wp core install --url=http://$domain_name --title=WordPress --admin_user=admin --admin_password=$password --admin_email=$user->email" . "\n");
             $application->db_name = "admin_$domain";
             $application->db_username = "admin_$domain";
             $application->db_password = $db_password;
+            $application->username = 'admin';
+            $application->password = $password;
         }
         $application->save();
         $output2 = $ssh->read();
