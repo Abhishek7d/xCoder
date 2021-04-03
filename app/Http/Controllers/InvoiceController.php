@@ -63,7 +63,7 @@ class InvoiceController extends Controller
     {
         if ($user == 'parvaty') {
             return [
-                'ForeShop Inc'
+                'ForeShop Group Ltd'
             ];
         } else {
             if (SavedCards::where('user_id', $user->id)->exists()) {
