@@ -66,13 +66,17 @@ class InvoiceController extends Controller
                 'ForeShop Inc'
             ];
         } else {
-            $card = SavedCards::where('user_id', $user->id)->first();
-            return [
-                $card->address,
-                $card->city,
-                $card->state,
-                $card->country . ' ' . $card->postal_code
-            ];
+            if (SavedCards::where('user_id', $user->id)->exists()) {
+                $card = SavedCards::where('user_id', $user->id)->first();
+                return [
+                    $card->address,
+                    $card->city,
+                    $card->state,
+                    $card->country . ' ' . $card->postal_code
+                ];
+            } else {
+                return [];
+            }
         }
     }
     public function getStatistics(Request $request)
