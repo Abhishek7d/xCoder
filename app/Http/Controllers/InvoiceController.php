@@ -51,7 +51,7 @@ class InvoiceController extends Controller
         $details['invoicedTo'] =  [
             $user->name,
         ];
-        array_push($details['invoicedTo'], ...$this->getAddress());
+        array_push($details['invoicedTo'], ...$this->getAddress($user));
         $details['payTo'] =  [
             'Parvaty Cloud Hosting',
         ];
@@ -59,11 +59,21 @@ class InvoiceController extends Controller
         $details['items'] =  $invoiceItems;
         return CF::sendResponse(1, "Details", $details);
     }
-    public function getAddress()
+    public function getAddress($user = 'parvaty')
     {
-        return [
-            'Your Address', 'Will be Displayed Here'
-        ];
+        if ($user == 'parvaty') {
+            return [
+                'ForeShop Inc'
+            ];
+        } else {
+            $card = SavedCards::where('user_id', $user->id)->first();
+            return [
+                $card->address,
+                $card->city,
+                $card->state,
+                $card->country . ' ' . $card->postal_code
+            ];
+        }
     }
     public function getStatistics(Request $request)
     {
