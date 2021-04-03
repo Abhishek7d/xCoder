@@ -13,6 +13,8 @@ use App\Models\InvoiceItems;
 use Illuminate\Http\Request;
 use App\Models\StorageChanges;
 use App\Http\Controllers\helpers\CommonFunctions as CF;
+use App\Models\SavedCards;
+use App\Models\Transactions;
 
 class InvoiceController extends Controller
 {
@@ -105,5 +107,105 @@ class InvoiceController extends Controller
             $stats = null;
         }
         return $stats;
+    }
+
+    public function addCreditCard(Request $request)
+    {
+        if ($request->name !== 'null' && $request->id !== 'null'  && $request->number !== 'null' && $request->month !== 'null' && $request->year !== 'null' && $request->cvv !== 'null' && $request->address !== 'null' && $request->city !== 'null'  && $request->state !== 'null' && $request->country !== 'null' && $request->postal) {
+            $terminal = config('app.cardcom_terminal', 1000);
+            $username = config('app.cardcom_username', 'barak9611');
+
+            $url = "https://secure.cardcom.co.il/Interface/Direct2.aspx?TerminalNumber=$terminal&Sum=1&cardnumber=$request->number&cardvalidityyear=$request->year&cardvaliditymonth=$request->month&identitynumber=$request->id&username=$username&Languages=en&Cvv=$request->cvv&CreateToken=true&CoinISOName=USD";
+            //&Jparameter=2&CreateToken=true
+            $result = CF::sendRequest(null, $url);
+
+            error_log(json_encode($request->input()));
+            error_log(json_encode($result));
+
+            if ($result['ResponseCode'] == "501" || $result['ResponseCode'] == "505" || $result['ResponseCode'] == "614") {
+                return CF::sendResponse(0, 'Internal Server Error');
+            }
+            if ($result['ResponseCode'] == "0") {
+                $isAdded = SavedCards::where([['token', $result['Token']], ['user_id', auth()->user()->id]])->exists();
+                if (!$isAdded) {
+                    $card = new SavedCards();
+                    $card->user_id = auth()->user()->id;
+                    $card->name = $request->name;
+                    $card->card_holder_id = $request->id;
+                    $card->number = $result['CardNumEnd'];
+                    $card->card = $request->card;
+                    $card->month = $request->month;
+                    $card->year = $request->year;
+                    $card->cvv = $request->cvv;
+                    $card->token = $result['Token'];
+                    $card->city = $request->city;
+                    $card->state = $request->state;
+                    $card->address = $request->address;
+                    $card->country = $request->country;
+                    $card->postal_code = $request->postal;
+                    $card->primary = (SavedCards::where('user_id', auth()->user()->id)->exists()) ? 0 : 1;
+                    $card->save();
+
+                    $transaction = new Transactions();
+                    $transaction->amount = "1";
+                    $transaction->currency = "USD";
+                    $transaction->user_id = auth()->user()->id;
+                    $transaction->card = $result['CardNumEnd'];
+                    $transaction->low_profile_code = (isset($result['LowProfileCode'])) ? $result['LowProfileCode'] : 'N/A';
+                    $transaction->description = $result['Description'];
+                    $transaction->internal_deal_number = $result['InternalDealNumber'];
+                    $transaction->approval_number = $result['ApprovalNumber'];
+                    $transaction->status = 'success';
+                    $transaction->save();
+
+                    return CF::sendResponse(1, 'Card added successful', $result);
+                } else {
+                    return CF::sendResponse(0, 'Card already exists', $result);
+                }
+            } else {
+                return CF::sendResponse(0, $result['Description']);
+            }
+        } else {
+            return CF::sendResponse(0, 'All fields are required');
+        }
+    }
+
+    public function getCreditCard()
+    {
+        $cards = SavedCards::select(['name', 'id', 'card_holder_id', 'number', 'month', 'year', 'address', 'city', 'state', 'country', 'postal_code', 'card', 'primary'])->where('user_id', auth()->user()->id)->get();
+        return CF::sendResponse(1, 'All cards', $cards);
+    }
+
+    public function getTransactions()
+    {
+        $transactions = Transactions::where('user_id', auth()->user()->id)->paginate(15);
+        return CF::sendResponse(1, 'All Transactions', $transactions);
+    }
+    public function creditCardAction(Request $request)
+    {
+        $id = $request->id;
+        $action = $request->action;
+        $status = 0;
+        $msg = "Error";
+        switch ($action) {
+            case 'make-primary':
+                SavedCards::where('primary', 1)->update(['primary' => 0]);
+                $card = SavedCards::where('id', $id)->first();
+                $card->primary = 1;
+                $card->save();
+                $status = 1;
+                $msg = "Card Marked Primary";
+                break;
+            case 'delete':
+                $card = SavedCards::where('id', $id)->first();
+                $card->delete();
+                $status = 1;
+                $msg = "Card Deleted Successful";
+                break;
+            default:
+                null;
+        }
+
+        return CF::sendResponse($status, $msg);
     }
 }

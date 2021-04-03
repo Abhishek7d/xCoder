@@ -14,7 +14,7 @@ import Loader from '../components/template/Loader';
 
 class Invoices extends React.Component {
     constructor(props) {
-        super();
+        super(props);
         let invoiceId = props.match.params.uuId;
         this.state = {
             projectName: read_cookie('projectName'),
@@ -104,6 +104,8 @@ class Invoices extends React.Component {
                     </td>
                 </tr >)
             })
+        } else {
+            tr.push(<tr key="0"><td colSpan="7" className="text-center">No Invoices</td></tr>);
         }
         return tr;
     }
@@ -113,8 +115,29 @@ class Invoices extends React.Component {
     }
     selectChange = (event) => {
         let value = event.target.value;
+        this.setState({ year: parseInt(value) })
         this.loadStatistics(value)
-
+    }
+    renderSelectYear = () => {
+        let s = [];
+        if (this.state.stats !== null) {
+            let currentYear = new Date().getFullYear()
+            let year = new Date(this.state.stats.invoices.from).getFullYear()
+            let y = this.state.year
+            let sel = false
+            if (currentYear > year) {
+                for (let i = currentYear; i >= year; i--) {
+                    sel = false
+                    if (y === i) {
+                        sel = 'selected';
+                    }
+                    s.push(<option selected={sel} value={i}>{i}</option>)
+                }
+            } else if (currentYear === year) {
+                s.push(<option value={year}>{year}</option>)
+            }
+        }
+        return s;
     }
     render() {
         return (
@@ -133,10 +156,7 @@ class Invoices extends React.Component {
                                         <div className="row">
                                             <div className="offset-lg-8 col-sm-4 col-md-4 mb-2 mb-sm-0  align-self-center">
                                                 <select onChange={this.selectChange} className="custom-select" name="year">
-                                                    <option value="2021">2021</option>
-                                                    <option value="2020">2020</option>
-                                                    <option value="2019">2019</option>
-                                                    <option value="2018">2018</option>
+                                                    {this.renderSelectYear()}
                                                 </select>
                                             </div>
                                         </div>
@@ -210,7 +230,7 @@ class Invoices extends React.Component {
                                                         <div className="card">
                                                             <div className="card-header">
                                                                 <div className="row no-gutters">
-                                                                    <div className="col-8 align-self-center">
+                                                                    <div className="col-12 align-self-center">
                                                                         <h6 className="heading">Invoice History</h6>
                                                                         <p className="sub-heading">
                                                                             All Invoices

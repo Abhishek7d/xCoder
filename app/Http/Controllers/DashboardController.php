@@ -384,6 +384,7 @@ class DashboardController extends Controller
         }
         $project_id = CF::projectId($project_id);
         if (!empty($name) && !empty($size) && !empty($region) && !empty($appName)) {
+
             $sizes = CommonFunctions::makeRequest("/sizes", "GET");
             if (!$sizes['status']) {
                 return CommonFunctions::sendResponse(0, "Something Went wrong");
@@ -399,6 +400,9 @@ class DashboardController extends Controller
                 return CommonFunctions::sendResponse(0, "Invalid Selection");
             }
             $user = CommonFunctions::userHasDelegateAccess($request->project_id);
+            if (!CommonFunctions::hasBillingMethod($user->id)) {
+                return CommonFunctions::sendResponse(0, "Please Add a Billing Method First");
+            }
             $body = [
                 "name" => "Customer-" . $user->id,
                 "region" => env("DEFAULT_REGION"),

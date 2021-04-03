@@ -15,6 +15,8 @@ import { read_cookie } from 'sfcookies';
 import DelegateAccess from '../screens/DelegateAccess';
 import Invitation from '../screens/Invitation';
 import Invoices from '../screens/Invoices';
+import Payment from '../screens/Payment';
+import AddPaymentDetails from '../screens/AddPaymentDetails';
 
 let routes = [
     {
@@ -225,6 +227,32 @@ let routes = [
             let cookie = read_cookie("auth")
             if (typeof cookie !== "object") {
                 return <Invoices />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/payment',
+        title: 'Payment Setting',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <Payment />;
+            }
+            else {
+                return <Redirect to="/login" />;
+            }
+        }
+    },
+    {
+        path: '/payment/add-card',
+        title: 'Add Card',
+        component: () => {
+            let cookie = read_cookie("auth")
+            if (typeof cookie !== "object") {
+                return <AddPaymentDetails />;
             }
             else {
                 return <Redirect to="/login" />;

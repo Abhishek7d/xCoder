@@ -383,7 +383,7 @@ class Navigation extends React.Component {
                         <li className="nav-item">
                             <div className="dropdown show profile-dropdown">
                                 <div className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Hello, <b>{this.state.name}</b>
+                                    <span className="">Hello, <b>{this.state.name}</b></span>
                                 </div>
                                 <div className="dropdown-menu" style={{ left: '-50px' }} aria-labelledby="dropdownMenuLink">
                                     <Link to="/change-password" className="dropdown-item" role="button">
@@ -392,7 +392,7 @@ class Navigation extends React.Component {
                                     <Link to="/delegate-access" className="dropdown-item" role="button">
                                         Delegate Access
                                 </Link>
-                                    <button className="dropdown-item" onClick={this.handleLogout}>Logout</button>
+                                    <button className="dropdown-item btn" onClick={this.handleLogout}>Logout</button>
                                 </div>
                             </div>
                         </li>

@@ -43,34 +43,34 @@ class ServerInstaller​ implements ShouldQueue
     {
         $server = $this->server;
 
-        $server_id = "SERVER:".$server->id;
+        $server_id = "SERVER:" . $server->id;
         $key = array_search($server->status, CommonFunctions::$server_statuses, true);
-        if($key >= 2 && false){
-            die("Server is ".$server->status);
+        if ($key >= 2 && false) {
+            die("Server is " . $server->status);
         }
 
         $server->status = CommonFunctions::$server_statuses[1];
         $server->save();
-        $response = CommonFunctions::makeRequest("/droplets?tag_name=".$server_id);
-        if($response['status']==false){
+        $response = CommonFunctions::makeRequest("/droplets?tag_name=" . $server_id);
+        if ($response['status'] == false) {
             echo "something wente wrong on control panel";
             die();
-        }else{
+        } else {
             $response = json_decode($response['data']);
             $droplets = $response->droplets;
-            if(count($droplets)<1){
+            if (count($droplets) < 1) {
                 echo "Droplet Doesn't exist";
                 die();
-            }else{
+            } else {
                 $droplet = $droplets[0];
-                if($droplet->networks && $droplet->networks->v4 && count($droplet->networks->v4)>0){
+                if ($droplet->networks && $droplet->networks->v4 && count($droplet->networks->v4) > 0) {
                     $found = false;
-                    foreach($droplet->networks->v4 as $address){
-                        if($address->type=="public"){
+                    foreach ($droplet->networks->v4 as $address) {
+                        if ($address->type == "public") {
                             $found = $address->ip_address;
                         }
                     }
-                    if(!$found){
+                    if (!$found) {
                         echo "Server Not Ready";
                         sleep(10);
                         ServerInstaller​::dispatch($server, $this->app_name);
@@ -85,18 +85,18 @@ class ServerInstaller​ implements ShouldQueue
 
                     $port = '22';
 
-                    try{
+                    try {
                         $fp = @fsockopen($server->ip_address, $port, $errno, $errstr, 300);
-                    }catch(Exception $ex){
+                    } catch (\Exception $ex) {
                         echo "Server Unreachable";
                         sleep(10);
                         ServerInstaller​::dispatch($server, $this->app_name);
                     }
-                    if($fp){
+                    if ($fp) {
                         $key = new RSA();
                         $key->loadKey(file_get_contents('../ssh-keys/parvaty-cloud-hosting'));
                         $ssh = new SSH2($server->ip_address);
-                        
+
                         if (!$ssh->login('root', $key)) {
                             exit('Login Failed');
                         }
@@ -111,14 +111,13 @@ class ServerInstaller​ implements ShouldQueue
                         $ssh->exec($this->step_one);
                         $ssh->exec('screen -dmS vestacp');
                         $ssh->exec("screen -S vestacp -X stuff '$this->step_two $this->step_two_cmd\n'");
-                        return CommonFunctions::sendResponse(1,"Server Installation started");
-                    } 
-                    else{   
+                        return CommonFunctions::sendResponse(1, "Server Installation started");
+                    } else {
                         echo "Server Unreachable";
                         sleep(10);
                         ServerInstaller​::dispatch($server, $this->app_name);
                     }
-                }else{
+                } else {
                     echo "Server Not Ready";
                     sleep(10);
                     ServerInstaller​::dispatch($server, $this->app_name);

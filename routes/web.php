@@ -129,6 +129,10 @@ Route::group(['prefix' => 'api'], function () {
         // Invoices
         Route::post('/invoice/statistics', [InvoiceController::class, 'getStatistics']);
         Route::get('/invoice/{id}', [InvoiceController::class, 'getInvoiceDetails']);
+        Route::post('/add-credit-card', [InvoiceController::class, 'addCreditCard']);
+        Route::post('/credit-card-action', [InvoiceController::class, 'creditCardAction']);
+        Route::get('/get-credit-card', [InvoiceController::class, 'getCreditCard']);
+        Route::get('/get-transactions', [InvoiceController::class, 'getTransactions']);
     });
 });
 Route::view("/{path?}", "app");

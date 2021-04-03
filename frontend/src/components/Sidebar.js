@@ -10,7 +10,6 @@ class Sidebar extends React.Component {
             name: read_cookie("name"),
             page: window.location.pathname.split("/")[1],
             sidebarToggle: false,
-
         }
     }
     hideSideBar() {
@@ -58,6 +57,12 @@ class Sidebar extends React.Component {
                                     <Link to="/invoices" className={"nav-link " + ((this.state.page === "invoices") ? "menu-opened" : "")}>
                                         <i className="nav-icon fa fa-dollar-sign"></i>
                                         <p>Invoices</p>
+                                    </Link>
+                                </li>
+                                <li className="nav-item has-treeview">
+                                    <Link to="/payment" className={"nav-link " + ((this.state.page === "payment") ? "menu-opened" : "")}>
+                                        <i className="nav-icon fa fa-dollar-sign"></i>
+                                        <p>Payment Settings</p>
                                     </Link>
                                 </li>
                             </ul>

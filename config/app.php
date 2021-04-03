@@ -54,8 +54,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'admin_url' => env('ADMIN_URL', 'http://localhost'),
-
     'asset_url' => env('ASSET_URL', null),
+
+    // Card com settings
+    'cardcom_username' => env('CARDCOM_USERNAME', 'barak9611'),
+    'cardcom_terminal' => env('CARDCOM_TERMINAL', '1000'),
 
     /*
     |--------------------------------------------------------------------------

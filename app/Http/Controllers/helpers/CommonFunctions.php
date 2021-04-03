@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\admin\droplet\InvoiceController;
 use App\Models\Invoices;
+use App\Models\SavedCards;
 use App\Models\ServerSize;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
@@ -279,10 +280,15 @@ class CommonFunctions extends Controller
             ];
         }
         if (strtotime($year) < strtotime($startAt)) {
-            $lastDate = $array[$startMonth]['year'] . '-' . $array[$startMonth]['month'] . '-' . $array[$startMonth]['end'];
-            $array[$startMonth]['start'] = $startDate;
-            $array[$startMonth]['days'] = $array[$startMonth]['end'] - $startDate;
-            $array[$startMonth]['hours'] = SELF::getDiff(strtotime($startAt), strtotime($lastDate), "hours");
+            if (isset($array[$startMonth])) {
+                $lastDate = $array[$startMonth]['year'] . '-' . $array[$startMonth]['month'] . '-' . $array[$startMonth]['end'];
+                $array[$startMonth]['start'] = $startDate;
+                $array[$startMonth]['days'] = $array[$startMonth]['end'] - $startDate;
+                $array[$startMonth]['hours'] = SELF::getDiff(strtotime($startAt), strtotime($lastDate), "hours");
+            }
+        }
+        if (count($array) == 0) {
+            return null;
         }
         return array_reverse(array_values($array));
         //return $array;
@@ -377,5 +383,43 @@ class CommonFunctions extends Controller
             'asc' => $asc,
             'perPage' => $perPage
         ];
+    }
+
+    public static function sendRequest($vars, $url)
+    {
+
+        # urlencode the information
+        if ($vars) {
+            $urlencoded = http_build_query($vars);
+        }
+        #init curl connection
+        $CR = curl_init();
+        curl_setopt($CR, CURLOPT_URL, $url);
+        curl_setopt($CR, CURLOPT_FAILONERROR, true);
+        // if ($vars) {
+        //     curl_setopt($CR, CURLOPT_POST, 1);
+        //     curl_setopt($CR, CURLOPT_POSTFIELDS, $urlencoded);
+        // }
+        curl_setopt($CR, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($CR, CURLOPT_SSL_VERIFYPEER, 0);
+
+
+        #actual curl execution
+        $result = curl_exec($CR);
+        $error = curl_error($CR);
+        curl_close($CR);
+
+        $resultArray = array();
+        parse_str($result, $resultArray);
+
+        return $resultArray;
+    }
+    public static function hasBillingMethod($id)
+    {
+        if (SavedCards::where('user_id', $id)->exists()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -95,7 +95,7 @@ class WebSiteController extends Controller
         $domain = $request->get('domain');
         $project_id = $request->get('project_id');
         $server = $request->get('server');
-        
+
         if (empty($project_id)) {
             return CommonFunctions::sendResponse(0, "Invalid Project");
         }
@@ -157,6 +157,11 @@ class WebSiteController extends Controller
 
             $ssh->write("cd /home/admin/web/$domain_name/public_html\n");
             $ssh->write("su admin\n");
+            // install wp cli
+            $ssh->write("wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar\n");
+            $ssh->write("chmod +x wp-cli.phar\n");
+            $ssh->write("mv wp-cli.phar /usr/local/bin/wp\n");
+            // install wp
             $ssh->write("wget " . $this->wp_download_link . "\n");
             $ssh->write("unzip latest.zip\n");
             $ssh->write("mv ./wordpress/* ./ && mv ./wordpress/.* ./ \n");

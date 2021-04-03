@@ -1184,6 +1184,107 @@ class ApiHandler {
             }
         }, failure);
     }
+
+    addCreditCard = (name, id, number, card, month, year, cvv, address, city, state, country, postal, success = () => { }, failure = () => { }) => {
+
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("id", id);
+        formData.append("number", number);
+        formData.append("card", card);
+        formData.append("month", month);
+        formData.append("year", year);
+        formData.append("cvv", cvv);
+        formData.append("address", address);
+        formData.append("city", city);
+        formData.append("state", state);
+        formData.append("country", country);
+        formData.append("postal", postal);
+
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        this.getResult("/add-credit-card", "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    creditCardAction = (action, id, success = () => { }, failure = () => { }) => {
+
+        const formData = new FormData();
+        formData.append("action", action);
+        formData.append("id", id);
+
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        this.getResult("/credit-card-action", "POST", formData, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    getCards = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        this.getResult("/get-credit-card", "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
+    getTransactions = (success = () => { }, failure = () => { }) => {
+        let access_token = read_cookie("auth");
+        var authHeaders = new Headers();
+        authHeaders.append("Authorization", "Bearer " + access_token)
+
+        this.getResult("/get-transactions", "GET", null, authHeaders, (response) => {
+            if (response.status === 0) {
+                if (response.message === "Authentication Faild") {
+                    delete_cookie("auth");
+                    window.location.href = "/login"
+                    return;
+                }
+                failure(response.message)
+            } else if (response.status === 1) {
+                success(response.message, response.data);
+            } else {
+                failure("something went wrong");
+            }
+        }, failure);
+    }
 }
 
 export default ApiHandler;
