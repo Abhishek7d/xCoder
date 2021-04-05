@@ -40,6 +40,9 @@ class AddPaymentDetails extends Component {
     refreshPage = () => {
 
     }
+    componentDidMount() {
+        document.title = "Add Payment Method";
+    }
     displayCardLogo = () => {
         let icon = null;
         let style = {

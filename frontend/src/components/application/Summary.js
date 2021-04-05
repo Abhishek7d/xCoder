@@ -19,8 +19,8 @@ class Summary extends React.Component {
             <div className="col-sm-6 col-md-6 col-lg-4 full-height">
                 <div className="card">
                     <div className="card-header">
-                        <h6 className="heading">Summary</h6>
-                        <p className="sub-heading">Genral Details</p>
+                        <h6 className="heading">Admin Credentials</h6>
+                        <p className="sub-heading">WordPress Details</p>
                     </div>
                     <div className="card-body server-details-list">
                         <div className="row">

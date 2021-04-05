@@ -19,6 +19,7 @@ class ResetScreen extends React.Component {
 
     }
     componentDidMount() {
+        document.title = "Reset Password";
         try {
             let params = window.location.href
             params = params.split("?")[1];

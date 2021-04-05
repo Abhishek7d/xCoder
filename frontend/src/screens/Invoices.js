@@ -32,6 +32,7 @@ class Invoices extends React.Component {
 
     }
     componentDidMount() {
+        document.title = "Your Invoices";
         let y = new Date();
         this.loadStatistics(y.getFullYear());
     }

@@ -19,6 +19,9 @@ class Profile extends React.Component {
         }
         this.apiHandler = new ApiHandler();
     }
+    componentDidMount() {
+        document.title = "Change Password";
+    }
     handleChangePassword = () => {
         this.setState({ loading: true })
 

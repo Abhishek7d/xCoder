@@ -19,6 +19,7 @@ class DelegateAccess extends React.Component {
         this.apiHandler = new ApiHandler();
     }
     componentDidMount = () => {
+        document.title = "Delegate Access";
         this.getDelegateAccess()
     }
     getDelegateAccess = () => {

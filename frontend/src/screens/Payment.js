@@ -30,6 +30,7 @@ class Payment extends Component {
         }
     }
     componentDidMount() {
+        document.title = "Payment Settings";
         this.getCreditCard();
         this.getTransactions();
     }

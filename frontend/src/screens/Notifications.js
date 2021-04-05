@@ -20,6 +20,7 @@ class Notifications extends React.Component {
     }
 
     componentDidMount = () => {
+        document.title = "Notifications";
         this.getNotifications();
         this.setNotificationStatus();
     }
