@@ -1,9 +1,9 @@
-import * as conf from './config';
+import apiUrl from './config';
 import { read_cookie, delete_cookie } from 'sfcookies';
 
 class ApiHandler {
     constructor() {
-        this._url = conf.apiUrl;
+        this._url = apiUrl;
     }
     showError = (err) => {
         console.log(err)
