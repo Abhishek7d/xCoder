@@ -66,7 +66,8 @@ class InvoiceDetails extends React.Component {
                 payTo: data.payTo,
                 userMail: data.userMail,
                 salesMail: data.salesMail,
-                loading: false
+                loading: false,
+                fullWidth: false
             })
         }, error => {
             this.setState({
@@ -133,6 +134,19 @@ class InvoiceDetails extends React.Component {
         }
         return p;
     }
+    print = () => {
+        this.setState({
+            fullWidth: true
+        })
+        setTimeout(() => {
+            window.print()
+        }, 10);
+        setTimeout(() => {
+            this.setState({
+                fullWidth: false
+            })
+        }, 20);
+    }
     render() {
         return (
             <> {(this.state.loading) ?
@@ -143,7 +157,7 @@ class InvoiceDetails extends React.Component {
                             <i className="cursor-pointer fas fa-arrow-left"></i> Back
                         </button>
                     </div>
-                    <div className="col-md-9">
+                    <div className={(this.state.fullWidth) ? 'col-md-12' : 'col-md-9'}>
                         <div className="card invoice">
                             <div className="card-body p-0">
                                 <div className="table-responsive">
@@ -211,6 +225,7 @@ class InvoiceDetails extends React.Component {
                                         </tbody>
                                     </table> */}
                                 </div>
+
                                 <div className="text-center">
                                     <p className="text-muted">
                                         Thank you for choosing us.
@@ -220,17 +235,15 @@ class InvoiceDetails extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-3  d-print-none">
+                    <div className={(this.state.fullWidth) ? 'col-md-12' : 'col-md-3'}>
                         <div className="pt-2 d-print-none">
-                            <button className="btn btn-theme btn-block">
-                                Pay Now
-                            </button>
-                            <button className="btn btn-theme-outline btn-block">
-                                Download
+                            <button onClick={() => this.print()} className="btn btn-theme-outline btn-block">
+                                Print / Save
                             </button>
                             <button className="btn btn-link btn-block">
                                 Need Help?
                             </button>
+
                             <p style={{ marginTop: '20px' }} className="text-muted text-small">
                                 Note 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                             </p>

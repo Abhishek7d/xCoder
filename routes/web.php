@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\ActionsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
@@ -31,7 +32,6 @@ Route::group(['prefix' => 'api'], function () {
     // admin routes
     Route::group(['prefix' => 'admin'], function () {
         Route::post('/login', [AdminUserController::class, 'login']);
-        Route::post('/register', [AdminUserController::class, 'register']);
         Route::post('/resend', [AdminUserController::class, 'resend']);
         Route::get('/check', [AdminUserController::class, 'checkLogin']);
         //Route::get('email/verify/{id}', [AdminUserController::class, 'verify'])->name('admin.verification.verify');
@@ -41,8 +41,12 @@ Route::group(['prefix' => 'api'], function () {
 
         Route::group(['middleware' => 'checkAuth'], function () {
 
+            // Actions
+            Route::post('/actions/delete', [ActionsController::class, 'deleteSelected']);
+
             // Users
             Route::post('/change/password', [AdminUserController::class, 'changePassword']);
+            Route::post('/users/create', [AdminUserController::class, 'register']);
             Route::post('/users', [AdminUserController::class, 'allUsers']);
 
             // Invoices

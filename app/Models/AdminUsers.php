@@ -9,10 +9,11 @@ use App\Notifications\AdminPasswordResetNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\AdminEmailVerificationNotification;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AdminUsers extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     protected $table = "users";
     protected $guard_name = 'web';

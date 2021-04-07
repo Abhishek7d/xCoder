@@ -59,9 +59,9 @@ class InvoiceController extends Controller
         $details['items'] =  $invoiceItems;
         return CF::sendResponse(1, "Details", $details);
     }
-    public function getAddress($user = 'parvaty')
+    public function getAddress($user = null)
     {
-        if ($user == 'parvaty') {
+        if ($user == null) {
             return [
                 'ForeShop Group Ltd'
             ];

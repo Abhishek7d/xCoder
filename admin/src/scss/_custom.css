@@ -123,3 +123,44 @@
 .table tr:hover th:first-child .form-check-input {
   opacity: 1;
 }
+
+.react-confirm-alert-body {
+  box-shadow: 0 20px 75px #ccc !important;
+}
+
+.react-confirm-alert-body h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.react-confirm-alert-button-group {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.react-confirm-alert-button-group .btn-danger {
+  background: #ff1d10 !important;
+  border-color: #ff1d10 im !important;
+}
+
+.card .card-header.with-tab {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.card .card-header .nav {
+  border: none;
+}
+
+.card .card-header .nav .nav-item {
+  border: none;
+}
+
+.card .card-header .nav .nav-item .nav-link {
+  padding: 0 15px;
+}
+
+.card .card-header .nav .nav-item .nav-link.active {
+  border: none;
+  background-color: inherit;
+}

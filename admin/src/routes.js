@@ -7,6 +7,7 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'));
 
 // Users
 const AdminUsers = React.lazy(() => import('./views/users/Users'));
+const AddUsers = React.lazy(() => import('./views/users/AddUsers'));
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/Login'));
@@ -66,6 +67,15 @@ const routes = [
         icon: cilMoney
     },
     {
+        path: '/dashboard/users/create-new-user',
+        name: 'Create User',
+        routeName: 'dashboard.users.create',
+        component: AddUsers,
+        permission: 'dashboard.users.create',
+        icon: 'cil-user'
+
+    },
+    {
         path: '/dashboard/users',
         name: 'Users',
         routeName: 'dashboard.users',
@@ -74,6 +84,7 @@ const routes = [
         icon: 'cil-user'
 
     },
+
     {
         path: '/dashboard/droplets/servers',
         exact: true,

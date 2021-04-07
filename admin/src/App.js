@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import './scss/style.scss';
 import routes from './routes';
 
@@ -23,7 +24,6 @@ const App = () => {
     const getRoutes = () => {
         let route = [];
         routes.forEach((data, index) => {
-
             if (data.layout === false) {
                 const DynamicComponent = data.component;
                 route.push(

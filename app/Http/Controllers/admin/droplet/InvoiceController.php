@@ -352,8 +352,8 @@ class InvoiceController extends Controller
     }
     public function calculateCost($started, $ended, $lastDate)
     {
-        $hourlyRate = 0.000138;
-        $monthlyRate = 0.10;
+        $hourlyRate = 0.000138 * 2;
+        $monthlyRate = 0.10 * 2;
         $rate = 0;
         $chargeType = null;
         $charge = 0;

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\helpers\CommonFunctions;
 use App\Models\AdminUsers;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -185,6 +186,7 @@ class UserController extends Controller
         $email = $request->get('email');
         $password = $request->get('password');
         $conf_password = $request->get('confirm_password');
+        $role = $request->role;
 
         if (!empty($name) &&  !empty($email) && !empty($password)) {
             if ($password == $conf_password) {
@@ -193,11 +195,14 @@ class UserController extends Controller
                     $user = new User();
                     $user->name = $name;
                     $user->email = $email;
+                    $user->email_verified_at = Carbon::now();
                     $user->password = Hash::make($password);
                     $user->access_tokens = json_encode([]);
                     $user->save();
-                    $user->sendEmailVerificationNotification();
-                    return CommonFunctions::sendResponse(1, "Verification email sent");
+                    // Assign Role
+                    $user->assignRole($role);
+                    // $user->sendEmailVerificationNotification();
+                    return CommonFunctions::sendResponse(1, "User Added Successfully");
                 } else {
                     return CommonFunctions::sendResponse(0, "Email Already Registered");
                 }

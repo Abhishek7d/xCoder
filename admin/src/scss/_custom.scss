@@ -18,6 +18,10 @@
 }
 .badge {
     padding: 0.35em 0.4em 0.25em 0.25em;
+    transition: all 0.2s ease-in-out;
+}
+.badge:hover {
+    transform: scale(1.5) !important;
 }
 .widget-custom {
     .text-value {
@@ -121,6 +125,43 @@
                 &:first-child {
                     .form-check-input {
                         opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}
+.react-confirm-alert-body {
+    box-shadow: 0 20px 75px #ccc !important;
+    h1 {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+}
+.react-confirm-alert-button-group {
+    display: flex;
+    flex-direction: row-reverse;
+    .btn-danger {
+        background: #ff1d10 !important;
+        border-color: #ff1d10 im !important;
+    }
+}
+.card {
+    .card-header {
+        &.with-tab {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .nav {
+            border: none;
+            .nav-item {
+                border: none;
+                .nav-link {
+                    padding: 0 15px;
+                    &.active {
+                        border: none;
+                        background-color: inherit;
+                        color: $primary;
                     }
                 }
             }
