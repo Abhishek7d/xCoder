@@ -19,6 +19,11 @@
 
 .badge {
   padding: 0.35em 0.4em 0.25em 0.25em;
+  transition: all 0.2s ease-in-out;
+}
+
+.badge:hover {
+  transform: scale(1.5) !important;
 }
 
 .widget-custom .text-value {
@@ -162,5 +167,18 @@
 
 .card .card-header .nav .nav-item .nav-link.active {
   border: none;
-  background-color: inherit;
+  background-color: none;
+  color: #ff1d10;
+}
+
+.abc p {
+  color: red;
+}
+
+.c-sidebar-nav-link .c-sidebar-nav-icon {
+  transition: all 0.2s ease-in-out;
+}
+
+.c-sidebar-nav-link:hover .c-sidebar-nav-icon {
+  transform: scale(1.5) !important;
 }
