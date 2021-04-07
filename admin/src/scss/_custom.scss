@@ -16,15 +16,6 @@
 .c-sidebar.c-sidebar-minimized .c-sidebar-nav > .c-sidebar-nav-dropdown:hover {
     background: #26334d;
 }
-.badge {
-    padding: 0.35em 0.4em 0.25em 0.25em;
-    transition: all 0.2s ease-in-out;
-
-    &:hover {
-        transform: scale(1.5) !important;
-    }
-}
-
 .widget-custom {
     .text-value {
         font-size: 18px;
@@ -167,21 +158,6 @@
                     }
                 }
             }
-        }
-    }
-}
-.abc {
-    p {
-        color: red;
-    }
-}
-.c-sidebar-nav-link {
-    .c-sidebar-nav-icon {
-        transition: all 0.2s ease-in-out;
-    }
-    &:hover {
-        .c-sidebar-nav-icon {
-            transform: scale(1.5) !important;
         }
     }
 }
