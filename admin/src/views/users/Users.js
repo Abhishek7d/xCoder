@@ -324,6 +324,20 @@ const Users = (props) => {
         }
     }
 
+    // Add Permissions
+
+    const addPermission = (e) => {
+        let permission = e.target.value
+        let checked = e.target.checked
+        if (checked) {
+            if (selectedRole.permission) {
+                setSelectedRole({ ...selectedRole, permission: [...selectedRole.permission, [permission]] })
+            }
+        } else {
+
+        }
+    }
+
     // Render Permissions
     const permissionCheckBox = () => {
         let checkbox = []
@@ -333,12 +347,18 @@ const Users = (props) => {
                     let sp = selectedRole.permission
                     roles.permissions.forEach((permission, index) => {
                         let selected = false;
-                        if (sp.find(i => permission.name === i)) {
+                        if (sp.find(i => permission.name === i.name)) {
                             selected = true
                         }
                         checkbox.push(
-                            <CCol key={index} md='3'>
-                                <CInputCheckbox key={permission.id} checked={selected} id={permission.id} /> <label htmlFor={permission.id}>{permission.name}</label>
+                            <CCol key={selectedRole.role + "-" + index} md='3'>
+                                <div className="ml-2">
+                                    <CInputCheckbox value={permission}
+                                        key={selectedRole.role + "-" + permission.id}
+                                        onChange={addPermission} defaultChecked={selected} id={permission.id} />
+                                    <label htmlFor={permission.id}>{permission.name}</label>
+                                </div>
+
                             </CCol>
                         )
                     })
@@ -444,7 +464,7 @@ const Users = (props) => {
                                     <CCol xs="12">
                                         <CFormGroup>
                                             <CLabel htmlFor="role" className="ml-1">User Role</CLabel>
-                                            <CSelect id="role" defaultValue={selectedUser.has_roles} onChange={changeRoleSelect} name="role">
+                                            <CSelect id="role" defaultValue={(selectedUser.has_roles[0]) ? selectedUser.has_roles[0] : ''} onChange={changeRoleSelect} name="role">
                                                 {roleSelectOption()}
                                             </CSelect>
                                         </CFormGroup>
