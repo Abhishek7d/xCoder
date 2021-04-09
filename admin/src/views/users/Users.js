@@ -34,7 +34,7 @@ import {
 
 import Api from '../../Api';
 import CIcon from '@coreui/icons-react';
-import { cilUserPlus, cilTrash, cilLockLocked, cilCog, cilInfo, cilLockUnlocked, cilBatteryEmpty, cilCompass, cilUser } from '@coreui/icons'
+import { cilUserPlus, cilTrash, cilLockLocked, cilCog, cilInfo, cilLockUnlocked, cilBatteryEmpty, cilCompass, cilUser, cilSettings, cilArrowCircleLeft, cilReload } from '@coreui/icons'
 import { removeElem } from 'src/reusable/Helper';
 import { hasElem } from '../../reusable/Helper';
 // const selectedRows = [];
@@ -256,6 +256,12 @@ const Users = (props) => {
         }
     }
 
+    const restoreUser = (item) => {
+        changeUserData('id', [item.id], {
+            deleted_at: null
+        })
+    }
+
     // Lock Selected Users
     // const localSelected = (action) => {
     //     if (action === 0) {
@@ -470,14 +476,20 @@ const Users = (props) => {
                                     {alert.text}
                                 </Alert>
                                 <CRow>
-                                    <CCol xs="12">
+                                    <CCol xs="3">
                                         <CFormGroup>
                                             <CLabel htmlFor="role" className="ml-1">User Role</CLabel>
                                             <CSelect id="role"
-                                                defaultValue={(selectedUser.has_roles[0]) ? selectedUser.has_roles[0] : ''}
+                                                defaultValue={selectedUser.has_roles}
                                                 onChange={changeRoleSelect} name="role">
                                                 {roleSelectOption()}
                                             </CSelect>
+                                        </CFormGroup>
+                                    </CCol>
+                                    <CCol xs="3">
+                                        <CFormGroup>
+                                            <CLabel htmlFor="pass" className="ml-1">Change User's Password</CLabel>
+                                            <CInput type="text" placeholder="" />
                                         </CFormGroup>
                                     </CCol>
                                     <CCol xs="12">
@@ -597,10 +609,16 @@ const Users = (props) => {
                                                 {(tab === 'users') ?
                                                     <CTooltip content="User Details" advancedOptions={{ delay: [1000, 100] }}>
                                                         <CButton onClick={() => toggleInfo(item)} className="ml-2" color="info" size="sm">
-                                                            <CIcon content={cilInfo} />
+                                                            <CIcon content={cilSettings} />
                                                         </CButton>
                                                     </CTooltip>
-                                                    : null}
+                                                    :
+                                                    <CTooltip content="Restore User" advancedOptions={{ delay: [1000, 100] }}>
+                                                        <CButton onClick={() => restoreUser(item)} className="ml-2" color="info" size="sm">
+                                                            <CIcon content={cilUserPlus} />
+                                                        </CButton>
+                                                    </CTooltip>
+                                                }
                                             </td>
                                         )
                                 }}
