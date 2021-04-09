@@ -258,7 +258,7 @@ const Users = (props) => {
 
     const restoreUser = (item) => {
         changeUserData('id', [item.id], {
-            deleted_at: null
+            password: null
         })
     }
 

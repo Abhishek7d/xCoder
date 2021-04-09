@@ -37,6 +37,11 @@ class ActionsController extends Controller
         $table = $request->table;
         error_log(json_encode($request->input()));
         if (!empty($key) && !empty($table)) {
+            foreach ($update as $key => $update) {
+                if (in_array($key, ['password', 'email_verified_at', 'remember_token', 'access_token'])) {
+                    return CF::sendResponse(0, 'Action Unauthorized');
+                }
+            }
             // $model = "App\Models\/$table";
             DB::table($table)->whereIn($key, $value)->update($update);
             return CF::sendResponse(1, 'Updated Successfully', $request->update);
