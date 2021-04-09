@@ -314,10 +314,14 @@ const Users = (props) => {
         if (roles) {
             //roles.forEach((data, index) => {
             let r = roles.roles.find(i => i.name === role)
+            let p = [];
             if (r) {
+                r.permissions.forEach((per, index) => {
+                    p.push(per.name)
+                })
                 setSelectedRole({
                     role: r.name,
-                    permission: r.permissions
+                    permission: p
                 })
             }
             //  })
@@ -327,14 +331,19 @@ const Users = (props) => {
     // Add Permissions
 
     const addPermission = (e) => {
-        let permission = e.target.value
+        let index = e.target.value
         let checked = e.target.checked
         if (checked) {
             if (selectedRole.permission) {
-                setSelectedRole({ ...selectedRole, permission: [...selectedRole.permission, [permission]] })
+                setSelectedRole({ ...selectedRole, permission: [...selectedRole.permission, roles.permissions[index].name] })
             }
         } else {
-
+            if (selectedRole.permission) {
+                let oldPer = selectedRole.permission
+                let index = oldPer.indexOf(i => i === roles.permissions[index].name)
+                oldPer.splice(index, 1)
+                setSelectedRole({ ...selectedRole, permission: oldPer })
+            }
         }
     }
 
@@ -347,13 +356,13 @@ const Users = (props) => {
                     let sp = selectedRole.permission
                     roles.permissions.forEach((permission, index) => {
                         let selected = false;
-                        if (sp.find(i => permission.name === i.name)) {
+                        if (sp.find(i => permission.name === i)) {
                             selected = true
                         }
                         checkbox.push(
                             <CCol key={selectedRole.role + "-" + index} md='3'>
                                 <div className="ml-2">
-                                    <CInputCheckbox value={permission}
+                                    <CInputCheckbox value={index}
                                         key={selectedRole.role + "-" + permission.id}
                                         onChange={addPermission} defaultChecked={selected} id={permission.id} />
                                     <label htmlFor={permission.id}>{permission.name}</label>
@@ -464,7 +473,9 @@ const Users = (props) => {
                                     <CCol xs="12">
                                         <CFormGroup>
                                             <CLabel htmlFor="role" className="ml-1">User Role</CLabel>
-                                            <CSelect id="role" defaultValue={(selectedUser.has_roles[0]) ? selectedUser.has_roles[0] : ''} onChange={changeRoleSelect} name="role">
+                                            <CSelect id="role"
+                                                defaultValue={(selectedUser.has_roles[0]) ? selectedUser.has_roles[0] : ''}
+                                                onChange={changeRoleSelect} name="role">
                                                 {roleSelectOption()}
                                             </CSelect>
                                         </CFormGroup>
