@@ -4,27 +4,33 @@
 .c-sidebar .c-sidebar-nav-link.c-active {
     background-color: #26334d;
 }
+
 .c-sidebar .c-sidebar-nav-link:hover,
 .c-sidebar .c-sidebar-nav-dropdown-toggle:hover {
     color: #fff;
     background: #26334d;
 }
-.c-sidebar.c-sidebar-minimized .c-sidebar-nav-item:hover > .c-sidebar-nav-link,
-.c-sidebar.c-sidebar-minimized .c-sidebar-nav-item:hover > .c-sidebar-nav-dropdown-toggle {
+
+.c-sidebar.c-sidebar-minimized .c-sidebar-nav-item:hover>.c-sidebar-nav-link,
+.c-sidebar.c-sidebar-minimized .c-sidebar-nav-item:hover>.c-sidebar-nav-dropdown-toggle {
     background: #26334d;
 }
-.c-sidebar.c-sidebar-minimized .c-sidebar-nav > .c-sidebar-nav-dropdown:hover {
+
+.c-sidebar.c-sidebar-minimized .c-sidebar-nav>.c-sidebar-nav-dropdown:hover {
     background: #26334d;
 }
+
 .widget-custom {
     .text-value {
         font-size: 18px;
     }
+
     .text-muted {
         font-size: 13px;
         letter-spacing: 2px;
     }
 }
+
 .vh-70 {
     min-height: 70vh;
     display: -webkit-flex;
@@ -32,10 +38,12 @@
     -webkit-flex-direction: row;
     flex-direction: row;
 }
+
 .card {
     border-radius: 5px;
     border: 0;
     box-shadow: 0px 2px 15px #d6d3d3b8;
+
     .card-header {
         font-weight: 800;
         border-radius: 5px 5px 10px 10px;
@@ -43,6 +51,7 @@
         border: 0;
         padding: 1.25rem;
     }
+
     .card-footer {
         font-weight: 800;
         border-radius: 10px 10px 5px 5px;
@@ -50,6 +59,7 @@
         border: 0;
         padding: 1.25rem;
     }
+
     .card-body.has-table {
         div.row:not(.table-responsive) {
             padding: 1rem 1.25rem 1.5rem 1rem;
@@ -61,15 +71,19 @@
         th {
             border-top: 0;
         }
+
         th,
         td {
             border-top-color: #efefef;
             border-bottom-color: #efefef;
+
             &:first-child {
                 padding-left: 1.3rem;
             }
+
             &:last-child {
                 padding-right: 1.3rem;
+
                 svg {
                     right: 13px;
                 }
@@ -77,35 +91,44 @@
         }
     }
 }
+
 .table {
     tr {
         th {
             padding: 0.5rem 0.75rem;
+            vertical-align: middle;
+
             &:first-child {
                 .form-check-input {
                     width: 15px;
                     height: 15px;
                     margin-top: -7px;
                     opacity: 0.4;
+
                     &:checked {
                         opacity: 1;
                     }
                 }
             }
         }
+
         td {
+            vertical-align: middle;
+
             &:first-child {
                 .form-check-input {
                     width: 15px;
                     height: 15px;
-                    margin-top: 3px;
+                    margin-top: -8px;
                     opacity: 0.4;
+
                     &:checked {
                         opacity: 1;
                     }
                 }
             }
         }
+
         &:hover {
             td {
                 &:first-child {
@@ -114,6 +137,7 @@
                     }
                 }
             }
+
             th {
                 &:first-child {
                     .form-check-input {
@@ -124,37 +148,52 @@
         }
     }
 }
+
 .react-confirm-alert-body {
     box-shadow: 0 20px 75px #ccc !important;
+
     h1 {
         font-size: 1.5rem;
         font-weight: bold;
     }
 }
+
 .react-confirm-alert-button-group {
     display: flex;
     flex-direction: row-reverse;
+
     .btn-danger {
         background: #ff1d10 !important;
         border-color: #ff1d10 im !important;
     }
 }
+
 .card {
     .card-header {
         &.with-tab {
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding: 0;
         }
+
         .nav {
             border: none;
+
             .nav-item {
                 border: none;
+
                 .nav-link {
-                    padding: 0 15px;
+                    font-size: 14px;
+                    padding: 15px 0px 15px 30px;
+                    color: #ccc;
+                    border: 0;
+
+                    &:hover {
+                        border: 0;
+                    }
+
                     &.active {
                         border: none;
-                        background-color: none;
-                        color: $primary;
+                        background-color: inherit;
+                        color: #000;
                     }
                 }
             }

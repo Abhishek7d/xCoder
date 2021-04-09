@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\helpers\CommonFunctions;
 use App\Models\AdminUsers;
 use Carbon\Carbon;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -230,7 +232,9 @@ class UserController extends Controller
                     if (!$user->hasPermissionTo('access-admin-panel')) {
                         return CommonFunctions::sendResponse(0, "Invalid User", true);
                     }
-
+                    if ($user->locked === 1) {
+                        return CommonFunctions::sendResponse(0, "Your Account Is Locked, Please Contact Admin", true);
+                    }
                     $token_key = Str::random(32);
                     $token = $user->id . ":" . $token_key;
                     $tokens = json_decode($user->access_tokens);
@@ -270,14 +274,15 @@ class UserController extends Controller
     public function allUsers(Request $request)
     {
         $user = AdminUsers::find(auth()->user()->id);
+        $withTrashed = ($request->trashed === 1) ? true : false;
         $sort = CommonFunctions::checkQueryString($request);
         $in = $request->input();
 
         error_log(json_encode($sort));
-
+        // sleep(5);
         if ($user->can('dashboard.users.view')) {
             $users = AdminUsers::permission('access-admin-panel')
-                ->select('id', 'name', 'email', 'created_at');
+                ->select('id', 'name', 'email', 'created_at', 'locked');
             if ($in['filter'] !== null) {
                 $users->where(function ($q) use ($in) {
                     foreach ($in['filter'] as $column => $value) {
@@ -286,11 +291,30 @@ class UserController extends Controller
                     }
                 });
             }
+            if ($withTrashed) {
+                $users->onlyTrashed();
+            }
             $users = $users->orderBy($sort->column, $sort->asc)
                 ->paginate($sort->perPage);
             return CommonFunctions::sendResponse(1, "Access Granted", $users);
         } else {
             return CommonFunctions::sendResponse(0, "Permission Denied", null);
         }
+    }
+
+    public function getRoles()
+    {
+        $allRoles = Role::all();
+        $allPermissions = Permission::all();
+        $roles = [];
+        $i = 0;
+        foreach ($allRoles as $role) {
+            $roles['roles'][$i]['name'] = $role->name;
+            $roles['roles'][$i]['id'] = $role->id;
+            $roles['roles'][$i]['permissions'] = $role->permissions()->get(['name', 'id']);
+            $i++;
+        }
+        $roles['permissions'] = $allPermissions;
+        return CommonFunctions::sendResponse(1, "Access Granted", $roles);;
     }
 }

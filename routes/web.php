@@ -43,11 +43,13 @@ Route::group(['prefix' => 'api'], function () {
 
             // Actions
             Route::post('/actions/delete', [ActionsController::class, 'deleteSelected']);
+            Route::post('/actions/set-value', [ActionsController::class, 'setValue']);
 
             // Users
             Route::post('/change/password', [AdminUserController::class, 'changePassword']);
             Route::post('/users/create', [AdminUserController::class, 'register']);
             Route::post('/users', [AdminUserController::class, 'allUsers']);
+            Route::get('/roles', [AdminUserController::class, 'getRoles']);
 
             // Invoices
             Route::get('/invoice/generate/{date}', [Invoice::class, 'generateInvoice']);

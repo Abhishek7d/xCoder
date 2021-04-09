@@ -27,20 +27,37 @@ import {
     CNav,
     CNavItem,
     CNavLink,
-    CAlert as Alert
+    CAlert as Alert,
+    CSpinner,
+    CContainer
 } from '@coreui/react'
 
 import Api from '../../Api';
 import CIcon from '@coreui/icons-react';
-import { cilUserPlus, cilTrash, cilLockLocked, cilCog, cilInfo, cilLockUnlocked } from '@coreui/icons'
+import { cilUserPlus, cilTrash, cilLockLocked, cilCog, cilInfo, cilLockUnlocked, cilBatteryEmpty, cilCompass, cilUser } from '@coreui/icons'
 import { removeElem } from 'src/reusable/Helper';
 import { hasElem } from '../../reusable/Helper';
 // const selectedRows = [];
 const Users = (props) => {
     // const dispatch = useDispatch()
+    // States
     const [loading, isLoading] = useState(false)
+    const [formLoading, isFormLoading] = useState(false)
     const [users, setUsers] = useState(null)
     const [selectedRows, setSelectedItems] = useState([])
+    const [tab, setTab] = useState('users');
+    const [modalAddUser, setModalAddUser] = useState(false);
+    const [modalInfo, setModalInfo] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [roles, setRoles] = useState(null)
+    const [selectedRole, setSelectedRole] = useState({
+        role: null,
+        permission: null
+    })
+    const [actionLoading, setActionLoading] = useState({
+        action: null,
+        loading: false,
+    })
     const [request, setRequest] = useState({
         sort: null,
         search: null,
@@ -52,22 +69,23 @@ const Users = (props) => {
     const [form, setForm] = useState({
         name: null,
         email: null,
-        role: null,
+        role: 0,
         password: null,
         confirm_password: null,
         raw: true
     })
-    const [modal, setModal] = useState(false);
     const [alert, showAlert] = useState({
         show: false,
         text: null,
         type: 'info'
     });
-    const toggle = () => {
-        setModal(!modal);
+    // End States
+    const toggleAddUser = () => {
+        setModalAddUser(!modalAddUser);
+        dismissAlert()
     }
     const isAllSelected = () => {
-        if (users) {
+        if (users && users.data.length > 0) {
             if (selectedRows.length === users.data.length) {
                 return true
             }
@@ -77,7 +95,7 @@ const Users = (props) => {
     const confirm = (type, item = null) => {
         let title = (type === 'single' ? 'Delete User ' + item.name : 'Delete Selected Users')
         confirmAlert({
-            title: 'Delete Users',
+            title: title,
             message: 'What you`d probably have to do is make a custom checkbox-looking image and bind to its various events (click, for example) to store its current "state" in a hidden form field via JavaScript. You may run into a number of issues with this approach, though.',
             buttons: [
                 {
@@ -95,9 +113,10 @@ const Users = (props) => {
     const deleteSelected = (type, item) => {
         isLoading(true)
         let data = {
-            items: type === 'single' ? [item] : selectedRows,
+            items: type === 'single' ? [item.id] : selectedRows,
             // Model Name
             table: "users",
+            force: (tab === 'trashed') ? 'true' : 'false',
             raw: true
         }
         new Api().get("POST", '/actions/delete', data, true, (data, msg) => {
@@ -129,15 +148,16 @@ const Users = (props) => {
             filter: false
         }]
 
-    // Load data
+    // Load User data
     const getUsersData = () => {
         isLoading(true)
         new Api().get("POST", "/users?page=" + request.page, request, true, (data, msg) => {
             console.log(data)
             isLoading(false)
             setUsers(data)
+            setSelectedItems([])
         }, (error) => {
-
+            console.log(error)
         })
     }
     const addToSelectedList = (event, id) => {
@@ -170,26 +190,183 @@ const Users = (props) => {
         }
         return true
     }
-
+    // Load User on filter
     useEffect(() => {
         getUsersData()
     }, [request])
 
+    // Call function on first load
+    useEffect(() => {
+        getRoles()
+    }, [])
+
+
+    // Set Tab
+    const setTabX = (t) => {
+        if (t === 'trashed') {
+
+            setRequest({ ...request, trashed: 1 })
+        } else {
+            setRequest({ ...request, trashed: 0 })
+        }
+        setTab(t)
+    }
+
+    // Set Input
     const setInput = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
+    // Update User Data
+    const changeUserData = (key, value, update) => {
+        let data = {
+            table: 'users',
+            key: key,
+            value: value,
+            update: update,
+            raw: true
+        }
+        new Api().get("POST", "/actions/set-value", data, true, (data, msg) => {
+            console.log(data)
+            setActionLoading({
+                action: null, loading: false
+            })
+            getUsersData()
+        }, (error) => {
+            console.log(error);
+            setActionLoading({
+                action: null, loading: false
+            })
+        })
+    }
+
+    // Lock / Unlock User
+    const lockUnlockUser = (action, id) => {
+        setActionLoading({
+            action: 'lock-' + id, loading: true
+        })
+        if (action === 0) {
+            changeUserData('id', [id], {
+                locked: 1
+            })
+        } else {
+            changeUserData('id', [id], {
+                locked: 0
+            })
+        }
+    }
+
+    // Lock Selected Users
+    // const localSelected = (action) => {
+    //     if (action === 0) {
+    //         changeUserData('id', selectedRows, {
+    //             locked: 1
+    //         })
+    //     } else {
+    //         changeUserData('id', selectedRows, {
+    //             locked: 0
+    //         })
+    //     }
+    // }
+
+    // Get Roles
+    const getRoles = () => {
+        new Api().get("GET", "/roles", null, true, (data, msg) => {
+            setRoles(data)
+        }, (error) => {
+            console.log(error);
+        })
+    }
+
+    // Render Roles
+    const roleSelectOption = () => {
+        let option = [];
+        if (roles) {
+            if (roles.roles) {
+                option.push(<option disabled key={'select-role'} value="0">Select Role</option>)
+                roles.roles.forEach((role, index) => {
+                    option.push(<option key={index} value={role.name}>{String(role.name).toUpperCase()}</option>)
+                })
+            } else {
+                option.push(<option key={0}>Loading..</option>)
+            }
+        }
+        return option
+    }
+
+    // 
+    const toggleInfo = (user = null) => {
+        if (user) {
+            setSelectedUser(user)
+            setSelectedRole({ role: user.has_roles, permission: user.has_permissions })
+        } else {
+            setSelectedUser(null)
+            setSelectedRole({ role: null, permission: null })
+        }
+        setModalInfo(!modalInfo);
+        dismissAlert()
+    }
+
+    // change role
+    const changeRoleSelect = (e) => {
+        let role = e.target.value;
+
+        if (roles) {
+            //roles.forEach((data, index) => {
+            let r = roles.roles.find(i => i.name === role)
+            if (r) {
+                setSelectedRole({
+                    role: r.name,
+                    permission: r.permissions
+                })
+            }
+            //  })
+        }
+    }
+
+    // Render Permissions
+    const permissionCheckBox = () => {
+        let checkbox = []
+        if (roles) {
+            if (roles.permissions) {
+                if (selectedRole.permission) {
+                    let sp = selectedRole.permission
+                    roles.permissions.forEach((permission, index) => {
+                        let selected = false;
+                        if (sp.find(i => permission.name === i)) {
+                            selected = true
+                        }
+                        checkbox.push(
+                            <CCol key={index} md='3'>
+                                <CInputCheckbox key={permission.id} checked={selected} id={permission.id} /> <label htmlFor={permission.id}>{permission.name}</label>
+                            </CCol>
+                        )
+                    })
+                }
+            }
+        }
+        return checkbox;
+    }
+    // Add Users
     const addUsers = () => {
+        isFormLoading(true)
         new Api().get("POST", '/users/create', form, true, (res, meg) => {
             console.log(res);
             showAlert({ show: true, text: "User Added Successfully", type: 'success' })
-            setModal(false)
             getUsersData()
-            dismissAlert(false)
+            isFormLoading(false)
+            setForm({
+                name: null,
+                email: null,
+                role: null,
+                password: null,
+                confirm_password: null,
+                raw: true
+            })
         }, (error) => {
             console.log(error);
             showAlert({ show: true, text: error, type: 'danger' })
-
+            isFormLoading(false)
         })
     }
     const validateFormAndSubmit = () => {
@@ -199,16 +376,17 @@ const Users = (props) => {
             showAlert({ show: true, text: "All fields are required", type: 'danger' })
         }
     }
-    const dismissAlert = (s) => {
+    const dismissAlert = (s = false) => {
         showAlert({ ...alert, show: s, })
     }
     return (
         <>
+            {/* Modal Add User */}
             <CModal
+                key={modalAddUser}
                 centered
-                show={modal}
-                onClose={toggle}
-            >
+                show={modalAddUser}
+                onClose={toggleAddUser}>
                 <CModalHeader closeButton>Create New User</CModalHeader>
                 <CModalBody>
                     <Alert color={alert.type} show={alert.show} onShowChange={dismissAlert} closeButton>
@@ -216,35 +394,84 @@ const Users = (props) => {
                     </Alert>
                     <CFormGroup>
                         <CLabel className="ml-1">Name</CLabel>
-                        <CInput onChange={setInput} type="text" name="name" placeholder="Enter Name" />
+                        <CInput value={form.name || ''} onChange={setInput} type="text" name="name" placeholder="Enter Name" />
                     </CFormGroup>
                     <CFormGroup>
                         <CLabel className="ml-1">Email</CLabel>
-                        <CInput onChange={setInput} type="text" name="email" placeholder="Enter Email" />
+                        <CInput value={form.email || ''} onChange={setInput} type="text" name="email" placeholder="Enter Email" />
                     </CFormGroup>
                     <CFormGroup>
                         <CLabel className="ml-1">Password</CLabel>
-                        <CInput onChange={setInput} type="text" name="password" placeholder="Enter Password" />
+                        <CInput value={form.password || ''} onChange={setInput} type="text" name="password" placeholder="Enter Password" />
                     </CFormGroup>
+
                     <CFormGroup>
                         <CLabel className="ml-1">Password</CLabel>
-                        <CInput onChange={setInput} type="text" name="confirm_password" placeholder="Enter Password" />
+                        <CInput value={form.confirm_password || ''} onChange={setInput} type="text" name="confirm_password" placeholder="Enter Password" />
                     </CFormGroup>
                     <CFormGroup>
                         <CLabel className="ml-1">Select Role</CLabel>
-                        <CSelect onChange={setInput} name="role">
-                            <option disabled selected value="admin">Select Role</option>
-                            <option value="admin">Admin</option>
+                        <CSelect defaultValue={form.role} onChange={setInput} name="role">
+                            {roleSelectOption()}
                         </CSelect>
                     </CFormGroup>
                 </CModalBody>
                 <CModalFooter>
-                    <CButton onClick={validateFormAndSubmit} color="primary">Add</CButton>{' '}
+                    <CButton onClick={validateFormAndSubmit} color="primary">
+                        {(!formLoading) ? 'Add' : <CSpinner className="mt-1" color="light" size="sm" />}
+                    </CButton>{' '}
                     <CButton
                         color="secondary"
-                        onClick={toggle}
+                        onClick={toggleAddUser}
                     >Cancel</CButton>
                 </CModalFooter>
+            </CModal>
+            {/* Modal Info */}
+            <CModal
+                size="xl"
+                key={modalInfo + "-info"}
+                show={modalInfo}
+                onClose={toggleInfo}>
+                {
+                    (selectedUser) ?
+                        <>
+                            <CModalHeader closeButton><CIcon content={cilUser} size="lg" />&nbsp;&nbsp;&nbsp;<b>{selectedUser.name}</b></CModalHeader>
+                            <CModalBody>
+                                <Alert color={alert.type} show={alert.show} onShowChange={dismissAlert} closeButton>
+                                    {alert.text}
+                                </Alert>
+                                <CRow>
+                                    <CCol xs="12">
+                                        <CFormGroup>
+                                            <CLabel htmlFor="role" className="ml-1">User Role</CLabel>
+                                            <CSelect id="role" defaultValue={selectedUser.has_roles} onChange={changeRoleSelect} name="role">
+                                                {roleSelectOption()}
+                                            </CSelect>
+                                        </CFormGroup>
+                                    </CCol>
+                                    <CCol xs="12">
+                                        <CLabel htmlFor="permissions" className="ml-1">Permissions</CLabel>
+                                        <CContainer>
+                                            <CRow>
+                                                {permissionCheckBox()}
+                                            </CRow>
+                                        </CContainer>
+                                    </CCol>
+                                </CRow>
+
+                            </CModalBody>
+                            <CModalFooter>
+                                <CButton onClick={validateFormAndSubmit} color="primary">
+                                    {(!formLoading) ? 'Modify' : <CSpinner className="mt-1" color="light" size="sm" />}
+                                </CButton>{' '}
+                                <CButton
+                                    color="secondary"
+                                    onClick={toggleInfo}
+                                >Cancel</CButton>
+                            </CModalFooter>
+                        </>
+                        : null
+                }
             </CModal>
             <CRow>
                 <CCol xs='12' sm='12' md='12' lg="12">
@@ -253,12 +480,12 @@ const Users = (props) => {
                             <CTabs activeTab="home">
                                 <CNav variant="tabs">
                                     <CNavItem>
-                                        <CNavLink data-tab="home">
+                                        <CNavLink active={(tab === 'users' ? true : false)} data-tab="users" onClick={() => setTabX('users')}>
                                             All Users
                                          </CNavLink>
                                     </CNavItem>
                                     <CNavItem>
-                                        <CNavLink data-tab="profile">
+                                        <CNavLink active={(tab === 'trashed' ? true : false)} data-tab="trashed" onClick={() => setTabX('trashed')}>
                                             Trashed
                                         </CNavLink>
                                     </CNavItem>
@@ -268,33 +495,33 @@ const Users = (props) => {
                         <CCardBody className="p-0 has-table">
                             <CRow className="mt-1">
                                 <CCol md="12">
-                                    <CButtonGroup>
-                                        <CTooltip content="Delete Selected" advancedOptions={{ delay: [1000, 100] }}>
-                                            <CButton onClick={() => confirm('multiple')} disabled={isSelected()} size="sm" color="danger">
-                                                <CIcon content={cilTrash} />
-                                            </CButton>
-                                        </CTooltip>
-                                        <CTooltip content="Lock Selected" advancedOptions={{ delay: [1000, 100] }}>
-                                            <CButton disabled={isSelected()} size="sm" color="info">
-                                                <CIcon content={cilLockLocked} />
-                                            </CButton>
-                                        </CTooltip>
-                                        <CTooltip content="Create New User" advancedOptions={{ delay: [1000, 100] }}>
-                                            <CButton onClick={toggle} size="sm" color="success">
-                                                <CIcon content={cilUserPlus} />
-                                            </CButton>
-                                        </CTooltip>
-                                    </CButtonGroup>
+                                    <CTooltip content="Delete Selected" advancedOptions={{ delay: [1000, 100] }}>
+                                        <CButton onClick={() => confirm('multiple')} disabled={isSelected()} size="sm" color="danger">
+                                            <CIcon content={cilTrash} />
+                                        </CButton>
+                                    </CTooltip>
+                                    <CTooltip content="Create New User" advancedOptions={{ delay: [1000, 100] }}>
+                                        <CButton className="ml-2" onClick={toggleAddUser} size="sm" color="success">
+                                            <CIcon content={cilUserPlus} />
+                                        </CButton>
+                                    </CTooltip>
                                 </CCol>
                             </CRow>
                             <CDataTable
+                                key={tab}
                                 items={(users) ? users.data : []}
                                 fields={fields}
                                 loading={loading}
-                                noItemsViewSlot={<>
-                                    {(users === null || users.length === 0) ? 'No Items' : ''}
-                                </>
-                                }
+                                noItemsViewSlot={
+                                    <>
+                                        <p className="text-center p-0 m-0">
+                                            {(loading) ? '' :
+                                                <>
+                                                    {(users && users.length > 0) ? '' : 'No Data'}
+                                                </>
+                                            }
+                                        </p>
+                                    </>}
                                 clickableRows
                                 columnFilter
                                 itemsPerPage={(users) ? users.per_page : 10}
@@ -321,37 +548,34 @@ const Users = (props) => {
                                     'action':
                                         (item) => (
                                             <td>
-                                                <CTooltip content="Change Password" advancedOptions={{ delay: [1000, 100] }}>
-                                                    <CButton color="primary" size="sm">
-                                                        <CIcon content={cilCog} />
-                                                    </CButton>
-                                                </CTooltip>
-                                                <CTooltip content="Lock User" advancedOptions={{ delay: [1000, 100] }}>
-                                                    <CButton className="ml-2" color="danger" size="sm">
-                                                        <CIcon content={cilLockLocked} />
-                                                    </CButton>
-                                                </CTooltip>
-                                                <CTooltip content="Unlock User" advancedOptions={{ delay: [1000, 100] }}>
-                                                    <CButton disabled className="ml-2" color="success" size="sm">
-                                                        <CIcon content={cilLockUnlocked} />
-                                                    </CButton>
-                                                </CTooltip>
+                                                {(tab === 'users') ?
+                                                    <>
+                                                        <CTooltip content={(item.locked === 1) ? 'Unlock User' : 'Lock User'}
+                                                            advancedOptions={{ delay: [1000, 100] }}>
+                                                            <CButton onClick={() => lockUnlockUser(item.locked, item.id)} className="ml-2" color={(item.locked === 1) ? 'danger' : 'success'} size="sm">
+                                                                {(actionLoading.action === 'lock-' + item.id && actionLoading.loading) ? <CSpinner className="mt-1" color="light" size="sm" /> : <CIcon key={item.id + item.locked} content={(item.locked === 1) ? cilLockLocked : cilLockUnlocked} />}
+                                                            </CButton>
+                                                        </CTooltip>
+                                                    </>
+                                                    : null}
                                                 <CTooltip content="Delete User" advancedOptions={{ delay: [1000, 100] }}>
                                                     <CButton onClick={() => confirm('single', item)} className="ml-2" color="danger" size="sm">
                                                         <CIcon content={cilTrash} />
                                                     </CButton>
                                                 </CTooltip>
-                                                <CTooltip content="User Details" advancedOptions={{ delay: [1000, 100] }}>
-                                                    <CButton className="ml-2" color="info" size="sm">
-                                                        <CIcon content={cilInfo} />
-                                                    </CButton>
-                                                </CTooltip>
+                                                {(tab === 'users') ?
+                                                    <CTooltip content="User Details" advancedOptions={{ delay: [1000, 100] }}>
+                                                        <CButton onClick={() => toggleInfo(item)} className="ml-2" color="info" size="sm">
+                                                            <CIcon content={cilInfo} />
+                                                        </CButton>
+                                                    </CTooltip>
+                                                    : null}
                                             </td>
                                         )
                                 }}
                             />
                             {
-                                (users) ?
+                                (users && users.next_page_url !== null) ?
                                     <CPagination
                                         className="p-4"
                                         key='p1'
