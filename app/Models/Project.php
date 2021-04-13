@@ -13,6 +13,7 @@ class Project extends Model
     use SoftDeletes;
     use HasFactory;
     protected $table = 'projects';
+    // protected $appends = array();
 
     protected static function boot()
     {
@@ -31,6 +32,15 @@ class Project extends Model
     public function servers()
     {
         return $this->hasMany("App\Models\Server", "project_id");
+    }
+    public function droplets()
+    {
+        return $this->hasMany("App\Models\Server", "project_id")->withTrashed();
+    }
+    public function users()
+    {
+        $user = $this->belongsTo("App\Models\User", 'user_id');
+        return $user;
     }
     public function applications()
     {

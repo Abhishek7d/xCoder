@@ -17,7 +17,7 @@ class AdminUsers extends Authenticatable implements MustVerifyEmail
 
     protected $table = "users";
     protected $guard_name = 'web';
-    protected $appends = array('has_roles', 'has_permissions');
+    protected $appends = array('has_roles', 'has_permissions', 'applications', 'droplets');
 
     /**
      * The attributes that are mass assignable.
@@ -73,5 +73,24 @@ class AdminUsers extends Authenticatable implements MustVerifyEmail
     public function getHasPermissionsAttribute()
     {
         return $this->getAllPermissions()->pluck('name');
+    }
+
+    public function getDropletsAttribute()
+    {
+        return $this->hasMany(Server::class, "user_id")->get();
+    }
+    public function getApplicationsAttribute()
+    {
+        return $this->hasMany(Application::class, "user_id")->get();
+    }
+
+    public function droplets()
+    {
+        return $this->hasMany(Server::class, "user_id");
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, "user_id");
     }
 }

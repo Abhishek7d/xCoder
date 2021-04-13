@@ -11,7 +11,6 @@ import {
     CCol,
     CRow,
     CButton,
-    CButtonGroup,
     CInputCheckbox,
     CTooltip,
     CModal,
@@ -19,7 +18,6 @@ import {
     CModalHeader,
     CModalFooter,
     CFormGroup,
-    CFormText,
     CLabel,
     CInput,
     CSelect,
@@ -52,7 +50,9 @@ const Users = (props) => {
     const [roles, setRoles] = useState(null)
     const [selectedRole, setSelectedRole] = useState({
         role: null,
-        permission: null
+        permission: null,
+        password: null,
+        user: null
     })
     const [actionLoading, setActionLoading] = useState({
         action: null,
@@ -247,11 +247,11 @@ const Users = (props) => {
         })
         if (action === 0) {
             changeUserData('id', [id], {
-                locked: 1
+                locked: true
             })
         } else {
             changeUserData('id', [id], {
-                locked: 0
+                locked: false
             })
         }
     }
@@ -304,10 +304,10 @@ const Users = (props) => {
     const toggleInfo = (user = null) => {
         if (user) {
             setSelectedUser(user)
-            setSelectedRole({ role: user.has_roles, permission: user.has_permissions })
+            setSelectedRole({ role: user.has_roles, permission: user.has_permissions, password: null, user: user.id })
         } else {
             setSelectedUser(null)
-            setSelectedRole({ role: null, permission: null })
+            setSelectedRole({ role: null, permission: null, password: null, user: null })
         }
         setModalInfo(!modalInfo);
         dismissAlert()
@@ -335,7 +335,6 @@ const Users = (props) => {
     }
 
     // Add Permissions
-
     const addPermission = (e) => {
         let index = e.target.value
         let checked = e.target.checked
@@ -404,6 +403,27 @@ const Users = (props) => {
             isFormLoading(false)
         })
     }
+
+    // Modify User permissions
+    const changeAccess = () => {
+        isFormLoading(true)
+        if (selectedRole) {
+            let data = {
+                raw: true,
+                ...selectedRole
+            }
+            new Api().get("POST", "/change-access", data, true, (data, msg) => {
+                showAlert({ show: true, text: msg, type: 'success' })
+                getUsersData()
+                isFormLoading(false)
+            }, (error) => {
+                console.log(error);
+                showAlert({ show: true, text: error, type: 'danger' })
+                isFormLoading(false)
+            })
+        }
+    }
+
     const validateFormAndSubmit = () => {
         if (form.name && form.email && form.password && form.role) {
             addUsers()
@@ -489,7 +509,7 @@ const Users = (props) => {
                                     <CCol xs="3">
                                         <CFormGroup>
                                             <CLabel htmlFor="pass" className="ml-1">Change User's Password</CLabel>
-                                            <CInput type="text" placeholder="" />
+                                            <CInput onChange={e => setSelectedRole({ ...selectedRole, password: e.target.value })} type="text" placeholder="Password" />
                                         </CFormGroup>
                                     </CCol>
                                     <CCol xs="12">
@@ -504,7 +524,7 @@ const Users = (props) => {
 
                             </CModalBody>
                             <CModalFooter>
-                                <CButton onClick={validateFormAndSubmit} color="primary">
+                                <CButton onClick={changeAccess} color="primary">
                                     {(!formLoading) ? 'Modify' : <CSpinner className="mt-1" color="light" size="sm" />}
                                 </CButton>{' '}
                                 <CButton

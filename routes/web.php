@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\ActionsController;
+use App\Http\Controllers\admin\droplet\ClientController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
@@ -10,7 +11,7 @@ use App\Http\Controllers\BlockStorageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\admin\droplet\InvoiceController as Invoice;
-
+use App\Http\Controllers\admin\droplet\ProjectController;
 use App\Http\Controllers\admin\UserController as AdminUserController;
 
 /*
@@ -50,9 +51,16 @@ Route::group(['prefix' => 'api'], function () {
             Route::post('/users/create', [AdminUserController::class, 'register']);
             Route::post('/users', [AdminUserController::class, 'allUsers']);
             Route::get('/roles', [AdminUserController::class, 'getRoles']);
+            Route::post('/change-access', [AdminUserController::class, 'changeAccess']);
 
             // Invoices
             Route::get('/invoice/generate/{date}', [Invoice::class, 'generateInvoice']);
+
+            // Clients
+            Route::post('/clients', [ClientController::class, 'clients']);
+
+            // Projects
+            Route::post('/projects', [ProjectController::class, 'allProjects']);
         });
     });
 

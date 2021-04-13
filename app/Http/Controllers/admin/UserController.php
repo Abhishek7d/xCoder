@@ -315,6 +315,24 @@ class UserController extends Controller
             $i++;
         }
         $roles['permissions'] = $allPermissions;
-        return CommonFunctions::sendResponse(1, "Access Granted", $roles);;
+        return CommonFunctions::sendResponse(1, "Access Granted", $roles);
+    }
+
+    public function changeAccess(Request $request)
+    {
+        $role = $request->role;
+        $password = $request->password;
+        $permissions = $request->permission;
+
+        $user = AdminUsers::find($request->user);
+        $user->syncRoles([$role]);
+        $user->syncPermissions($permissions);
+        // change password
+        if (!empty($password)) {
+            $user->password = Hash::make($request->password);
+            $user->save();
+        }
+        error_log(json_encode($request->input()));
+        return CommonFunctions::sendResponse(1, "Access Changed Successfully");
     }
 }
