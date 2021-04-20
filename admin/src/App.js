@@ -31,7 +31,7 @@ const App = () => {
                 )
             } else {
                 route.push(
-                    <Route key={index} exact path={data.path} name={data.name} render={props => <TheLayout {...props} />} />
+                    <Route key={index} exact={(data.exact) ? data.exact : false} path={data.path} name={data.name} render={props => <TheLayout {...props} />} />
                 )
             }
         })

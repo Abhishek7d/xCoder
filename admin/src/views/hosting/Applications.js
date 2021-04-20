@@ -22,46 +22,36 @@ import {
 import Api from '../../Api';
 import CIcon from '@coreui/icons-react';
 import { cilUserPlus, cilTrash, cilLockLocked, cilCog, cilInfo, cilLockUnlocked, cilBatteryEmpty, cilCompass, cilUser, cilSettings, cilArrowCircleLeft, cilReload } from '@coreui/icons'
-import { Link } from 'react-router-dom';
 import { usePermission } from 'src/reusable/Permissions';
+import { Link, withRouter } from 'react-router-dom';
 
 // const selectedRows = [];
-const Users = (props) => {
-    const canViewProject = usePermission("droplets.projects.view")
+const Applications = (props) => {
+    const canViewApps = usePermission("droplets.servers.view")
+
     // const dispatch = useDispatch()
     // States
     const [loading, isLoading] = useState(false)
-    const [users, setUsers] = useState(null)
+    const [applications, setApplications] = useState(null)
     const [selectedRows, setSelectedItems] = useState([])
-    const [tab, setTab] = useState('users');
+    const [tab, setTab] = useState('main');
     const [actionLoading, setActionLoading] = useState({
         action: null,
         loading: false,
     })
     const [request, setRequest] = useState({
-        sort: { column: "droplets_count", asc: false },
+        sort: { column: "id", asc: false },
         search: null,
         filter: null,
         page: 1,
-        perPage: 10,
+        perPage: 15,
+        userId: props.match.params.userId,
+        serverId: props.match.params.serverId,
         raw: true
-    });
-    const [form, setForm] = useState({
-        name: null,
-        email: null,
-        role: 0,
-        password: null,
-        confirm_password: null,
-        raw: true
-    })
-    const [alert, showAlert] = useState({
-        show: false,
-        text: null,
-        type: 'info'
     });
     // End States
     const confirm = (type, item = null) => {
-        let title = (type === 'single' ? 'Delete Client ' + item.name : 'Delete Selected Client')
+        let title = (type === 'single' ? 'Delete Droplet ' + item['projects.name'] : 'Delete Selected Droplets')
         confirmAlert({
             title: title,
             message: 'Are you sure? You want to delete this client?',
@@ -83,7 +73,7 @@ const Users = (props) => {
         let data = {
             items: type === 'single' ? [item.id] : selectedRows,
             // Model Name
-            table: "users",
+            table: "projects",
             force: (tab === 'trashed') ? 'true' : 'false',
             raw: true
         }
@@ -98,44 +88,31 @@ const Users = (props) => {
     const fields = [
         {
             key: 'id',
+            label: 'ID',
             _style: { width: '10%' },
         },
+        'domain',
+        'name',
+        'db_name',
         {
-            key: 'name',
-            label: 'User'
+            key: 'ftp_credentials',
+            label: 'FTP',
+            _style: { width: '10px' }
         },
-        'email',
-
+        'ssl_enabled',
         {
-            key: 'droplets_count',
-            filter: false,
-            label: 'Droplets'
-        },
-        {
-            key: 'applications_count',
-            filter: false,
-            label: 'Applications'
-        },
-        {
-            key: 'status',
-            label: 'Status'
-        },
-        'created_at',
-        {
-            key: 'action',
-            _style: { width: '15%' },
-            sorter: false,
-            filter: false
+            key: 'created_at',
+            label: 'Date'
         }
     ]
 
     // Load User data
     const getUsersData = () => {
         isLoading(true)
-        new Api().get("POST", "/clients?page=" + request.page, request, true, (data, msg) => {
+        new Api().get("POST", "/applications?page=" + request.page, request, true, (data, msg) => {
             console.log(data)
             isLoading(false)
-            setUsers(data)
+            setApplications(data)
             setSelectedItems([])
         }, (error) => {
             console.log(error)
@@ -158,9 +135,9 @@ const Users = (props) => {
     }
 
     // Update User Data
-    const changeUserData = (key, value, update) => {
+    const changeProjectData = (key, value, update) => {
         let data = {
-            table: 'users',
+            table: 'projects',
             key: key,
             value: value,
             update: update,
@@ -180,30 +157,15 @@ const Users = (props) => {
         })
     }
 
-    // Lock / Unlock User
-    const lockUnlockUser = (action, id) => {
-        setActionLoading({
-            action: 'lock-' + id, loading: true
-        })
-        if (action === 0) {
-            changeUserData('id', [id], {
-                locked: true
-            })
-        } else {
-            changeUserData('id', [id], {
-                locked: false
-            })
-        }
-    }
-
     const restoreUser = (item) => {
-        changeUserData('id', [item.id], {
+        changeProjectData('id', [item.id], {
             deleted_at: null
         })
     }
 
     return (
         <>
+
             <CRow>
                 <CCol xs='12' sm='12' md='12' lg="12">
                     <CCard>
@@ -211,8 +173,8 @@ const Users = (props) => {
                             <CTabs activeTab="home">
                                 <CNav variant="tabs">
                                     <CNavItem>
-                                        <CNavLink active={(tab === 'users' ? true : false)} data-tab="users" onClick={() => setTabX('users')}>
-                                            Clients
+                                        <CNavLink active={(tab === 'main' ? true : false)} data-tab="users" onClick={() => setTabX('main')}>
+                                            Applications
                                          </CNavLink>
                                     </CNavItem>
                                     <CNavItem>
@@ -227,7 +189,7 @@ const Users = (props) => {
                             <CDataTable
 
                                 key={tab}
-                                items={(users) ? users.data : []}
+                                items={(applications) ? applications.data : []}
                                 fields={fields}
                                 loading={loading}
                                 noItemsViewSlot={
@@ -235,83 +197,51 @@ const Users = (props) => {
                                         <p className="text-center p-0 m-0">
                                             {(loading) ? '' :
                                                 <>
-                                                    {(users && users.length > 0) ? '' : 'No Data'}
+                                                    {(applications && applications.length > 0) ? '' : 'No Data'}
                                                 </>
                                             }
                                         </p>
                                     </>}
                                 clickableRows
                                 columnFilter
-                                itemsPerPage={(users) ? users.per_page : 10}
+                                itemsPerPage={(applications) ? applications.per_page : 10}
                                 hover
                                 sorter
                                 onPaginationChange={e => setRequest({ ...request, perPage: e })}
                                 onSorterValueChange={e => setRequest({ ...request, sort: e })}
                                 onColumnFilterChange={e => setRequest({ ...request, filter: e })}
                                 onTableFilterChange={e => setRequest({ ...request, search: e })}
-
                                 scopedSlots={{
-                                    'name': (item) => (
+                                    'ftp_credentials': (item) => (
                                         <td>
-                                            {
-                                                (canViewProject && item.droplets_count > 0) ? <Link to={"/dashboard/droplets/users/" + item.id + "/servers"} class="">{item.name}</Link> : item.name
-                                            }
+                                            {console.log(JSON.parse(item.ftp_credentials))}
+                                            {(JSON.parse(item.ftp_credentials).length) ?
+                                                JSON.parse(item.ftp_credentials).length
+                                                : 0}
                                         </td>
                                     ),
-                                    'droplets_count': (item) => (
+                                    'ssl_enabled': (item) => (
                                         <td>
-                                            {item.droplets_count}
-                                        </td>
-                                    ),
-
-                                    'applications_count': (item) => (
-                                        <td>
-                                            {item.applications_count}
+                                            {(item.ssl_enabled === '1') ?
+                                                <span className="text-success">
+                                                    Enabled
+                                            </span> : 'Disabled'}
                                         </td>
                                     ),
                                     'created_at': (item) => (
                                         <td>
                                             {new Date(item.created_at).toDateString()}
                                         </td>
-                                    ),
-                                    'action':
-                                        (item) => (
-                                            <td>
-                                                {(tab === 'users') ?
-                                                    <>
-                                                        <CTooltip content={(item.locked === 1) ? 'Unlock Client' : 'Lock Client'}
-                                                            advancedOptions={{ delay: [1000, 100] }}>
-                                                            <CButton onClick={() => lockUnlockUser(item.locked, item.id)} className="ml-2" color={(item.locked === 1) ? 'danger' : 'success'} size="sm">
-                                                                {(actionLoading.action === 'lock-' + item.id && actionLoading.loading) ? <CSpinner className="mt-1" color="light" size="sm" /> : <CIcon key={item.id + item.locked} content={(item.locked === 1) ? cilLockLocked : cilLockUnlocked} />}
-                                                            </CButton>
-                                                        </CTooltip>
-                                                    </>
-                                                    : null}
-                                                <CTooltip content="Delete Client" advancedOptions={{ delay: [1000, 100] }}>
-                                                    <CButton onClick={() => confirm('single', item)} className="ml-2" color="danger" size="sm">
-                                                        <CIcon content={cilTrash} />
-                                                    </CButton>
-                                                </CTooltip>
-                                                {(tab === 'users') ?
-                                                    null
-                                                    :
-                                                    <CTooltip content="Restore Client" advancedOptions={{ delay: [1000, 100] }}>
-                                                        <CButton onClick={() => restoreUser(item)} className="ml-2" color="info" size="sm">
-                                                            <CIcon content={cilUserPlus} />
-                                                        </CButton>
-                                                    </CTooltip>
-                                                }
-                                            </td>
-                                        )
+                                    )
                                 }}
                             />
                             {
-                                (users && users.next_page_url !== null) ?
+                                (applications && applications.last_page !== 1) ?
                                     <CPagination
                                         className="p-4"
                                         key='p1'
                                         activePage={request.page}
-                                        pages={users.last_page}
+                                        pages={applications.last_page}
                                         onActivePageChange={e => setRequest({ ...request, page: e })}
                                     /> : null
                             }
@@ -323,4 +253,4 @@ const Users = (props) => {
     )
 }
 
-export default Users
+export default withRouter(Applications)

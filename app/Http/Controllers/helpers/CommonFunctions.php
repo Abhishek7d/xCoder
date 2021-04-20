@@ -3,26 +3,27 @@
 namespace App\Http\Controllers\helpers;
 
 use DateTime;
+use stdClass;
 use DatePeriod;
 use DateInterval;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Project;
 use phpseclib\Net\SSH2;
+use App\Models\Invoices;
 use phpseclib\Crypt\RSA;
+use App\Models\SavedCards;
+use App\Models\ServerSize;
 use Illuminate\Support\Str;
+use App\Models\Transactions;
 use Illuminate\Http\Request;
 use App\Models\Notifications;
 use App\Models\DelegateAccess;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\admin\droplet\InvoiceController;
-use App\Models\Invoices;
-use App\Models\SavedCards;
-use App\Models\ServerSize;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use stdClass;
+use App\Http\Controllers\Controller;
+use Illuminate\Notifications\Notification;
+use App\Http\Controllers\admin\droplet\InvoiceController;
 
 class CommonFunctions extends Controller
 {
@@ -420,6 +421,88 @@ class CommonFunctions extends Controller
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static function getClientStatus($id)
+    {
+        // Check if overdue 
+        $invoice = Invoices::where([['user_id', $id], ['status', '!=', 'paid'], ['created_at', '<=', Carbon::now()->subDays(5)->toDateTimeString()]]);
+
+        if ($invoice->count() > 0) {
+            return 'overdue';
+        } else {
+            return 'active';
+        }
+    }
+
+    public static function chargeInvoice()
+    {
+        $invoice = Invoices::where([['status', 'unpaid']]);
+
+        if ($invoice->exists()) {
+            foreach ($invoice as $inv) {
+                self::chargeCard($inv);
+            }
+        }
+    }
+
+    public static function chargeCard($invoice)
+    {
+        $amount = $invoice->amount;
+        $id = $invoice->id;
+        $user = $invoice->user_id;
+
+        $card = SavedCards::where([['user_id', $user], ['primary', '1']])->first();
+
+        $terminal = config('app.cardcom_terminal', 1000);
+        $username = config('app.cardcom_username', 'barak9611');
+
+        $url = "https://secure.cardcom.co.il/Interface/Direct2.aspx?TerminalNumber=$terminal&Sum=$amount&Token=$card->token&cardvalidityyear=$card->year&cardvaliditymonth=$card->month&identitynumber=$card->card_holder_id&username=$username&Languages=en&Cvv=$card->cvv&CreateToken=true&CoinISOName=USD";
+
+        $result = self::sendRequest(null, $url);
+        error_log(json_encode($result));
+        if ($result['ResponseCode'] == "501" || $result['ResponseCode'] == "505" || $result['ResponseCode'] == "614") {
+            // handle error
+            // todo
+            // display a notification on admin dashboard
+        }
+        if ($result['ResponseCode'] == "0") {
+            $transaction = new Transactions();
+            $transaction->amount = $amount;
+            $transaction->currency = "USD";
+            $transaction->user_id = $user;
+            $transaction->invoice_id = $id;
+            $transaction->card = $result['CardNumEnd'];
+            $transaction->low_profile_code = (isset($result['LowProfileCode'])) ? $result['LowProfileCode'] : 'N/A';
+            $transaction->description = $result['Description'];
+            $transaction->internal_deal_number = $result['InternalDealNumber'];
+            $transaction->approval_number = $result['ApprovalNumber'];
+            $transaction->status = 'success';
+            $transaction->save();
+
+            $invoice = Invoices::find($id);
+            $invoice->status = "paid";
+            $invoice->payment_date = date('Y-m-d h:i:s');
+            $invoice->save();
+        } else {
+            $transaction = new Transactions();
+            $transaction->amount = $amount;
+            $transaction->currency = "USD";
+            $transaction->user_id = $user;
+            $transaction->invoice_id = $id;
+            $transaction->card = $result['CardNumEnd'];
+            $transaction->low_profile_code = (isset($result['LowProfileCode'])) ? $result['LowProfileCode'] : 'N/A';
+            $transaction->description = $result['Description'];
+            $transaction->internal_deal_number = $result['InternalDealNumber'];
+            $transaction->approval_number = $result['ApprovalNumber'];
+            $transaction->status = 'failed';
+            $transaction->save();
+
+            $invoice = Invoices::find($id);
+            $invoice->status = "failed";
+            $invoice->payment_date = date('Y-m-d h:i:s');
+            $invoice->save();
         }
     }
 }

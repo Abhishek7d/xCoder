@@ -6,15 +6,70 @@ use App\Models\Server;
 use App\Models\Project;
 use App\Models\Storage;
 use App\Models\Invoices;
+use App\Models\AdminUsers;
 use Illuminate\Support\Str;
 use App\Models\InvoiceItems;
 use Illuminate\Http\Request;
 use App\Models\StorageChanges;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\helpers\CommonFunctions;
 use App\Http\Controllers\helpers\CommonFunctions as CF;
 
 class InvoiceController extends Controller
 {
+
+    public function invoices(Request $request)
+    {
+        $user = AdminUsers::find(auth()->user()->id);
+        $withTrashed = ($request->trashed === 1) ? true : false;
+        $sort = CommonFunctions::checkQueryString($request);
+        $in = $request->input();
+        $id = ($request->id !== null) ? $request->id : null;
+        error_log(json_encode($sort));
+        // sleep(5);
+        if ($user->can('droplets.invoices.view')) {
+            $data = Invoices::join('users', 'users.id', '=', 'invoices.user_id')
+                ->select([
+                    'users.name as username',
+                    'invoices.*',
+                    DB::raw('count(*) as invoices')
+                ]);
+            if ($id) {
+                $data->where("invoices.user_id", $id);
+            }
+            if ($in['filter'] !== null) {
+                if (isset($in['filter']['user'])) {
+                    $data->whereHas('user', function ($q) use ($in) {
+                        if ($in['filter']['user'] !== '') {
+                            $q->where('name', 'LIKE', '%' . $in['filter']['user'] . '%');
+                        }
+                    });
+                } else {
+                    $data->where(function ($q) use ($in) {
+                        foreach ($in['filter'] as $column => $value) {
+                            if ($value !== null || $value !== '') {
+                                $q = $q->where($column, 'LIKE', '%' . $value . '%');
+                            }
+                        }
+                    });
+                }
+            }
+            if ($withTrashed) {
+                $data->onlyTrashed();
+            }
+            $data->sum('grand_total');
+            // $data->select('invoices.month_year', DB::raw('count(*) as invoices'));
+            $data->groupBy('invoices.month_year');
+            $data = $data->orderBy($sort->column, $sort->asc)
+                ->paginate($sort->perPage);
+
+            return CommonFunctions::sendResponse(1, "Access Granted", $data);
+        } else {
+            return CommonFunctions::sendResponse(0, "Permission Denied", null);
+        }
+    }
+
     public function generateInvoice($invoiceDate)
     {
         $projects = Project::withTrashed()->get();
@@ -114,6 +169,7 @@ class InvoiceController extends Controller
         $previousArrears = CF::previousArrears($invoice['invoice']['month'], $invoice['invoice']['project_id'], $invoice['invoice']['user_id']);
         $invoices->previous_arrears = ($previousArrears == 0) ? null : $previousArrears;
         $taxEnabled = CF::isTaxEnabled();
+
         if ($taxEnabled['status']) {
             $invoices->tax_percent = $taxEnabled['tax'];
             $invoices->tax_amount = round($invoice['invoice']['amount'] * $taxEnabled['tax'] / 100, 2);
@@ -431,7 +487,6 @@ class InvoiceController extends Controller
             'chargeType' => $chargeType,
             'charge' => $charge,
             'rate' => $rate,
-
         ];
     }
 }

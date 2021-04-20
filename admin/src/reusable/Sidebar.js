@@ -8,6 +8,7 @@ export default class sidebarMenu {
         this.routes = routes
         this.sidebarMenu = []
         this.defaultIcon = <CIcon name="cil-file" customClasses="c-sidebar-nav-icon" />
+
     }
 
     // get route details
@@ -33,6 +34,7 @@ export default class sidebarMenu {
         this.sidebarMenu.push(
             {
                 _tag: 'CSidebarNavItem',
+                className: "",
                 to: this.getRoute(name).path,
                 name: (fName) ? fName : this.getRoute(name).name,
                 permission: this.getRoute(name).permission,

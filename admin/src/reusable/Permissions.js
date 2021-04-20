@@ -1,5 +1,6 @@
 // import React from 'react';
 import { useSelector } from 'react-redux';
+import { matchPath, useRouteMatch } from 'react-router';
 
 function UsePermission(per) {
     const permissions = useSelector(stateObj => stateObj.userPermissions)
@@ -7,6 +8,7 @@ function UsePermission(per) {
     if (permissions !== null && permissions !== '') {
         isTrue = (permissions.find(permission => permission.name === per) !== undefined) ? true : false
     }
+    // console.log(isTrue);
     return isTrue;
 }
 
@@ -18,6 +20,7 @@ function WithPermission(_nav) {
             if (nav._tag === 'CSidebarNavItem') {
                 if (nav.hasOwnProperty("permission")) {
                     if (permissions.find(permission => permission.name === nav.permission) !== undefined) {
+
                         menu.push(nav)
                     }
                 } else {

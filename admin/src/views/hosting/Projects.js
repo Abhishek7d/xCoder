@@ -22,9 +22,13 @@ import {
 import Api from '../../Api';
 import CIcon from '@coreui/icons-react';
 import { cilUserPlus, cilTrash, cilLockLocked, cilCog, cilInfo, cilLockUnlocked, cilBatteryEmpty, cilCompass, cilUser, cilSettings, cilArrowCircleLeft, cilReload } from '@coreui/icons'
+import { usePermission } from 'src/reusable/Permissions';
+import { Link, withRouter } from 'react-router-dom';
 
 // const selectedRows = [];
 const Projects = (props) => {
+    const canViewServers = usePermission("droplets.projects.view")
+
     // const dispatch = useDispatch()
     // States
     const [loading, isLoading] = useState(false)
@@ -41,6 +45,7 @@ const Projects = (props) => {
         filter: null,
         page: 1,
         perPage: 5,
+        id: props.match.params.id,
         raw: true
     });
     // End States
@@ -86,12 +91,12 @@ const Projects = (props) => {
             _style: { width: '10%' },
         },
         {
-            key: 'users.name',
-            label: 'User'
-        },
-        {
             key: 'projects.name',
             label: 'Project'
+        },
+        {
+            key: 'users.name',
+            label: 'User'
         },
         {
             key: 'droplets_count',
@@ -221,6 +226,13 @@ const Projects = (props) => {
                                 onColumnFilterChange={e => setRequest({ ...request, filter: e })}
                                 onTableFilterChange={e => setRequest({ ...request, search: e })}
                                 scopedSlots={{
+                                    'projects.name': (item) => (
+                                        <td>
+                                            {
+                                                (canViewServers && item.droplets_count > 0) ? <Link to={"/dashboard/droplets/users/" + item.user_id + "/projects/" + item.id} class="">{item['projects.name']}</Link> : item['projects.name']
+                                            }
+                                        </td>
+                                    ),
                                     'droplets_count': (item) => (
                                         <td>
                                             {item.droplets_count}
@@ -275,4 +287,4 @@ const Projects = (props) => {
     )
 }
 
-export default Projects
+export default withRouter(Projects)

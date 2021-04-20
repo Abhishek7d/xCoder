@@ -18,6 +18,7 @@ const ResetPassword = React.lazy(() => import('./views/pages/ResetPassword'));
 const Sizes = React.lazy(() => import('./views/hosting/Sizes'));
 const Users = React.lazy(() => import('./views/hosting/Users'));
 const Projects = React.lazy(() => import('./views/hosting/Projects'));
+const Applications = React.lazy(() => import('./views/hosting/Applications'));
 const Invoices = React.lazy(() => import('./views/hosting/Invoices'));
 const Droplets = React.lazy(() => import('./views/hosting/Droplets'));
 
@@ -84,9 +85,17 @@ const routes = [
         icon: 'cil-user'
 
     },
-
     {
-        path: '/dashboard/droplets/servers',
+        path: '/dashboard/droplets/users/:userId/servers/:serverId/applications',
+        exact: true,
+        name: 'Applications',
+        routeName: 'applications',
+        component: Applications,
+        permission: 'droplets.servers.view',
+        icon: cilCloudy
+    },
+    {
+        path: '/dashboard/droplets/users/:id/servers',
         exact: true,
         name: 'Servers',
         routeName: 'droplets',
@@ -95,8 +104,17 @@ const routes = [
         icon: cilCloudy
     },
     {
-        path: '/dashboard/droplets/projects',
+        path: '/dashboard/droplets/servers',
         exact: true,
+        name: 'Servers',
+        routeName: 'droplets.servers',
+        component: Droplets,
+        permission: 'droplets.servers.view',
+        icon: cilCloudy
+    },
+    {
+        path: '/dashboard/droplets/users/:id/project',
+        exact: false,
         name: 'Projects',
         routeName: 'droplets.projects',
         component: Projects,
@@ -106,11 +124,13 @@ const routes = [
     {
         path: '/dashboard/droplets/users',
         name: 'Clients',
+        exact: true,
         routeName: 'droplets.users',
         component: Users,
         permission: 'droplets.users.view',
         icon: 'cil-user'
     },
+
     {
         path: '/dashboard/droplets/invoices',
         name: 'Invoices',

@@ -16,7 +16,7 @@ class ProjectController extends Controller
         $withTrashed = ($request->trashed === 1) ? true : false;
         $sort = CommonFunctions::checkQueryString($request);
         $in = $request->input();
-
+        $id = ($request->id !== null) ? $request->id : null;
         error_log(json_encode($sort));
         // sleep(5);
         if ($user->can('droplets.projects.view')) {
@@ -26,6 +26,10 @@ class ProjectController extends Controller
                 ->with('applications')
                 ->withCount('droplets')
                 ->withCount('applications');
+
+            if ($id) {
+                $data->where("user_id", $id);
+            }
             if ($in['filter'] !== null) {
                 if (isset($in['filter']['user'])) {
                     $data->whereHas('user', function ($q) use ($in) {
@@ -53,5 +57,10 @@ class ProjectController extends Controller
         } else {
             return CommonFunctions::sendResponse(0, "Permission Denied", null);
         }
+    }
+
+    public function FunctionName($var = null)
+    {
+        # code...
     }
 }

@@ -12,6 +12,7 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\admin\droplet\InvoiceController as Invoice;
 use App\Http\Controllers\admin\droplet\ProjectController;
+use App\Http\Controllers\admin\droplet\ServerController;
 use App\Http\Controllers\admin\UserController as AdminUserController;
 
 /*
@@ -61,6 +62,23 @@ Route::group(['prefix' => 'api'], function () {
 
             // Projects
             Route::post('/projects', [ProjectController::class, 'allProjects']);
+
+            // Droplets
+            Route::post('/droplets', [ServerController::class, 'droplets']);
+            Route::post('/applications', [ServerController::class, 'applications']);
+
+            // Sizes
+            Route::post('/sizes', [ServerController::class, 'sizes']);
+            Route::post('/save-price', [ServerController::class, 'savePrice']);
+
+            // Services
+            Route::get('/droplets/services/{server}', [ServerController::class, 'getStatus']);
+            Route::post('/droplets/services/{server}', [ServerController::class, 'setService']);
+            Route::get('/droplets/resources/{server}', [ServerController::class, 'getResources']);
+            Route::get('/droplets/cron-jobs/{server}', [ServerController::class, 'getCronJobs']);
+
+            // Invoices
+            Route::post('/invoices', [Invoice::class, 'invoices']);
         });
     });
 

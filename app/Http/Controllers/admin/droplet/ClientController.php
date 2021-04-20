@@ -20,7 +20,8 @@ class ClientController extends Controller
         // sleep(5);
         if ($user->can('droplets.users.view')) {
             $users = AdminUsers::doesntHave('roles')
-                ->select('id', 'name', 'email', 'created_at', 'locked')->withCount('applications')->withCount('droplets');
+                ->select('id', 'name', 'email', 'created_at', 'locked', 'status')
+                ->withCount('applications')->withCount('droplets');
             if ($in['filter'] !== null) {
                 $users->where(function ($q) use ($in) {
                     foreach ($in['filter'] as $column => $value) {

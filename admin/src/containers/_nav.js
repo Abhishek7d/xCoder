@@ -18,8 +18,9 @@ sidebar.menu('dashboard.users')
 // Droplets
 sidebar.header("Droplets")
 sidebar.menu('droplets.users')
-sidebar.menu('droplets.projects')
-sidebar.menu('droplets')
+// sidebar.menu('droplets.projects')
+sidebar.menu('droplets.servers')
+sidebar.menu('droplets.sizes')
 sidebar.menu('droplets.invoices',)
 
 // Settings
