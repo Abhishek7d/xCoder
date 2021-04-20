@@ -330,12 +330,12 @@ const Droplets = (props) => {
                     <CProgress className=" bg-white" style={{ height: '25px' }}>
                         <CProgressBar
                             showPercentage
-                            value={memPercentage}
+                            value={100 - memPercentage}
                             color="danger"
 
                         />
                         <CProgressBar
-                            value={100 - memPercentage}
+                            value={memPercentage}
                             color="dark"
                         />
                     </CProgress>
