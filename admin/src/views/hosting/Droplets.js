@@ -25,11 +25,12 @@ import {
     CTabPane,
     CProgress,
     CProgressBar,
+    CInput,
 } from '@coreui/react'
 
 import Api from '../../Api';
 import CIcon from '@coreui/icons-react';
-import { cilCog } from '@coreui/icons'
+import { cilCog, cilPenNib, cilSave } from '@coreui/icons'
 import { usePermission } from 'src/reusable/Permissions';
 import { Link, withRouter } from 'react-router-dom';
 let interval = null
@@ -41,6 +42,7 @@ const Droplets = (props) => {
     // const dispatch = useDispatch()
     // States
     const [loading, isLoading] = useState(false)
+    const [editCron, enableEditCron] = useState(null)
     const [loadingServices, isLoadingServices] = useState(false)
     const [loadingCrons, isLoadingCrons] = useState(false)
     const [loadingResource, isLoadingResource] = useState(false)
@@ -410,24 +412,77 @@ const Droplets = (props) => {
             if (crons.hasOwnProperty('1')) {
                 tr.push(<tr key={"cron"}>
                     {renderThs(crons[1])}
+                    <th>Actions</th>
                 </tr>)
             }
             for (const [index, data] of Object.entries(crons)) {
                 tr.push(<tr key={"cron-" + index}>
-                    {renderTds(data)}
+                    {
+                        (editCron && editCron.JOB === data.JOB) ? renderEditTds(data) : renderTds(data)
+                    }
+                    <td key={(editCron) ? 0 : 1}>
+                        {
+                            (editCron && editCron.JOB === data.JOB) ?
+                                <CButton onClick={saveCrons} >
+                                    {
+                                        (actionLoading.action === data.JOB && actionLoading.loading) ?
+                                            <CSpinner size="sm" color="dark" />
+                                            : <CIcon content={cilSave} />
+                                    }
+
+                                </CButton> :
+                                <CButton onClick={() => { (editCron) ? enableEditCron(null) : enableEditCron(data) }} >
+                                    <CIcon content={cilPenNib} />
+                                </CButton>
+                        }
+
+                    </td>
                 </tr>)
             }
         }
         return tr;
     }
+    const saveCrons = (e) => {
+        setActionLoading({ action: editCron.JOB, loading: true })
+        if (editCron) {
+            let data = {
+                ...editCron, action: 'change'
+            }
+            new Api().get("POST", "/cron/" + selectedRows.id + "/" + editCron.JOB, data, true, (data, msg) => {
+                console.log(msg);
+                getCrons(selectedRows.id)
+                enableEditCron(null)
+                setActionLoading({ action: null, loading: false })
+            }, (error) => {
+                console.log(error);
+                enableEditCron(null)
+                setActionLoading({ action: null, loading: false })
+            })
+        }
+    }
     const renderThs = (data) => {
         let td = [];
         let i = 0;
         for (const [key, value] of Object.entries(data)) {
+            let size = (key === 'CMD') ? '35%' : '10%'
+            // if (editCron !== null && key === 'JOB') break;
             td.push(
-                <th>
+                <th style={{ width: size }}>
                     {key}
                 </th>
+            )
+        }
+        return td;
+    }
+    const renderEditTds = (data) => {
+        let td = [];
+        for (const [key, value] of Object.entries(data)) {
+            let span = (key === 'CMD') ? '5' : ''
+            if (value === editCron.JOB) break;
+            td.push(
+                <td colSpan={span}>
+                    <CInput defaultValue={value} name={key} onChange={(e) => enableEditCron({ ...editCron, [e.target.name]: e.target.value })} />
+                </td>
             )
         }
         return td;
@@ -435,6 +490,7 @@ const Droplets = (props) => {
     const renderTds = (data) => {
         let td = [];
         for (const [key, value] of Object.entries(data)) {
+            // if (editCron !== null && key === 'JOB') break;
             td.push(
                 <td>
                     {value}
@@ -497,12 +553,16 @@ const Droplets = (props) => {
                                                                 <h5>Services</h5>
                                                                 <hr />
                                                                 <table className="table">
-                                                                    <tr>
-                                                                        <th>Name</th>
-                                                                        <th>Status</th>
-                                                                        <th>Action</th>
-                                                                    </tr>
-                                                                    {renderServices()}
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Name</th>
+                                                                            <th>Status</th>
+                                                                            <th>Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {renderServices()}
+                                                                    </tbody>
                                                                 </table>
                                                             </>
                                                     }
@@ -517,7 +577,9 @@ const Droplets = (props) => {
                                                     </div> :
                                                     <>
                                                         <table className="table">
-                                                            {renderCrons()}
+                                                            <tbody>
+                                                                {renderCrons()}
+                                                            </tbody>
                                                         </table>
                                                     </>
 

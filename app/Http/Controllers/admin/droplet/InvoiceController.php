@@ -30,11 +30,13 @@ class InvoiceController extends Controller
         // sleep(5);
         if ($user->can('droplets.invoices.view')) {
             $data = Invoices::join('users', 'users.id', '=', 'invoices.user_id')
+                ->join('projects', 'projects.id', '=', 'invoices.project_id')
                 ->select([
                     'users.name as username',
-                    'invoices.*',
-                    DB::raw('count(*) as invoices')
-                ]);
+                    'projects.name as project',
+                    'invoices.id as invoices.id',
+                    'invoices.*'
+                ])->with('items');
             if ($id) {
                 $data->where("invoices.user_id", $id);
             }
@@ -58,9 +60,9 @@ class InvoiceController extends Controller
             if ($withTrashed) {
                 $data->onlyTrashed();
             }
-            $data->sum('grand_total');
+            // $data->sum('grand_total');
             // $data->select('invoices.month_year', DB::raw('count(*) as invoices'));
-            $data->groupBy('invoices.month_year');
+            // $data->groupBy('invoices.month_year');
             $data = $data->orderBy($sort->column, $sort->asc)
                 ->paginate($sort->perPage);
 

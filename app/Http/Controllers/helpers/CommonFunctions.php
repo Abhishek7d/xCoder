@@ -360,7 +360,8 @@ class CommonFunctions extends Controller
         if ($invoice->exists()) {
             $preArrears = $invoice->first()->grand_total;
         }
-        return $preArrears;
+        // return $preArrears;
+        return 0;
     }
 
     public static function checkQueryString(Request $request)

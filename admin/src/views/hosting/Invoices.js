@@ -27,11 +27,12 @@ import {
     CInput,
     CForm,
     CLink,
+    CCollapse
 } from '@coreui/react'
 
 import Api from '../../Api';
 import CIcon from '@coreui/icons-react';
-import { cilCog, } from '@coreui/icons'
+import { cilArrowThickBottom, cilArrowThickTop, cilCog, cilFolder, cilFolderOpen, } from '@coreui/icons'
 import { usePermission } from 'src/reusable/Permissions';
 import { Link, withRouter } from 'react-router-dom';
 import { subtract } from 'lodash';
@@ -52,7 +53,7 @@ const Invoices = (props) => {
         loading: false,
     })
     const [request, setRequest] = useState({
-        sort: { column: 'invoices.month_year', asc: true },
+        sort: { column: 'invoices.id', asc: false },
         search: null,
         filter: null,
         page: 1,
@@ -70,10 +71,29 @@ const Invoices = (props) => {
         price_hourly: '',
         raw: true
     })
+    const [details, setDetails] = useState([])
+    // const [items, setItems] = useState(usersData)
+
+    const toggleDetails = (index) => {
+        const position = details.indexOf(index)
+        let newDetails = details.slice()
+        if (position !== -1) {
+            newDetails.splice(position, 1)
+        } else {
+            newDetails = [...details, index]
+        }
+        setDetails(newDetails)
+    }
     const fields = [
         {
-            key: 'uuid',
-            label: 'UUID',
+            key: 'invoices.id',
+            label: 'ID',
+            _style: { width: '8%' },
+
+        },
+        {
+            key: 'project',
+            label: 'Project',
         },
         {
             key: 'month_year',
@@ -81,10 +101,10 @@ const Invoices = (props) => {
         },
         {
             key: 'username',
-            label: 'Invoices',
+            label: 'User',
         },
         {
-            key: 'grand_total',
+            key: 'amount',
             label: 'Total',
         },
         {
@@ -95,12 +115,12 @@ const Invoices = (props) => {
             key: 'created_at',
             label: 'Generated',
         },
-        {
-            key: 'action',
-            _style: { width: '1%' },
-            sorter: false,
-            filter: false
-        }
+        // {
+        //     key: 'action',
+        //     _style: { width: '1%' },
+        //     sorter: false,
+        //     filter: false
+        // },
     ]
 
     // Load User data
@@ -166,6 +186,29 @@ const Invoices = (props) => {
             showAlert({ show: true, text: error, type: 'danger' })
         })
     }
+    const pad = (num, size) => {
+        var s = num + "";
+        while (s.length < size) s = "0" + s;
+        return s;
+    }
+    const renderSubTable = (items) => {
+        let tr = [];
+        if (items.length > 0) {
+            items.forEach((data, index) => {
+                tr.push(<tr key={index}>
+                    <td>{data.item}</td>
+                    {/* <td className="text-center text-capitalize">{data.cost_type}</td> */}
+                    {(data.cost_type === "monthly") ?
+                        <td className="text-left">{pad(data.days, 2)} Days</td> :
+                        <td className="text-left" title={data.hours + " Hours"}>{data.hours} Hours</td>
+                    }
+                    <td title={data.cost_type + " rate"}>${data.description + " " + data.cost_type}</td>
+                    <td title={"Billed " + data.cost_type}>${data.total}</td>
+                </tr>)
+            })
+        }
+        return tr;
+    }
     return (
         <>
             <CModal
@@ -222,7 +265,6 @@ const Invoices = (props) => {
                         </CCardHeader>
                         <CCardBody className="p-0 has-table pt-4">
                             <CDataTable
-
                                 key={tab}
                                 items={(projects) ? projects.data : []}
                                 fields={fields}
@@ -240,20 +282,20 @@ const Invoices = (props) => {
                                 clickableRows
                                 columnFilter
                                 itemsPerPage={(projects) ? projects.per_page : 10}
-                                hover
                                 sorter
                                 onPaginationChange={e => setRequest({ ...request, perPage: e })}
                                 onSorterValueChange={e => setRequest({ ...request, sort: e })}
                                 onColumnFilterChange={e => setRequest({ ...request, filter: e })}
                                 onTableFilterChange={e => setRequest({ ...request, search: e })}
+                                onRowClick={(e, index) => toggleDetails(index)}
                                 scopedSlots={{
-                                    'uuid': (item) => (
-                                        <td>
-                                            <CLink>
-                                                {item.uuid}
-                                            </CLink>
-                                        </td>
-                                    ),
+                                    // 'uuid': (item) => (
+                                    //     <td>
+                                    //         <CLink>
+                                    //             {item.uuid}
+                                    //         </CLink>
+                                    //     </td>
+                                    // ),
                                     'price_hourly': (item) => (
                                         <td>
                                             ${item.price_hourly}
@@ -271,22 +313,43 @@ const Invoices = (props) => {
                                     ),
                                     'created_at': (item) => (
                                         <td>
-                                            {new Date(item.created_at).toLocaleString()}
+                                            {new Date(item.created_at).toDateString()}
                                         </td>
                                     ),
                                     'action':
-                                        (item) => (
-                                            <td>
-                                                {(tab === 'main') ?
-                                                    <>
-                                                        <CButton onClick={() => toggleInfo(item)} size="sm" color="primary">
-                                                            <CIcon content={cilCog} />
-                                                        </CButton>
-                                                    </>
-                                                    : null
-                                                }
-                                            </td>
-                                        )
+                                        (item, index) => {
+                                            return (
+                                                <td key={(details.includes(index)) ? index + '0' : index + '1'}>
+                                                    <CButton onClick={() => toggleInfo(item)} size="sm" color="primary">
+                                                        <CIcon content={cilCog} />
+                                                    </CButton>
+                                                </td>
+                                            )
+                                        },
+                                    'details':
+                                        (item, index) => {
+                                            return (
+                                                <CCollapse show={details.includes(index)}>
+                                                    <CCardBody>
+                                                        <p>UUID: <b>{item.uuid}</b></p>
+
+                                                        <table className="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Item</th>
+                                                                    <th>Usage</th>
+                                                                    <th>Unit Price</th>
+                                                                    <th>Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {renderSubTable(item.items)}
+                                                            </tbody>
+                                                        </table>
+                                                    </CCardBody>
+                                                </CCollapse>
+                                            )
+                                        }
                                 }}
                             />
                             {

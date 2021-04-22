@@ -25,7 +25,7 @@ const Droplets = React.lazy(() => import('./views/hosting/Droplets'));
 // Settings
 const Settings = React.lazy(() => import('./views/settings/Settings'));
 const Notifications = React.lazy(() => import('./views/settings/Notifications'));
-const Payment = React.lazy(() => import('./views/settings/Payment'));
+// const Payment = React.lazy(() => import('./views/settings/tabs/Payment'));
 
 const routes = [
     {
@@ -45,7 +45,8 @@ const routes = [
     },
     {
         path: '/dashboard/settings',
-        name: 'Cloud Settings',
+        exact: true,
+        name: 'Settings',
         routeName: 'dashboard.settings',
         component: Settings,
         permission: 'dashboard.settings.view',
@@ -53,20 +54,22 @@ const routes = [
     },
     {
         path: '/dashboard/settings/notifications',
+        exact: true,
         name: 'Notifications',
         routeName: 'dashboard.notifications',
         component: Notifications,
         permission: 'dashboard.notifications.view',
         icon: cilEnvelopeLetter
     },
-    {
-        path: '/dashboard/settings/payments',
-        name: 'Payments',
-        routeName: 'dashboard.payments',
-        component: Payment,
-        permission: 'dashboard.payments.view',
-        icon: cilMoney
-    },
+    // {
+    //     path: '/dashboard/settings/payments',
+    //     exact: true,
+    //     name: 'Transactions',
+    //     routeName: 'dashboard.payments',
+    //     component: Payment,
+    //     permission: 'dashboard.payments.view',
+    //     icon: cilMoney
+    // },
     {
         path: '/dashboard/users/create-new-user',
         name: 'Create User',

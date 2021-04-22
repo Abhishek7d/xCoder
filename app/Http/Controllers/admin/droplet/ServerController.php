@@ -340,14 +340,11 @@ class ServerController extends Controller
     {
         $server = Server::find($server);
         if (!$server) {
-            return CommonFunctions::sendResponse(0, "You have not access to this resource");
-        }
-        if (!$server->user_id == auth()->user()->id) {
-            return CommonFunctions::sendResponse(0, "You have not access to this resource");
+            return CommonFunctions::sendResponse(0, "Server Not found");
         }
         $ssh = CommonFunctions::connect($server->ip_address);
         if (!$ssh) {
-            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+            return CommonFunctions::sendResponse(0, "Server Auth Failed");
         }
         $action = $request->get('action');
         if (!$cronjob) {
@@ -365,16 +362,16 @@ class ServerController extends Controller
                 $cmd = "v-unsuspend-cron-job admin $cronjob";
                 break;
             case "change":
-                $min = $request->get('min');
-                $hour = $request->get('hour');
-                $day = $request->get('day');
-                $month = $request->get('month');
-                $wday = $request->get('wday');
-                $command = $request->get('command');
+                $min = $request->get('MIN');
+                $hour = $request->get('HOUR');
+                $day = $request->get('DAY');
+                $month = $request->get('MONTH');
+                $wday = $request->get('WDAY');
+                $command = $request->get('CMD');
                 if (empty($min) || empty($hour) || empty($day) || empty($month) || empty($wday) || empty($command)) {
                     return CommonFunctions::sendResponse(0, "All cron data are required");
                 }
-                $cmd = "v-change-cron-job admin $cronjob $min $hour $day $month $wday '$command'";
+                $cmd = "v-change-cron-job admin '$cronjob' '$min' '$hour' '$day' '$month' '$wday' '$command'";
                 break;
             default:
                 return CommonFunctions::sendResponse(0, "Invalid Operation");
@@ -383,7 +380,7 @@ class ServerController extends Controller
 
         $ssh = CommonFunctions::connect($server->ip_address);
         if (!$ssh) {
-            return CommonFunctions::sendResponse(0, "Server Auth Faild");
+            return CommonFunctions::sendResponse(0, "Server Auth Failed");
         }
         $data = $ssh->exec('pwd');
         $ssh->write("cd /usr/local/vesta/bin/\n");

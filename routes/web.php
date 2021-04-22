@@ -46,6 +46,8 @@ Route::group(['prefix' => 'api'], function () {
             // Actions
             Route::post('/actions/delete', [ActionsController::class, 'deleteSelected']);
             Route::post('/actions/set-value', [ActionsController::class, 'setValue']);
+            Route::post('/actions/settings', [ActionsController::class, 'setSetting']);
+            Route::get('/actions/settings/{option}/{json?}', [ActionsController::class, 'getSetting']);
 
             // Users
             Route::post('/change/password', [AdminUserController::class, 'changePassword']);
@@ -66,6 +68,7 @@ Route::group(['prefix' => 'api'], function () {
             // Droplets
             Route::post('/droplets', [ServerController::class, 'droplets']);
             Route::post('/applications', [ServerController::class, 'applications']);
+            Route::post('/cron/{server}/{job}', [ServerController::class, 'setCronjob']);
 
             // Sizes
             Route::post('/sizes', [ServerController::class, 'sizes']);

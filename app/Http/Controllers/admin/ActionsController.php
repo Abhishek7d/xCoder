@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\helpers\CommonFunctions as CF;
+use App\Models\Options;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,6 +46,43 @@ class ActionsController extends Controller
             // $model = "App\Models\/$table";
             $re = DB::table($table)->whereIn($key, $value)->update($update);
             return CF::sendResponse(1, 'Updated Successfully', $re);
+        } else {
+            return CF::sendResponse(0, 'Something went wrong.');
+        }
+    }
+
+    public function setSetting(Request $request)
+    {
+        $json = $request->json;
+        $option = $request->option;
+        $value = ($json) ? json_encode($request->value) : $request->value;
+        if (!empty($option) && !empty($value)) {
+            $options = Options::where('option', $option);
+            if ($options->exists()) {
+                $options = $options->first();
+                $options->value = $value;
+                $options->save();
+                return CF::sendResponse(1, 'Updated Successfully');
+            } else {
+                $op = new Options();
+                $op->value = $value;
+                $op->option = $option;
+                $op->save();
+                return CF::sendResponse(1, 'Saved Successfully');
+            }
+        } else {
+            return CF::sendResponse(0, 'Something went wrong.');
+        }
+    }
+
+    public function getSetting($option, $json = 0)
+    {
+        $options = Options::where('option', $option)->select(['value']);
+        if ($options->exists()) {
+            if ($json == 'json') {
+                $options = json_decode($options->first()->value);
+            }
+            return CF::sendResponse(1, 'Settings', $options);
         } else {
             return CF::sendResponse(0, 'Something went wrong.');
         }

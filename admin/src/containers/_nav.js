@@ -26,7 +26,7 @@ sidebar.menu('droplets.invoices',)
 // Settings
 sidebar.header("Settings")
 sidebar.menu('dashboard.settings')
-sidebar.menu('dashboard.payments')
+// sidebar.menu('dashboard.payments')
 sidebar.menu('dashboard.notifications')
 
 // const _nav = [
